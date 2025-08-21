@@ -8,12 +8,13 @@ import { normalize } from './shared/path';
 async function fetchRSC() {
   const normalizedHref = normalize(window.location.pathname);
   const rscURL = new URL(normalizedHref + RSC_POSTFIX, window.location.origin);
-  console.log("fetchRSC", rscURL);
   const payload = await ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
   return payload;
 }
 
-function BrowserRoot({ initialPayload }: { initialPayload: RscPayload }) {
+// we export it to prevent hmr invalidate.
+// (fast-refresh require a default export)
+export default function BrowserRoot({ initialPayload }: { initialPayload: RscPayload }) {
   const [payload, setPayload] = React.useState(initialPayload);
 
   React.useEffect(() => {
