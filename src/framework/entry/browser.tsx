@@ -18,9 +18,7 @@ function BrowserRoot({ initialPayload }: { initialPayload: RscPayload }) {
 
   React.useEffect(() => {
     const onNavigation = () => {
-      fetchRSC().then((v) => {
-        setPayload(v);
-      });
+      fetchRSC().then(setPayload);
     };
     return listenNavigation(onNavigation);
   }, []);
