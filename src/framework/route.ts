@@ -1,3 +1,4 @@
+import routes from './entry/shared/route'
 import { normalize } from './entry/shared/path'
 
 export interface RouteConfig {
@@ -31,8 +32,6 @@ function isFunction(path: Path | (() => Path)): path is (()=>Path) {
 function isArray(path: Path | string): path is string[] {
   return Array.isArray(path);
 }
-
-const routes = import.meta.glob("/src/routes/**", {eager:true}) as Record<string, Promise<RouteModule>>;
 
 export async function route(path: Path | (()=>Path), filePath: string ): Promise<Route> {
 

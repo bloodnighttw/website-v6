@@ -1,21 +1,5 @@
 import { Counter } from './counter'
 
-async function getPosts() {
-  let glob = import.meta.glob('./posts/*.mdx', { eager: true })
-  glob = Object.fromEntries(
-    Object.entries(glob).map(([k, v]) => [
-      k.slice('./posts'.length, -'.mdx'.length),
-      v,
-    ]),
-  )
-  return glob
-}
-
-export async function getStaticPaths() {
-  const posts = await getPosts()
-  return ['/', ...Object.keys(posts)]
-}
-
 export async function Root({ children }: { children: React.ReactNode }) {
 
   return (
