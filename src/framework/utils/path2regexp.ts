@@ -81,7 +81,7 @@ class PathMatcher <T extends string> {
  * @param pattern - Path pattern with named parameters
  * @returns PathMatcher instance
  */
-function pathToRegExp<T extends string>(pattern: T): PathMatcher<T> {
+function path2RegExp<T extends string>(pattern: T): PathMatcher<T> {
   return new PathMatcher(pattern);
 }
 
@@ -89,5 +89,5 @@ function pathToRegExp<T extends string>(pattern: T): PathMatcher<T> {
 
 // Type-safe matchers
 // Export for use in modules
-export { pathToRegExp, PathMatcher };
+export { path2RegExp, PathMatcher };
 export type { MatchResult };

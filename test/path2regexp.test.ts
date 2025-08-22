@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
-import { pathToRegExp } from "../src/framework/utils/path2regexp";
+import { path2RegExp } from "../src/framework/utils/path2regexp";
 
 test("test single parameter", () => {
   // Example usage for /:id/a pattern
-  const matcher1 = pathToRegExp("/:id/a");
+  const matcher1 = path2RegExp("/:id/a");
   console.log("Pattern 1:", "/:id/a");
   console.log("RegExp:", matcher1.regexp);
   console.log();
@@ -33,7 +33,7 @@ test("test single parameter", () => {
 });
 
 test("test multiple parameters 1", () => {
-  const matcher2 = pathToRegExp("/:lang/:id");
+  const matcher2 = path2RegExp("/:lang/:id");
   console.log("Pattern 2:", "/:lang/:id");
   console.log("RegExp:", matcher2.regexp);
   console.log();
@@ -67,7 +67,7 @@ test("test multiple parameters 1", () => {
 
 
 test("test multiple parameters 2", () => {
-  const matcher2 = pathToRegExp("/a/:lang/:id");
+  const matcher2 = path2RegExp("/a/:lang/:id");
   console.log("Pattern 2:", "/a/:lang/:id");
   console.log("RegExp:", matcher2.regexp);
   console.log();
