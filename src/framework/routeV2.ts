@@ -25,3 +25,7 @@ export function createRoute<T extends string>(path:T, config: RouteConfig<T>): R
 }
 
 export type RouteParams<R extends Route<string>> = R extends Route<infer T> ? InferPathParams<T> : never;
+
+export interface RouterProps<R extends Route<string>> {
+  params: RouteParams<R>;
+}

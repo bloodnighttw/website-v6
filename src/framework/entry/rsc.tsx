@@ -1,5 +1,4 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { Root } from "../../root";
 import { type RscPayload } from "./shared";
 import { isRscRequest, normalizeByRequest } from "./shared/path";
 import { type RouteModule } from "../routeV2";
@@ -8,9 +7,7 @@ export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
   })
-).filter(
-  (module): module is RouteModule => !!(module as any)?.config
-);
+).filter((module): module is RouteModule => !!(module as any)?.config);
 
 function generateRSCStream({ request }: { request: Request }) {
   const normalizeUrl = normalizeByRequest(request);
@@ -23,7 +20,7 @@ function generateRSCStream({ request }: { request: Request }) {
     if (matcher.test(url.pathname)) {
       const params = matcher.exec(url.pathname)!;
       const rscPayload: RscPayload = {
-        root: <Root children={<Component params={params.params} />} />,
+        root: <Component params={params.params} />,
       };
       const rscStream =
         ReactServer.renderToReadableStream<RscPayload>(rscPayload);
@@ -32,7 +29,6 @@ function generateRSCStream({ request }: { request: Request }) {
   }
 
   throw new Error("not found");
-
 }
 
 export default async function handler(request: Request): Promise<Response> {
