@@ -1,11 +1,11 @@
 import { path2RegExp, PathMatcher, type InferPathParams } from "./utils/path2regexp";
 
 interface RouteConfig<T extends string> {
-  generator: () => Promise<InferPathParams<T>[] >;
+  generator: () => Promise<Array<InferPathParams<T>>>;
 }
 
 export interface RouteModule {
-  default: React.ComponentType<{ path: string }>;
+  default: React.ComponentType<{ params: InferPathParams<string> }>;
   config: Route<string>;
 }
 
@@ -23,3 +23,5 @@ export function createRoute<T extends string>(path:T, config: RouteConfig<T>): R
     config
   }
 }
+
+export type RouteParams<R extends Route<string>> = R extends Route<infer T> ? InferPathParams<T> : never;
