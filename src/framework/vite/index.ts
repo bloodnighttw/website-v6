@@ -34,8 +34,19 @@ async function renderStatic(config: ResolvedConfig) {
   )
 
   // entry provides a list of static paths
-  const staticPaths = entry.paths
-  console.log('Static paths', staticPaths)
+  const allRouteModules = entry.allRouteModules;
+
+  const staticPaths = (await Promise.all(allRouteModules.map(async (module) => {
+    const generator = module.config.config.generator;
+    const matcher = module.config.matcher;
+
+    const staticPaths = await generator();
+    const result = staticPaths.map((staticPath) => {
+      return matcher.toString(staticPath);
+    });
+
+    return result;
+  }))).flat();
 
   // render rsc and html
   const baseDir = config.environments.client.build.outDir

@@ -8,12 +8,11 @@ export default async function Index({path} : {path: string}){
     </>
 }
 
-export const config = createRoute("/:lang", {
+export const config = createRoute("/a", {
   generator: async () => {
-
-    
-    return {
-        lang: "en"
-    };
+    return [{
+      lang: "en",
+      wtf:"123"
+    }];
   },
 });

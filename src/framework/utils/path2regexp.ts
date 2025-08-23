@@ -20,11 +20,6 @@ class PathMatcher <T extends string> {
     this.regexp = this.toRegExp(pattern);
   }
 
-  /**
-   * Convert a path pattern to a regular expression
-   * @param path - Path pattern like "/:id/a" or "/:lang/:id"
-   * @returns Regular expression to match the path
-   */
   private toRegExp(path: string): RegExp {
     // Reset keys array
     this.keys.length = 0;
@@ -74,6 +69,26 @@ class PathMatcher <T extends string> {
       params,
     };
   }
+
+  /**
+   * Convert back to a path string by replacing parameters with values
+   * @param params - Object containing parameter values
+   * @returns Path string with parameters replaced
+   */
+  public toString(params: InferPathParams<T>): string {
+    let result = this.pattern as string;
+
+    // Replace each parameter with its value
+    this.keys.forEach(key => {
+      const value = (params as Record<string, string>)[key];
+      if (value !== undefined) {
+        result = result.replace(`:${key}`, String(value));
+      }
+    });
+    
+    return result;
+  }
+
 }
 
 /**

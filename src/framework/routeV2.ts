@@ -1,7 +1,7 @@
 import { path2RegExp, PathMatcher, type InferPathParams } from "./utils/path2regexp";
 
 interface RouteConfig<T extends string> {
-  generator: () => Promise<InferPathParams<T>>;
+  generator: () => Promise<InferPathParams<T>[] >;
 }
 
 export interface RouteModule {

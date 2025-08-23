@@ -4,13 +4,13 @@ import { type RscPayload } from "./shared";
 import { isRscRequest, normalizeByRequest } from "./shared/path";
 import { type RouteModule } from "../routeV2";
 
-const allRouteModules = Object.values(
+export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
   })
 ).filter(
   (module): module is RouteModule => !!(module as any)?.config
-) as RouteModule[];
+);
 
 function generateRSCStream({ request }: { request: Request }) {
   const normalizeUrl = normalizeByRequest(request);
@@ -22,8 +22,6 @@ function generateRSCStream({ request }: { request: Request }) {
 
     if (matcher.test(url.pathname)) {
       const params = matcher.exec(url.pathname)!;
-      console.log(params);
-      Object.assign(url.searchParams, params);
       const rscPayload: RscPayload = {
         root: <Root children={<Component path={JSON.stringify(params.params)} />} />,
       };
