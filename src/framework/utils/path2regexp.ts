@@ -85,9 +85,23 @@ function path2RegExp<T extends string>(pattern: T): PathMatcher<T> {
   return new PathMatcher(pattern);
 }
 
+/**
+ * Type utility to extract parameter names from a path pattern
+ */
+type ExtractParams<T extends string> = T extends `${string}:${infer Param}/${infer Rest}`
+    ? { [K in Param]: string } & ExtractParams<`/${Rest}`>
+    : T extends `${string}:${infer Param}`
+    ? { [K in Param]: string }
+    : {};
 
+/**
+ * Type utility to infer parameter types from path pattern
+ */
+type InferPathParams<T extends string> = {
+    [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
+};
 
 // Type-safe matchers
 // Export for use in modules
 export { path2RegExp, PathMatcher };
-export type { MatchResult };
+export type { MatchResult, InferPathParams };

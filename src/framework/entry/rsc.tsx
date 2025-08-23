@@ -1,85 +1,94 @@
-import * as ReactServer from '@vitejs/plugin-rsc/rsc'
-import { Root } from '../../root'
-import { type RscPayload } from './shared'
-import { isRscRequest, normalizeByRequest } from './shared/path'
-import ROUTE from "../../route"
-import type { RouteModule } from '../route'
+import * as ReactServer from "@vitejs/plugin-rsc/rsc";
+import { Root } from "../../root";
+import { type RscPayload } from "./shared";
+import { isRscRequest, normalizeByRequest } from "./shared/path";
+import { type RouteModule } from "../routeV2";
 
-const routes = (await Promise.all(ROUTE)).reduce((acc,route) => {
-  return {
-    ...acc,
-    ...route
+const allRouteModules = Object.values(
+  import.meta.glob("/src/routes/**", {
+    eager: true,
+  })
+).filter(
+  (module): module is RouteModule => !!(module as any)?.config
+) as RouteModule[];
+
+function generateRSCStream({ request }: { request: Request }) {
+  const normalizeUrl = normalizeByRequest(request);
+  const url = new URL(normalizeUrl, new URL(request.url).origin);
+
+  for (const module of allRouteModules) {
+    const Component = module.default;
+    const matcher = module.config.matcher;
+
+    if (matcher.test(url.pathname)) {
+      const params = matcher.exec(url.pathname)!;
+      console.log(params);
+      Object.assign(url.searchParams, params);
+      const rscPayload: RscPayload = {
+        root: <Root children={<Component path={JSON.stringify(params.params)} />} />,
+      };
+      const rscStream =
+        ReactServer.renderToReadableStream<RscPayload>(rscPayload);
+      return rscStream;
+    }
   }
-}, {} as Record<string, RouteModule>)
 
-const paths = Object.keys(routes)
+  throw new Error("not found");
 
-export { paths }
-
-function generateRSCStream({request}: { request: Request }) {
-  
-  const normalizeUrl = normalizeByRequest(request)
-  const url = new URL(normalizeUrl,new URL(request.url).origin)
-
-  if(!routes[normalizeUrl]) {
-    throw new Error(`No route found for ${normalizeUrl}`)
-  }
-
-  const module = routes[normalizeUrl];
-  const RouteComponent = module.default;
-
-  const rscPayload: RscPayload = { root: <Root children={<RouteComponent path={url.pathname} />} /> }
-  const rscStream = ReactServer.renderToReadableStream<RscPayload>(rscPayload)
-  return rscStream
 }
 
 export default async function handler(request: Request): Promise<Response> {
+  const routeModules = import.meta.glob("/src/routes/**", {
+    eager: true,
+  }) as Record<string, Partial<RouteModule>>;
 
-  const rscStream = generateRSCStream({ request })
+  console.log(Object.values(routeModules).map((it) => it.config));
 
+  const rscStream = generateRSCStream({ request });
 
   if (isRscRequest(request)) {
     return new Response(rscStream, {
       headers: {
-        'content-type': 'text/x-component;charset=utf-8',
-        vary: 'accept',
+        "content-type": "text/x-component;charset=utf-8",
+        vary: "accept",
       },
-    })
+    });
   }
 
   // to prevent circular import
-  const ssr = await import.meta.viteRsc.loadModule<
-    typeof import('./ssr')
-  >('ssr', 'index')
-  const htmlStream = await ssr.renderHtml(rscStream)
+  const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
+    "ssr",
+    "index"
+  );
+  const htmlStream = await ssr.renderHtml(rscStream);
 
   return new Response(htmlStream, {
     headers: {
-      'content-type': 'text/html;charset=utf-8',
-      vary: 'accept',
+      "content-type": "text/html;charset=utf-8",
+      vary: "accept",
     },
-  })
+  });
 }
 
 // return both rsc and html streams at once for ssg
 export async function handleSsg(request: Request): Promise<{
-  html: ReadableStream<Uint8Array>
-  rsc: ReadableStream<Uint8Array>
+  html: ReadableStream<Uint8Array>;
+  rsc: ReadableStream<Uint8Array>;
 }> {
-  
   const rscStream = generateRSCStream({ request });
-  const [rscStream1, rscStream2] = rscStream.tee()
+  const [rscStream1, rscStream2] = rscStream.tee();
 
-  const ssr = await import.meta.viteRsc.loadModule<
-    typeof import('./ssr')
-  >('ssr', 'index')
+  const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
+    "ssr",
+    "index"
+  );
   const htmlStream = await ssr.renderHtml(rscStream1, {
     ssg: true,
-  })
+  });
 
-  return { html: htmlStream, rsc: rscStream2 }
+  return { html: htmlStream, rsc: rscStream2 };
 }
 
 if (import.meta.hot) {
-  import.meta.hot.accept()
+  import.meta.hot.accept();
 }

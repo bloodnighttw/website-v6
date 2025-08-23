@@ -1,4 +1,5 @@
 import { Counter } from "../counter"
+import { createRoute } from "../framework/routeV2";
 
 export default async function Index({path} : {path: string}){
     return <>
@@ -7,6 +8,12 @@ export default async function Index({path} : {path: string}){
     </>
 }
 
-export const config = ()=>{
+export const config = createRoute("/:lang", {
+  generator: async () => {
 
-}
+    
+    return {
+        lang: "en"
+    };
+  },
+});
