@@ -8,6 +8,7 @@ export const config = createRoute("/:lang", {
     return [{
       lang: "en",
     }] satisfies InferPathParams<"/:lang">[];
+    // we will need satisfies to ensure no unwant props pass into router
   },
 });
 
@@ -17,7 +18,8 @@ export default async function Index({params} : RouterProps<typeof config>){
       <Root>
         <div>hi from /:lang</div>
         <div>props</div>
-        <div>{JSON.stringify(params)}</div>
+        <div>current lang: {params.lang}</div>
+        <div>data: {JSON.stringify(params)}</div>
         <Counter />
       </Root>
     </>
