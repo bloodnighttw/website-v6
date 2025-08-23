@@ -52,19 +52,16 @@ test("test multiple parameters 1", () => {
     "/en/", // Should NOT match (empty id)
   ];
 
-
-
   console.log("Test Results for /:lang/:id:");
   testPaths2.forEach((path: string) => {
     const result = matcher2.exec(path);
     console.log(
       `${path.padEnd(16)} -> ${
         result ? `✓ params: ${JSON.stringify(result.params)}` : "✗ no match"
-      }`
+      }`,
     );
   });
 });
-
 
 test("test multiple parameters 2", () => {
   const matcher2 = path2RegExp("/a/:lang/:id");
@@ -85,18 +82,13 @@ test("test multiple parameters 2", () => {
     "/a/en/", // Should NOT match (empty id)
   ];
 
-
-
   console.log("Test Results for /:lang/:id:");
   testPaths2.forEach((path: string) => {
     const result = matcher2.exec(path);
     console.log(
       `${path.padEnd(16)} -> ${
         result ? `✓ params: ${JSON.stringify(result.params)}` : "✗ no match"
-      }`
+      }`,
     );
   });
 });
-
-
-

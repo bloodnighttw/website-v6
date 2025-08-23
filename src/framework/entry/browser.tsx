@@ -3,7 +3,7 @@ import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "./shared";
-import { normalize } from './shared/path';
+import { normalize } from "./shared/path";
 
 async function fetchRSC() {
   const normalizedHref = normalize(window.location.pathname);
@@ -14,7 +14,11 @@ async function fetchRSC() {
 
 // we export it to prevent hmr invalidate.
 // (fast-refresh require a default export)
-export default function BrowserRoot({ initialPayload }: { initialPayload: RscPayload }) {
+export default function BrowserRoot({
+  initialPayload,
+}: {
+  initialPayload: RscPayload;
+}) {
   const [payload, setPayload] = React.useState(initialPayload);
 
   React.useEffect(() => {
@@ -28,9 +32,8 @@ export default function BrowserRoot({ initialPayload }: { initialPayload: RscPay
 }
 
 async function hydrate(): Promise<void> {
-  const initialPayload = await ReactClient.createFromReadableStream<RscPayload>(
-    rscStream
-  );
+  const initialPayload =
+    await ReactClient.createFromReadableStream<RscPayload>(rscStream);
 
   const browserRoot = (
     <React.StrictMode>

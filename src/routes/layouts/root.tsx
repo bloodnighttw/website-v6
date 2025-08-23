@@ -1,7 +1,6 @@
-import { Counter } from '../../counter'
+import { Counter } from "../../counter";
 
 export async function Root({ children }: { children: React.ReactNode }) {
-
   return (
     <html lang="en">
       <head>
@@ -10,7 +9,7 @@ export async function Root({ children }: { children: React.ReactNode }) {
         <title>RSC MDX SSG</title>
       </head>
       <body>
-        <header style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <header style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <h1>
             <a href="/">RSC + MDX + SSG</a>
           </h1>
@@ -19,10 +18,8 @@ export async function Root({ children }: { children: React.ReactNode }) {
             Rendered at {new Date().toISOString()}
           </span>
         </header>
-        <main>
-          {children}
-        </main>
+        <main>{children}</main>
       </body>
     </html>
-  )
+  );
 }

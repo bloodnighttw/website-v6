@@ -8,7 +8,7 @@ interface MatchResult {
   params: Record<string, string>;
 }
 
-class PathMatcher <T extends string> {
+class PathMatcher<T extends string> {
   public readonly pattern: T;
   // we store it as internal keys to know which parameters to extract
   public readonly keys: string[];
@@ -23,16 +23,19 @@ class PathMatcher <T extends string> {
   private toRegExp(path: string): RegExp {
     // Reset keys array
     this.keys.length = 0;
-    
+
     // Escape special regex characters except for our parameter syntax
-    let regexPattern = path.replace(/[.+*?^${}()|[\]\\]/g, '\\$&');
-    
+    let regexPattern = path.replace(/[.+*?^${}()|[\]\\]/g, "\\$&");
+
     // Replace parameter patterns like :id with capture groups
-    regexPattern = regexPattern.replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, (_match: string, paramName: string) => {
-      this.keys.push(paramName);
-      return '([^/]+)'; // Match any character except forward slash
-    });
-    
+    regexPattern = regexPattern.replace(
+      /:([a-zA-Z_][a-zA-Z0-9_]*)/g,
+      (_match: string, paramName: string) => {
+        this.keys.push(paramName);
+        return "([^/]+)"; // Match any character except forward slash
+      },
+    );
+
     // Ensure exact match by anchoring start and end
     return new RegExp(`^${regexPattern}$`);
   }
@@ -53,17 +56,17 @@ class PathMatcher <T extends string> {
    */
   public exec(path: string): MatchResult | null {
     const match = this.regexp.exec(path);
-    
+
     if (!match) {
       return null;
     }
-    
+
     // Create params object from captured groups
     const params: Record<string, string> = {};
     this.keys.forEach((key, index) => {
       params[key] = match[index + 1]; // index + 1 because match[0] is the full match
     });
-    
+
     return {
       path: match[0],
       params,
@@ -79,16 +82,15 @@ class PathMatcher <T extends string> {
     let result = this.pattern as string;
 
     // Replace each parameter with its value
-    this.keys.forEach(key => {
+    this.keys.forEach((key) => {
       const value = (params as Record<string, string>)[key];
       if (value !== undefined) {
         result = result.replace(`:${key}`, String(value));
       }
     });
-    
+
     return result;
   }
-
 }
 
 /**
@@ -103,17 +105,18 @@ function path2RegExp<T extends string>(pattern: T): PathMatcher<T> {
 /**
  * Type utility to extract parameter names from a path pattern
  */
-type ExtractParams<T extends string> = T extends `${string}:${infer Param}/${infer Rest}`
+type ExtractParams<T extends string> =
+  T extends `${string}:${infer Param}/${infer Rest}`
     ? { [K in Param]: string } & ExtractParams<`/${Rest}`>
     : T extends `${string}:${infer Param}`
-    ? { [K in Param]: string }
-    : {};
+      ? { [K in Param]: string }
+      : {};
 
 /**
  * Type utility to infer parameter types from path pattern
  */
 type InferPathParams<T extends string> = {
-    [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
+  [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
 };
 
 // Type-safe matchers

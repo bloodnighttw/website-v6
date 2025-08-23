@@ -1,17 +1,16 @@
-import { HTML_POSTFIX, RSC_POSTFIX } from '.';
+import { HTML_POSTFIX, RSC_POSTFIX } from ".";
 
-export const endWithRscPostfix = new RegExp(`${RSC_POSTFIX}$`)
-export const endWithHtmlPostfix = new RegExp(`${HTML_POSTFIX}$`)
+export const endWithRscPostfix = new RegExp(`${RSC_POSTFIX}$`);
+export const endWithHtmlPostfix = new RegExp(`${HTML_POSTFIX}$`);
 
 export function normalize(path: string): string {
-
   // remove .html and .rsc postfix
-  path = path.replace(endWithHtmlPostfix, '').replace(endWithRscPostfix, '');
+  path = path.replace(endWithHtmlPostfix, "").replace(endWithRscPostfix, "");
 
-  if(path.endsWith('/') || path === "") {
-    return path + "index"
+  if (path.endsWith("/") || path === "") {
+    return path + "index";
   }
-  return path
+  return path;
 }
 
 export function normalizeByRequest(request: Request): string {

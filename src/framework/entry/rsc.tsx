@@ -6,7 +6,7 @@ import { type RouteModule } from "../routeV2";
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
-  })
+  }),
 ).filter((module): module is RouteModule => !!(module as any)?.config);
 
 function generateRSCStream({ request }: { request: Request }) {
@@ -52,7 +52,7 @@ export default async function handler(request: Request): Promise<Response> {
   // to prevent circular import
   const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
     "ssr",
-    "index"
+    "index",
   );
   const htmlStream = await ssr.renderHtml(rscStream);
 
@@ -74,7 +74,7 @@ export async function handleSsg(request: Request): Promise<{
 
   const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
     "ssr",
-    "index"
+    "index",
   );
   const htmlStream = await ssr.renderHtml(rscStream1, {
     ssg: true,
