@@ -3,6 +3,7 @@
 import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
 import tseslint from "typescript-eslint";
+import reactHooks from "eslint-plugin-react-hooks";
 
 export default tseslint.config({
   files: ["**/*.ts", "**/*.tsx"],
@@ -15,6 +16,12 @@ export default tseslint.config({
     eslintJs.configs.recommended,
     tseslint.configs.recommended,
     eslintReact.configs["recommended-typescript"],
+    {
+      plugins: {
+        "react-hooks": reactHooks,
+      },
+      rules: reactHooks.configs.recommended.rules,
+    },
   ],
 
   // Configure language/parsing options
