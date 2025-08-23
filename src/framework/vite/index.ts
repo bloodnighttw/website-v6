@@ -69,7 +69,7 @@ async function renderStatic(config: ResolvedConfig) {
 
 async function writeFileStream(filePath: string, stream: ReadableStream) {
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.promises.writeFile(filePath, Readable.fromWeb(stream as any));
+  await fs.promises.writeFile(filePath, Readable.fromWeb(stream as never));
 }
 
 export default function rscSSG(): Plugin[] {

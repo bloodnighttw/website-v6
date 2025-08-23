@@ -110,7 +110,7 @@ type ExtractParams<T extends string> =
     ? { [K in Param]: string } & ExtractParams<`/${Rest}`>
     : T extends `${string}:${infer Param}`
       ? { [K in Param]: string }
-      : {};
+      : void;
 
 /**
  * Type utility to infer parameter types from path pattern
