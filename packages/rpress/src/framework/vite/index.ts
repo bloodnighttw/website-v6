@@ -76,9 +76,9 @@ export default function rscSSG(): Plugin[] {
   return [
     ...rsc({
       entries: {
-        client: "./src/framework/entry/browser.tsx",
-        rsc: "./src/framework/entry/rsc.tsx",
-        ssr: "./src/framework/entry/ssr.tsx",
+        client: "./node_modules/rpress/dist/entry/browser.js",
+        rsc: "./node_modules/rpress/dist/entry/rsc.js",
+        ssr: "./node_modules/rpress/dist/entry/ssr.js",
       },
       serverHandler: process.env.isPreview ? false : undefined,
       useBuildAppHook: true,
