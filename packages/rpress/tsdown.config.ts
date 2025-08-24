@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
     entry: {
@@ -16,5 +16,4 @@ export default defineConfig({
     target: "esnext",
     external: ["lightningcss", "vite"],
     watch: ["src/**/*"],
-     
 });
