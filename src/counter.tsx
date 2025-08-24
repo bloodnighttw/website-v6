@@ -6,6 +6,6 @@ export function Counter() {
   const [count, setCount] = React.useState(0);
 
   return (
-    <button type="button" onClick={() => setCount((c) => c + 1)}>Count is {count}</button>
+    <button onClick={() => setCount((c) => c + 1)}>Count is {count}</button>
   );
 }

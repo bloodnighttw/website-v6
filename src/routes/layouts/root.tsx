@@ -1,4 +1,4 @@
-import { Counter } from "@/counter";
+import { Counter } from "../../counter";
 
 export async function Root({ children }: { children: React.ReactNode }) {
   return (

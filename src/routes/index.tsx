@@ -1,6 +1,6 @@
-import { Counter } from "@/counter";
-import { createRoute, type RouterProps } from "@/framework/routeV2";
-import type { InferPathParams } from "@/framework/utils/path2regexp";
+import { Counter } from "../counter";
+import { createRoute, type RouterProps } from "../framework/routeV2";
+import type { InferPathParams } from "../framework/utils/path2regexp";
 import { Root } from "./layouts/root";
 
 export const config = createRoute("/:lang", {
