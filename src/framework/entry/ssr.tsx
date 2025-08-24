@@ -3,6 +3,7 @@ import React from "react";
 import * as ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { RscPayload } from "./shared";
+import { prerender } from "react-dom/static.edge";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,
@@ -22,11 +23,16 @@ export async function renderHtml(
   const bootstrapScriptContent =
     await import.meta.viteRsc.loadBootstrapScriptContent("index");
 
-  const htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-    bootstrapScriptContent,
-  });
+  let htmlStream: ReadableStream<Uint8Array>
   if (options?.ssg) {
-    await htmlStream.allReady;
+    const prerenderResult = await prerender(<SsrRoot />, {
+      bootstrapScriptContent,
+    })
+    htmlStream = prerenderResult.prelude
+  } else {
+    htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
+      bootstrapScriptContent,
+    })
   }
 
   let responseStream: ReadableStream<Uint8Array> = htmlStream;
