@@ -32,12 +32,7 @@ function generateRSCStream({ request }: { request: Request }) {
 }
 
 export default async function handler(request: Request): Promise<Response> {
-  const routeModules = import.meta.glob("/src/routes/**", {
-    eager: true,
-  }) as Record<string, Partial<RouteModule>>;
-
-  console.log(Object.values(routeModules).map((it) => it.config));
-
+  
   const rscStream = generateRSCStream({ request });
 
   if (isRscRequest(request)) {
