@@ -2,7 +2,7 @@ import { type Plugin, type ResolvedConfig } from "vite";
 import rsc from "@vitejs/plugin-rsc";
 import path, { normalize } from "path";
 import { pathToFileURL } from "url";
-import { HTML_POSTFIX, RSC_POSTFIX } from "../entry/shared";
+import { HTML_POSTFIX, RSC_POSTFIX } from "@/framework/entry/shared";
 import { Readable } from "stream";
 import fs from "node:fs";
 
@@ -29,7 +29,7 @@ function rscSsgPlugin(): Plugin[] {
 async function renderStatic(config: ResolvedConfig) {
   // import server entry
   const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
-  const entry: typeof import("../entry/rsc") = await import(
+  const entry: typeof import("@/framework/entry/rsc") = await import(
     pathToFileURL(entryPath).href
   );
 
