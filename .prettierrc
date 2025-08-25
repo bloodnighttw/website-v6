@@ -7,7 +7,7 @@
   "printWidth": 80,
   "overrides": [
     {
-      "files": ["*.json", "*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": ["*.json", "*.ts", "*.tsx", "*.js", "*.jsx", "*.md", "*.mdx"],
       "options": {
         "tabWidth": 2,
         "singleQuote": false,
