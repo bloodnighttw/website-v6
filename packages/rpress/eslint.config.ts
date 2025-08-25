@@ -38,6 +38,6 @@ export default tseslint.config({
   // Custom rule overrides (modify rule levels or disable rules)
   rules: {
     "@eslint-react/no-missing-key": "warn",
-    "quotes": ["error", "double"]
+    quotes: ["error", "double"],
   },
 });
