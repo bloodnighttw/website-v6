@@ -14,5 +14,5 @@ export default defineConfig({
   clean: true,
   minify: true,
   target: "esnext",
-  external: ["lightningcss", "vite"],
+  external: ["lightningcss", "vite", "@vitejs/plugin-rsc"],
 });
