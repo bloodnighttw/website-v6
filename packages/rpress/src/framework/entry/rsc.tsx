@@ -7,7 +7,9 @@ export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
   }),
-).filter((module): module is RouteModule => !!(module as Partial<RouteModule>)?.config);
+).filter(
+  (module): module is RouteModule => !!(module as Partial<RouteModule>)?.config,
+);
 
 function generateRSCStream({ request }: { request: Request }) {
   const normalizeUrl = normalizeByRequest(request);
@@ -32,7 +34,6 @@ function generateRSCStream({ request }: { request: Request }) {
 }
 
 export default async function handler(request: Request): Promise<Response> {
-  
   const rscStream = generateRSCStream({ request });
 
   if (isRscRequest(request)) {

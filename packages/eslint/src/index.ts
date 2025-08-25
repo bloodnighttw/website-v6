@@ -1,5 +1,3 @@
-// eslint.config.js
-
 import eslintReact from "@eslint-react/eslint-plugin";
 import eslintJs from "@eslint/js";
 import tseslint from "typescript-eslint";
@@ -38,6 +36,6 @@ export default tseslint.config({
   // Custom rule overrides (modify rule levels or disable rules)
   rules: {
     "@eslint-react/no-missing-key": "warn",
-    "quotes": ["error", "double"]
+    quotes: ["error", "double"],
   },
 });

@@ -23,16 +23,16 @@ export async function renderHtml(
   const bootstrapScriptContent =
     await import.meta.viteRsc.loadBootstrapScriptContent("index");
 
-  let htmlStream: ReadableStream<Uint8Array>
+  let htmlStream: ReadableStream<Uint8Array>;
   if (options?.ssg) {
     const prerenderResult = await prerender(<SsrRoot />, {
       bootstrapScriptContent,
-    })
-    htmlStream = prerenderResult.prelude
+    });
+    htmlStream = prerenderResult.prelude;
   } else {
     htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
       bootstrapScriptContent,
-    })
+    });
   }
 
   let responseStream: ReadableStream<Uint8Array> = htmlStream;
