@@ -1,3 +1,12 @@
-# RSC with static generator
+# Website-v6
 
-This is a simple React Server Components (RSC) application with a static site generator. It uses TypeScript for type safety and has a basic routing system.
+This is an experimental project for building a blog with React Server Components, and this is based on vite-rsc ssg example.
+
+## How to run
+
+```bash
+pnpm install
+pnpm dev
+```
+
+then open `http://localhost:5173/hello` in your browser, the content should be displayed.

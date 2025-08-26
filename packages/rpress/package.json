@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsdown --watch",
-    "build": "tsdown",
+    "build": "tsdown --clean",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
