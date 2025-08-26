@@ -1,11 +1,11 @@
 {
-  "name": "@vitejs/plugin-rsc-examples-starter",
+  "name": "website-v6",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "npx serve ./dist/client"
   },

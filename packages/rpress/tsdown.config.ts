@@ -11,7 +11,8 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   sourcemap: true,
-  clean: true,
+  // in dev we don't need to clean
+  clean: false,
   minify: true,
   target: "esnext",
   external: ["lightningcss", "vite", "@vitejs/plugin-rsc"],
