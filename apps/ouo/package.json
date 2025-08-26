@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-    "preview": "npx serve ./dist/client"
+    "preview": "npx serve ./dist/client",
+    "lint": "eslint . --ext .ts,.tsx,.mdx"
   },
   "dependencies": {
     "react": "^19.1.1",
