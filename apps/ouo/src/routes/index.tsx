@@ -1,7 +1,4 @@
-import {
-  createRoute,
-  type RouterProps,
-} from "rpress";
+import { createRoute, type RouterProps } from "rpress";
 import { Counter } from "../counter";
 
 export const config = createRoute("/:lang", {
