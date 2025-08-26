@@ -14,7 +14,7 @@
     "preview": {
       "cache": true,
       "persistent": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     }
   },
   "ui": "tui"
