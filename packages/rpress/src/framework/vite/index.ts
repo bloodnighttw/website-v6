@@ -33,26 +33,7 @@ async function renderStatic(config: ResolvedConfig) {
     pathToFileURL(entryPath).href
   );
 
-  // entry provides a list of static paths
-  const allRouteModules = entry.allRouteModules;
-
-  const staticPaths = (
-    await Promise.all(
-      allRouteModules.map(async (module) => {
-        const generator = module.config.config.generator;
-        const matcher = module.config.matcher;
-
-        const staticPaths = await generator();
-        const result = staticPaths.map((staticPath) => {
-          return matcher.toString(staticPath);
-        });
-
-        return result;
-      }),
-    )
-  ).flat();
-
-  // render rsc and html
+  const staticPaths = ["/", "/ouo", "/test", "/wtf"]  // render rsc and html
   const baseDir = config.environments.client.build.outDir;
   for (const staticPatch of staticPaths) {
     config.logger.info("[vite-rsc:ssg] -> " + staticPatch);
