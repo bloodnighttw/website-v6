@@ -1,20 +1,19 @@
-# Website-v6
+# A minimal setup to reproduce the issue
 
-## Packages
+## How to reproduce
 
-This monorepo contains several packages and an application. Brief summary:
+1. Clone the repository **with this branch(vite-issue-minimal)**
+2. Install dependencies (Don't forget to ``rm -rf **/node_modules`` if there has any)
+3. Start the development server ``pnpm dev``, you can run this in root, the first try
+ may have some error since some internal package hasn't been built yet.
+4. Open the application in your browser with any pathname (e.g. /ouo, /test, /wtf)
 
-- `apps/ouo`: A Vite + React Server Components application — the demo blog app and entrypoint for local development.
-- `packages/rpress`: The core framework utilities used by the app. It contains server / client entry points, SSR/RSC helpers, and routing utilities (see `src/framework`). There's also tests under `test`.
-  1. `src/framework/vite/index.ts` is the vite plugin used by other packages, and it is based on `@vitejs/plugin-rsc` and config to where entry script located.
-  2. `src/framework/entry/*` contain entry points for the server and client need by vite-rsc, shared logic is under `src/framework/entry/shared/*`
-- `packages/eslint`: Shared ESLint configuration used across the workspace.
+## How not to reproduce
 
-## How to run
-
-```bash
-pnpm install
-pnpm dev
-```
-
-then open `http://localhost:5173/hello` in your browser, the content should be displayed.
+1. add ``nodeLinker: hoisted`` in the end of ``pnpm-workspace.yaml``
+2. ``rm -rf **/node_modules`` to clean up any existing node_modules/
+3. ``pnpm install`` to install all monorepo packages
+4. Start the development server ``pnpm dev``, you can run this in root, the first try may have some error
+ since some internal package hasn't been built yet.
+5. Open the application in your browser with any pathname (e.g. /ouo, /test, /wtf)
+6. You can see that there are no errors in the console and no issues with the application.
