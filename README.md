@@ -17,3 +17,5 @@
  since some internal package hasn't been built yet.
 5. Open the application in your browser with any pathname (e.g. /ouo, /test, /wtf)
 6. You can see that there are no errors in the console and no issues with the application.
+
+Another way to fix the issue is to install @vitejs/plugin-rsc in the root package.json file.
