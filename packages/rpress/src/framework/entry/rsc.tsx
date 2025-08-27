@@ -1,5 +1,5 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { type RscPayload } from "./shared";
+import { RSC_POSTFIX, type RscPayload } from "./shared";
 import { isRscRequest } from "./shared/path";
 import { type RouteModule } from "../routeV2";
 
@@ -12,8 +12,10 @@ export const allRouteModules = Object.values(
 function generateRSCStream({ request }: { request: Request }) {
   const C = allRouteModules.default;
 
+  const message = `hello from server, you visit ${new URL(request.url).pathname.replace(RSC_POSTFIX, "")}`;
+
   const rscPayload: RscPayload = {
-    root: <C />
+    root: <C message={message} />
   }
 
   return ReactServer.renderToReadableStream<RscPayload>(rscPayload);

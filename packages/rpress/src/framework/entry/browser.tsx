@@ -5,7 +5,8 @@ import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "./shared";
 
 async function fetchRSC() {
-  const normalizedHref = "index";
+
+  const normalizedHref = window.location.href;
   const rscURL = new URL(normalizedHref + RSC_POSTFIX, window.location.origin);
   const payload = await ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
   return payload;
