@@ -20,8 +20,7 @@
     "@vitejs/plugin-react": "latest",
     "vite-plugin-inspect": "^11.3.2",
     "vitest": "^3.2.4",
-    "tsdown": "^0.14.1",
-    "@rpress/eslint": "workspace:*"
+    "tsdown": "^0.14.1"
   },
   "peerDependencies": {
     "react": "^19.0.0",

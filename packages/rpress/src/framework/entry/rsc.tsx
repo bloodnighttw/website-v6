@@ -1,36 +1,22 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import { type RscPayload } from "./shared";
-import { isRscRequest, normalizeByRequest } from "./shared/path";
+import { isRscRequest } from "./shared/path";
 import { type RouteModule } from "../routeV2";
 
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
   }),
-).filter(
-  (module): module is RouteModule => !!(module as Partial<RouteModule>)?.config,
-);
+)[0] as unknown as RouteModule;
 
 function generateRSCStream({ request }: { request: Request }) {
-  const normalizeUrl = normalizeByRequest(request);
-  const url = new URL(normalizeUrl, new URL(request.url).origin);
+  const C = allRouteModules.default;
 
-  for (const module of allRouteModules) {
-    const Component = module.default;
-    const matcher = module.config.matcher;
-
-    if (matcher.test(url.pathname)) {
-      const params = matcher.exec(url.pathname)!;
-      const rscPayload: RscPayload = {
-        root: <Component params={params.params} />,
-      };
-      const rscStream =
-        ReactServer.renderToReadableStream<RscPayload>(rscPayload);
-      return rscStream;
-    }
+  const rscPayload: RscPayload = {
+    root: <C />
   }
 
-  throw new Error("not found");
+  return ReactServer.renderToReadableStream<RscPayload>(rscPayload);
 }
 
 export default async function handler(request: Request): Promise<Response> {

@@ -1,18 +1,11 @@
-import { createRoute, type RouterProps } from "rpress";
 import { Counter } from "../counter";
 
-export const config = createRoute("/:lang", {
-  generator: async () => {
-    return [{ lang: "en" }, { lang: "fr" }, { lang: "es" }];
-  },
-});
-
-export default async function WTF(props: RouterProps<typeof config>) {
+export default async function WTF() {
   return (
     <>
-      <div>hi from /:lang</div>
-      <div>props</div>
-      <div>data: {JSON.stringify(props.params)}</div>
+      <h1>A showcase of client component</h1>
+      <h1>if we don't hoisted under pnpm-workspace.yaml</h1>
+      <h1>console will have error and this client component cannot do anything</h1>
       <Counter />
     </>
   );
