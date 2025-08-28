@@ -1,4 +1,4 @@
-// this module is used by frontend, backend, ssg.
+// this module is used by frontend, backend, ssg, so don't put any server/client specific code here
 
 import { HTML_POSTFIX, RSC_POSTFIX } from "../config";
 
