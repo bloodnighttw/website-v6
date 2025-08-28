@@ -2,7 +2,7 @@ import {
   path2RegExp,
   PathMatcher,
   type InferPathParams,
-} from "./utils/path2regexp";
+} from "../utils/path2regexp";
 
 interface RouteConfig<T extends string> {
   generator: () => Promise<Array<InferPathParams<T>>>;

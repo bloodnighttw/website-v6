@@ -2,8 +2,8 @@ import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { RSC_POSTFIX, type RscPayload } from "./shared";
-import { normalize } from "./shared/path";
+import { RSC_POSTFIX, type RscPayload } from "../shared";
+import { normalize } from "../shared/path";
 
 async function fetchRSC() {
   const normalizedHref = normalize(window.location.pathname);
