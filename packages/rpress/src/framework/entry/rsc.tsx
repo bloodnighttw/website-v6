@@ -1,7 +1,7 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import { type RscPayload } from "./shared";
 import { isRscRequest, normalizeByRequest } from "./shared/path";
-import { type RouteModule } from "../routeV2";
+import { type RouteModule } from "../route";
 
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
