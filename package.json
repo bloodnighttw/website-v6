@@ -8,11 +8,14 @@
     "dev": "turbo dev",
     "preview": "turbo preview",
     "build": "turbo build",
-    "lint": "prettier --check . && turbo lint"
+    "lint": "prettier --check . && turbo lint",
+    "test": "turbo test",
+    "test:dev": "turbo test:dev"
   },
   "devDependencies": {
     "prettier": "3.6.2",
-    "turbo": "^2.5.6"
+    "turbo": "^2.5.6",
+    "vitest": "3.2.4"
   },
   "packageManager": "pnpm@10.11.0"
 }
