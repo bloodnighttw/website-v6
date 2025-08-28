@@ -1,7 +1,4 @@
-/**
- * Custom Path-to-RegExp Solution in TypeScript
- * Handles patterns like /:id/a and /:lang/:id where parameters are extracted
- */
+// this module is only used by backend, so don't put any client specific code here
 
 interface MatchResult {
   path: string;
@@ -108,16 +105,3 @@ type InferPathParams<T extends string> = ExtractParams<T> extends void ? void :{
 // Export for use in modules
 export { path2RegExp, PathMatcher };
 export type { MatchResult, InferPathParams };
-
-const o: InferPathParams<"/:lang/:id"> = {
-  lang: "en",
-  id: "123",
-};
-
-console.log(o);
-
-function hi(noParams: InferPathParams<"/home">){
-  return noParams;
-}
-
-hi()
