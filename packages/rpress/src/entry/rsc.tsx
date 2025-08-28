@@ -1,5 +1,5 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { type RscPayload } from "../shared";
+import { type RscPayload } from "../config";
 import { isRscRequest, normalizeByRequest } from "../shared/path";
 import { type RouteModule } from "../framework/route";
 
