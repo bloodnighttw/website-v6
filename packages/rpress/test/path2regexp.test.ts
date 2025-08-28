@@ -52,14 +52,22 @@ test("test multiple parameters 1", () => {
     "/en/", // Should NOT match (empty id)
   ];
 
+  const resultArr = [
+    { lang: "en", id: "123" },
+    { lang: "fr", id: "user-456" },
+    { lang: "es", id: "abc" },
+    { lang: "zh-cn", id: "product-789" },
+  ];
+
   console.log("Test Results for /:lang/:id:");
-  testPaths2.forEach((path: string) => {
+  testPaths2.forEach((path: string, index: number) => {
     const result = matcher2.exec(path);
-    console.log(
-      `${path.padEnd(16)} -> ${
-        result ? `✓ params: ${JSON.stringify(result.params)}` : "✗ no match"
-      }`,
-    );
+    const exceptResult = resultArr.at(index);
+    if (exceptResult) {
+      expect(result?.params).toEqual(exceptResult);
+    } else {
+      expect(result).toBeNull();
+    }
   });
 });
 
@@ -82,13 +90,81 @@ test("test multiple parameters 2", () => {
     "/a/en/", // Should NOT match (empty id)
   ];
 
-  console.log("Test Results for /:lang/:id:");
-  testPaths2.forEach((path: string) => {
+  const resultArr = [
+    { lang: "en", id: "123" },
+    { lang: "fr", id: "user-456" },
+    { lang: "es", id: "abc" },
+    { lang: "zh-cn", id: "product-789" },
+  ];
+
+  testPaths2.forEach((path: string, index: number) => {
     const result = matcher2.exec(path);
-    console.log(
-      `${path.padEnd(16)} -> ${
-        result ? `✓ params: ${JSON.stringify(result.params)}` : "✗ no match"
-      }`,
-    );
+    const ans = resultArr.at(index);
+    if (ans) {
+      expect(result?.params).toEqual(ans);
+    } else {
+      expect(result).toBeNull();
+    }
   });
 });
+
+test("test no parameters", () => {
+  const matcher3 = path2RegExp("/home");
+  console.log("Pattern 3:", "/home");
+  console.log("RegExp:", matcher3.regexp);
+  console.log();
+
+  // Test cases for /home
+  const testPaths3= [
+    "/home", // Should match
+    "/home/", // Should NOT match (trailing slash)
+    "/home/extra", // Should NOT match (extra path)
+    "home", // Should NOT match (missing leading /)
+  ];
+
+  const resultArr = [
+    {}
+  ];
+
+  console.log("Test Results for /home:");
+  testPaths3.forEach((path: string, index: number) => {
+    const result = matcher3.exec(path);
+    const exceptResult = resultArr.at(index);
+    if (exceptResult) {
+      expect(result?.params).toEqual(exceptResult);
+    } else {
+      expect(result).toBeNull();
+    }
+  });
+});
+
+test("test index route", () => {
+  const matcher4 = path2RegExp("/");
+  console.log("Pattern 4:", "/");
+  console.log("RegExp:", matcher4.regexp);
+  console.log();
+
+  // Test cases for /
+  const testPaths4: string[] = [
+    // "", // this also should be match
+    "/", // Should match
+    "/home", // Should NOT match (extra path)
+    "home", // Should NOT match (missing leading /)
+  ];
+
+  const resultArr = [
+    // {  },
+    {  }
+  ];
+
+  console.log("Test Results for /:");
+  testPaths4.forEach((path: string, index: number) => {
+    const result = matcher4.exec(path);
+    const exceptResult = resultArr.at(index);
+    if (exceptResult) {
+      expect(result?.params).toEqual(exceptResult);
+    } else {
+      expect(result).toBeNull();
+    }
+  });
+})

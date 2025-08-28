@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "tsdown --watch",
     "build": "tsdown --clean",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "test": "vitest run",
+    "test:dev": "vitest --watch"
   },
   "dependencies": {
     "rsc-html-stream": "0.0.7",

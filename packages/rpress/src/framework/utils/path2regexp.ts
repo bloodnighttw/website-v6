@@ -40,21 +40,15 @@ class PathMatcher<T extends string> {
     return new RegExp(`^${regexPattern}$`);
   }
 
-  /**
-   * Test if a path matches the pattern
-   * @param path - Path to test
-   * @returns True if path matches
-   */
+  // test if a path matches the pattern
   public test(path: string): boolean {
+    if(path === "") throw new Error("Path must be normalized");
     return this.regexp.test(path);
   }
 
-  /**
-   * Execute the regex against a path and return match results
-   * @param path - Path to match
-   * @returns Match object with params or null if no match
-   */
+  // to get match results
   public exec(path: string): MatchResult | null {
+    if(path === "") throw new Error("Path must be normalized");
     const match = this.regexp.exec(path);
 
     if (!match) {
@@ -73,11 +67,7 @@ class PathMatcher<T extends string> {
     };
   }
 
-  /**
-   * Convert back to a path string by replacing parameters with values
-   * @param params - Object containing parameter values
-   * @returns Path string with parameters replaced
-   */
+  // Convert back to a path string by replacing parameters with values
   public toString(params: InferPathParams<T>): string {
     let result = this.pattern as string;
 
@@ -93,11 +83,7 @@ class PathMatcher<T extends string> {
   }
 }
 
-/**
- * Factory function to create a path matcher
- * @param pattern - Path pattern with named parameters
- * @returns PathMatcher instance
- */
+// Factory function to create a path matcher
 function path2RegExp<T extends string>(pattern: T): PathMatcher<T> {
   return new PathMatcher(pattern);
 }
@@ -111,11 +97,10 @@ type ExtractParams<T extends string> =
     : T extends `${string}:${infer Param}`
       ? { [K in Param]: string }
       : void;
-
 /**
  * Type utility to infer parameter types from path pattern
  */
-type InferPathParams<T extends string> = {
+type InferPathParams<T extends string> = ExtractParams<T> extends void ? void :{
   [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
 };
 
@@ -123,3 +108,16 @@ type InferPathParams<T extends string> = {
 // Export for use in modules
 export { path2RegExp, PathMatcher };
 export type { MatchResult, InferPathParams };
+
+const o: InferPathParams<"/:lang/:id"> = {
+  lang: "en",
+  id: "123",
+};
+
+console.log(o);
+
+function hi(noParams: InferPathParams<"/home">){
+  return noParams;
+}
+
+hi()
