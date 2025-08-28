@@ -2,7 +2,7 @@ import { type Plugin, type ResolvedConfig } from "vite";
 import rsc from "@vitejs/plugin-rsc";
 import path, { normalize } from "path";
 import { pathToFileURL } from "url";
-import { HTML_POSTFIX, RSC_POSTFIX } from "../shared";
+import { HTML_POSTFIX, RSC_POSTFIX } from "../config";
 import { Readable } from "stream";
 import fs from "node:fs";
 

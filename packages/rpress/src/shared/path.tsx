@@ -1,9 +1,15 @@
-import { HTML_POSTFIX, RSC_POSTFIX } from ".";
+// this module is used by frontend, backend, ssg.
+
+import { HTML_POSTFIX, RSC_POSTFIX } from "../config";
 
 export const endWithRscPostfix = new RegExp(`${RSC_POSTFIX}$`);
 export const endWithHtmlPostfix = new RegExp(`${HTML_POSTFIX}$`);
 
 export function normalize(path: string): string {
+
+  if(path === "")
+    return "/index";
+
   // remove .html and .rsc postfix
   path = path.replace(endWithHtmlPostfix, "").replace(endWithRscPostfix, "");
 
