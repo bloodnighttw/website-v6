@@ -6,6 +6,8 @@ import { HTML_POSTFIX, RSC_POSTFIX } from "../entry/shared";
 import { Readable } from "stream";
 import fs from "node:fs";
 
+const PKG_NAME = "rpress";
+
 function rscSsgPlugin(): Plugin[] {
   return [
     {
@@ -84,5 +86,24 @@ export default function rscSSG(): Plugin[] {
       useBuildAppHook: true,
     }),
     ...rscSsgPlugin(),
+    {
+      name: "rsc-ssg",
+      configEnvironment(_name, environmentConfig, _env) {
+        // make @vitejs/plugin-rsc usable as a transitive dependency
+        // by rewriting `optimizeDeps.include`. e.g.
+        // include: ["@vitejs/plugin-rsc/vendor/xxx", "@vitejs/plugin-rsc > yyy"]
+        // ⇓
+        // include: ["waku > @vitejs/plugin-rsc/vendor/xxx", "waku > @vitejs/plugin-rsc > yyy"]
+        if (environmentConfig.optimizeDeps?.include) {
+          environmentConfig.optimizeDeps.include =
+            environmentConfig.optimizeDeps.include.map((name) => {
+              if (name.startsWith('@vitejs/plugin-rsc')) {
+                name = `${PKG_NAME} > ${name}`;
+              }
+              return name;
+            });
+        }
+      },
+    }
   ];
 }
