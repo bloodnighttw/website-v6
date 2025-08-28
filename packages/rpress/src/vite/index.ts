@@ -57,7 +57,9 @@ async function renderStatic(config: ResolvedConfig) {
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
   for (const staticPatch of staticPaths) {
-    config.logger.info("[vite-rsc:ssg] -> " + staticPatch);
+    config.logger.info(
+      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${staticPatch}\x1b[0m`
+    );
     const { html, rsc } = await entry.handleSsg(
       new Request(new URL(staticPatch, "http://ssg.local")),
     );
@@ -89,6 +91,7 @@ export default function rscSSG(): Plugin[] {
     {
       name: "rsc-ssg",
       configEnvironment(_name, environmentConfig, _env) {
+        // see @vitejs/vite-plugin-react issue #789
         // make @vitejs/plugin-rsc usable as a transitive dependency
         // by rewriting `optimizeDeps.include`. e.g.
         // include: ["@vitejs/plugin-rsc/vendor/xxx", "@vitejs/plugin-rsc > yyy"]
