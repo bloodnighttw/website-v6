@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { path2RegExp } from "../src/framework/utils/path2regexp";
+import { path2RegExp } from "../src/utils/path2regexp";
 
 test("test single parameter", () => {
   // Example usage for /:id/a pattern
