@@ -9,7 +9,9 @@ interface RouteConfig<T extends string> {
 }
 
 export interface RouteModule {
-  default: React.ComponentType<{ params: InferPathParams<string> }>;
+  // the params should be inferred from the route path with `InferPathParams`, due to we can't
+  // infer type in lib, we use `Record<string, string>` as a fallback
+  default: React.ComponentType<{ params: Record<string, string> }>;
   config: Route<string>;
 }
 
