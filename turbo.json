@@ -15,6 +15,10 @@
       "cache": true,
       "persistent": true,
       "dependsOn": ["build"]
+    },
+    "test:dev": {
+      "cache": false,
+      "persistent": true
     }
   },
   "ui": "tui"

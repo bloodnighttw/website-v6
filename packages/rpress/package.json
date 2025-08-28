@@ -19,7 +19,6 @@
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "latest",
     "vite-plugin-inspect": "^11.3.2",
-    "vitest": "^3.2.4",
     "tsdown": "^0.14.1",
     "@rpress/eslint": "workspace:*"
   },
