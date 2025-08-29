@@ -40,6 +40,10 @@
     "./vite": {
       "import": "./dist/vite.js",
       "types": "./dist/vite.d.ts"
+    },
+    "./helper": {
+      "import": "./dist/helper.js",
+      "types": "./dist/helper.d.ts"
     }
   }
 }
