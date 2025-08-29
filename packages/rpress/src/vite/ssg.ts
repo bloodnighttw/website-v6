@@ -26,7 +26,6 @@ export function rscSsgPlugin(): Plugin[] {
   ];
 }
 
-
 async function renderStatic(config: ResolvedConfig) {
   // import server entry
   const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
@@ -34,39 +33,23 @@ async function renderStatic(config: ResolvedConfig) {
     pathToFileURL(entryPath).href
   );
 
-  // entry provides a list of static paths
-  const allRouteModules = entry.allRouteModules;
+  const mapping = entry.path2Modules;
 
-  const staticPaths = (
-    await Promise.all(
-      allRouteModules.map(async (module) => {
-        const generator = module.config.config.generator;
-        const matcher = module.config.matcher;
-
-        const staticPaths = await generator();
-        const result = staticPaths.map((staticPath) => {
-          return matcher.toString(staticPath);
-        });
-
-        return result;
-      }),
-    )
-  ).flat();
 
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
-  for (const staticPatch of staticPaths) {
+  for (const pathname of Object.keys(mapping)) {
     config.logger.info(
-      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${staticPatch}\x1b[0m`
+      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`
     );
     const { html, rsc } = await entry.handleSsg(
-      new Request(new URL(staticPatch, "http://ssg.local")),
+      new Request(new URL(pathname, "http://ssg.local")),
     );
     await writeFileStream(
-      path.join(baseDir, normalize(staticPatch) + HTML_POSTFIX),
+      path.join(baseDir, normalize(pathname) + HTML_POSTFIX),
       html,
     );
-    await writeFileStream(path.join(baseDir, staticPatch + RSC_POSTFIX), rsc);
+    await writeFileStream(path.join(baseDir, pathname + RSC_POSTFIX), rsc);
   }
 }
 
