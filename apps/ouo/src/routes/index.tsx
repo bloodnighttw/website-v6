@@ -12,7 +12,7 @@ export const config = createRoute("/:lang", {
 export default async function WTF(props: RouterProps<typeof config>) {
 
   const helper = new FlatComponentHelper();
-  helper.expand(RootLayout, {});
+  helper.expand(RootLayout, { lang: props.params.lang });
   const Flatten = helper.flatten();
 
   return (
