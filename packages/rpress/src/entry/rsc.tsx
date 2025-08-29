@@ -30,7 +30,7 @@ function generateRSCStream({ request }: { request: Request }) {
 
   const params = matcher.exec(url.pathname)!;
   const rscPayload: RscPayload = {
-    root: <Component params={params.params} />,
+    root: <Component params={params?.params ?? {}} />,
   };
   const rscStream = ReactServer.renderToReadableStream<RscPayload>(rscPayload);
   return rscStream;

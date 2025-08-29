@@ -78,6 +78,10 @@ class PathMatcher<T extends string> {
 
     return result;
   }
+
+  public hasParams(): boolean {
+    return this.keys.length > 0;
+  }
 }
 
 // Factory function to create a path matcher
