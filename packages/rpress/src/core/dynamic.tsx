@@ -1,6 +1,6 @@
-import { lazy, Suspense, use } from "react";
+import { Suspense, use } from "react";
 
-const ErrorBoundary = lazy(() => import("../helper/error"));
+const ErrorBoundary = (await import("../helper/error")).default;
 
 function Await({ fn }: { fn: Promise<{ default: React.ComponentType<any> }> }) {
   const C = use(fn).default;
