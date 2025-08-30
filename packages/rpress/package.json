@@ -44,6 +44,10 @@
     "./helper": {
       "import": "./dist/helper.js",
       "types": "./dist/helper.d.ts"
+    },
+    "./dynamic": {
+      "import": "./dist/dynamic.js",
+      "types": "./dist/dynamic.d.ts"
     }
   }
 }

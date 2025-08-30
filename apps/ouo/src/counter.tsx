@@ -2,7 +2,7 @@
 
 import React from "react";
 
-export function Counter() {
+export default function Counter() {
   const [count, setCount] = React.useState(0);
 
   return (

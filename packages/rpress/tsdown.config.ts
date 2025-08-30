@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    dynamic: "src/core/dynamic.tsx",
     helper: "src/core/helper.tsx",
     vite: "src/vite/index.ts",
     "entry/browser": "src/entry/browser.tsx",
