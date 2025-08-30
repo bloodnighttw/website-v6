@@ -115,16 +115,14 @@ test("test no parameters", () => {
   console.log();
 
   // Test cases for /home
-  const testPaths3= [
+  const testPaths3 = [
     "/home", // Should match
     "/home/", // Should NOT match (trailing slash)
     "/home/extra", // Should NOT match (extra path)
     "home", // Should NOT match (missing leading /)
   ];
 
-  const resultArr = [
-    {}
-  ];
+  const resultArr = [{}];
 
   console.log("Test Results for /home:");
   testPaths3.forEach((path: string, index: number) => {
@@ -154,7 +152,7 @@ test("test index route", () => {
 
   const resultArr = [
     // {  },
-    {  }
+    {},
   ];
 
   console.log("Test Results for /:");
@@ -167,4 +165,4 @@ test("test index route", () => {
       expect(result).toBeNull();
     }
   });
-})
+});

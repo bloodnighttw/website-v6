@@ -3,18 +3,19 @@
 import type { RouteModule } from "../core/route";
 import { normalize } from "./path";
 
-
 // generate static paths to route modules
 // the paths are normalized to ensure consistency
-export async function generateStaticPaths(all: RouteModule[], supressErrors: boolean = false) {
-
+export async function generateStaticPaths(
+  all: RouteModule[],
+  supressErrors: boolean = false,
+) {
   const mapping: Record<string, RouteModule> = {};
 
   const addModule = async (module: RouteModule) => {
     const generator = module.route.config.generator;
     const matcher = module.route.matcher;
 
-    if(matcher.hasParams() === false) {
+    if (matcher.hasParams() === false) {
       mapping[normalize(matcher.toString())] = module;
     }
 
@@ -26,13 +27,15 @@ export async function generateStaticPaths(all: RouteModule[], supressErrors: boo
     result.forEach((path) => {
       if (!mapping[path]) {
         mapping[path] = module;
-      } else if(!supressErrors) {
+      } else if (!supressErrors) {
         throw new Error(`Duplicate static path found: ${path}`);
       } else {
-        console.warn(`[vite-rsc] Duplicate static path found: ${path}, supressing due to supressErrors=true`);
+        console.warn(
+          `[vite-rsc] Duplicate static path found: ${path}, supressing due to supressErrors=true`,
+        );
       }
     });
-  }
+  };
 
   await Promise.all(all.map((module) => addModule(module)));
 

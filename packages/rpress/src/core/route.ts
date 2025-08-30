@@ -42,7 +42,9 @@ export function createRoute<T extends string>(
     } as RouteConfig<T>;
   } else {
     if (!config)
-      throw new Error("Dynamic route must have a config with generator since we don't support SSR currently");
+      throw new Error(
+        "Dynamic route must have a config with generator since we don't support SSR currently",
+      );
   }
 
   return {

@@ -39,9 +39,9 @@ class PathMatcher<T extends string> {
   }
 
   // path must be normalized
-  private action(path: string): "test" | "match" | "not-match"{
-    if(!this.hasParams()){
-      return  path === this.pattern ? "match" : "not-match";
+  private action(path: string): "test" | "match" | "not-match" {
+    if (!this.hasParams()) {
+      return path === this.pattern ? "match" : "not-match";
     }
 
     return "test";
@@ -51,13 +51,12 @@ class PathMatcher<T extends string> {
   public test(path: string): boolean {
     const normalizedPath = normalize(path);
     if (this.action(normalizedPath) === "not-match") return false;
-    else if(this.action(normalizedPath) === "match") return true;
+    else if (this.action(normalizedPath) === "match") return true;
     return this.regexp.test(normalizedPath);
   }
 
   // to get match results
   public exec(path: string): MatchResult | null {
-
     if (this.action(normalize(path)) === "not-match") return null;
     else if (this.action(normalize(path)) === "match") return { params: {} };
 

@@ -30,7 +30,7 @@ function generateRSCStream({ request }: { request: Request }) {
 
   const params = matcher.exec(url.pathname);
   // when params are not match, matcher.exec will return null;
-  if(!params) return undefined;
+  if (!params) return undefined;
   const rscPayload: RscPayload = {
     root: <Component params={params.params} />,
   };
@@ -59,7 +59,9 @@ export default async function handler(request: Request): Promise<Response> {
     "ssr",
     "index",
   );
-  const htmlStream = await ssr.renderHtml(rscStream);
+  const htmlStream = await ssr.renderHtml(rscStream, {
+    ssg: false,
+  });
 
   return new Response(htmlStream, {
     headers: {
@@ -77,7 +79,7 @@ export async function handleSsg(request: Request): Promise<{
   const rscStream = generateRSCStream({ request });
 
   if (!rscStream) {
-    throw new Error("Static path not found",);
+    throw new Error("Static path not found");
   }
 
   const [rscStream1, rscStream2] = rscStream.tee();
@@ -87,7 +89,7 @@ export async function handleSsg(request: Request): Promise<{
     "index",
   );
   const htmlStream = await ssr.renderHtml(rscStream1, {
-    ssg: true,
+    ssg: false,
   });
 
   return { html: htmlStream, rsc: rscStream2 };

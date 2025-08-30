@@ -6,6 +6,8 @@ export const route = createRoute("/:lang", {
   },
 });
 
-export default async function LangLayout({ params }: RouterProps<typeof route>) {
+export default async function LangLayout({
+  params,
+}: RouterProps<typeof route>) {
   return <div>Current language: {params.lang}</div>;
 }
