@@ -9,8 +9,7 @@
     "lint": {},
     "dev": {
       "cache": false,
-      "persistent": true,
-      "dependsOn": ["rpress#build"]
+      "persistent": true
     },
     "preview": {
       "cache": true,

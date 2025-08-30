@@ -9,7 +9,7 @@ const allRouteModules = Object.values(
     eager: true,
   }),
 ).filter(
-  (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
+  (module): module is RouteModule => !!(module as Partial<RouteModule>)?.config,
 );
 
 export const path2Modules = await generateStaticPaths(allRouteModules);
@@ -26,7 +26,7 @@ function generateRSCStream({ request }: { request: Request }) {
   const url = new URL(normalizeUrl, new URL(request.url).origin);
 
   const Component = module.default;
-  const matcher = module.route.matcher;
+  const matcher = module.config.matcher;
 
   const params = matcher.exec(url.pathname);
   // when params are not match, matcher.exec will return null;

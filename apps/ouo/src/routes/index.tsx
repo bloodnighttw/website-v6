@@ -3,9 +3,13 @@ import { Counter } from "../counter";
 import RootLayout from "./layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
 
-export const route = createRoute("/");
-  
-export default async function WTF(props: RouterProps<typeof route>) {
+export const config = createRoute("/", {
+  generator: async () => {
+    return [];
+  },
+});
+
+export default async function WTF(props: RouterProps<typeof config>) {
 
   const helper = new FlatComponentHelper();
   helper.expand(RootLayout, {});
