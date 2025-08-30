@@ -1,7 +1,8 @@
 // this module is only used by backend, so don't put any client specific code here
 
+import { normalize } from "./path";
+
 interface MatchResult {
-  path: string;
   params: Record<string, string>;
 }
 
@@ -12,9 +13,9 @@ class PathMatcher<T extends string> {
   public readonly regexp: RegExp;
 
   constructor(pattern: T) {
-    this.pattern = pattern;
+    this.pattern = normalize(pattern) as T;
     this.keys = [];
-    this.regexp = this.toRegExp(pattern);
+    this.regexp = this.toRegExp(this.pattern);
   }
 
   private toRegExp(path: string): RegExp {
@@ -37,20 +38,32 @@ class PathMatcher<T extends string> {
     return new RegExp(`^${regexPattern}$`);
   }
 
+  // path must be normalized
+  private action(path: string): "test" | "match" | "not-match"{
+    if(!this.hasParams()){
+      return  path === this.pattern ? "match" : "not-match";
+    }
+
+    return "test";
+  }
+
   // test if a path matches the pattern
   public test(path: string): boolean {
-    if(path === "") throw new Error("Path must be normalized");
-    return this.regexp.test(path);
+    const normalizedPath = normalize(path);
+    if (this.action(normalizedPath) === "not-match") return false;
+    else if(this.action(normalizedPath) === "match") return true;
+    return this.regexp.test(normalizedPath);
   }
 
   // to get match results
   public exec(path: string): MatchResult | null {
-    if(path === "") throw new Error("Path must be normalized");
+
+    if (this.action(normalize(path)) === "not-match") return null;
+    else if (this.action(normalize(path)) === "match") return { params: {} };
+
     const match = this.regexp.exec(path);
 
-    if (!match) {
-      return null;
-    }
+    if (!match) return null;
 
     // Create params object from captured groups
     const params: Record<string, string> = {};
@@ -59,24 +72,20 @@ class PathMatcher<T extends string> {
     });
 
     return {
-      path: match[0],
       params,
     };
   }
 
   // Convert back to a path string by replacing parameters with values
   public toString(params: InferPathParams<T>): string {
-    let result = this.pattern as string;
-
-    // Replace each parameter with its value
-    this.keys.forEach((key) => {
-      const value = (params as Record<string, string>)[key];
-      if (value !== undefined) {
-        result = result.replace(`:${key}`, String(value));
-      }
-    });
-
-    return result;
+    return this.keys.reduce(
+      (result, key) =>
+        result.replace(
+          `:${key}`,
+          String((params as Record<string, string>)[key]),
+        ),
+      this.pattern as string,
+    );
   }
 
   public hasParams(): boolean {
@@ -101,9 +110,12 @@ type ExtractParams<T extends string> =
 /**
  * Type utility to infer parameter types from path pattern
  */
-type InferPathParams<T extends string> = ExtractParams<T> extends void ? void :{
-  [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
-};
+type InferPathParams<T extends string> =
+  ExtractParams<T> extends void
+    ? void
+    : {
+        [K in keyof ExtractParams<T>]: ExtractParams<T>[K];
+      };
 
 // Type-safe matchers
 // Export for use in modules
