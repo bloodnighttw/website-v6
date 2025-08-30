@@ -12,7 +12,7 @@ export interface RouteModule {
   // the params should be inferred from the route path with `InferPathParams`, due to we can't
   // infer type in lib, we use `Record<string, string>` as a fallback
   default: React.ComponentType<{ params: Record<string, string> }>;
-  config: Route<string>;
+  route: Route<string>;
 }
 
 interface Route<T extends string> {
@@ -22,9 +22,28 @@ interface Route<T extends string> {
 
 export function createRoute<T extends string>(
   path: T,
-  config: RouteConfig<T>,
+  ...rest: InferPathParams<T> extends void ? [] : [config: RouteConfig<T>]
+): Route<T>;
+
+export function createRoute<T extends string>(
+  path: T,
+  config?: RouteConfig<T> | undefined,
 ): Route<T> {
   const pathMatcher = path2RegExp(path);
+
+  if (pathMatcher.hasParams() === false) {
+    if (config) {
+      console.warn("Route config is ignored for static routes");
+    }
+    config = {
+      generator: async () => {
+        return [];
+      },
+    } as RouteConfig<T>;
+  } else {
+    if (!config)
+      throw new Error("Dynamic route must have a config with generator since we don't support SSR currently");
+  }
 
   return {
     matcher: pathMatcher,

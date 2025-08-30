@@ -11,8 +11,8 @@ export async function generateStaticPaths(all: RouteModule[], supressErrors: boo
   const mapping: Record<string, RouteModule> = {};
 
   const addModule = async (module: RouteModule) => {
-    const generator = module.config.config.generator;
-    const matcher = module.config.matcher;
+    const generator = module.route.config.generator;
+    const matcher = module.route.matcher;
 
     if(matcher.hasParams() === false) {
       mapping[normalize(matcher.toString())] = module;
