@@ -28,7 +28,9 @@ function generateRSCStream({ request }: { request: Request }) {
   const Component = module.default;
   const matcher = module.config.matcher;
 
-  const params = matcher.exec(url.pathname)!;
+  const params = matcher.exec(url.pathname);
+  // when params are not match, matcher.exec will return null;
+  if(!params) return undefined;
   const rscPayload: RscPayload = {
     root: <Component params={params.params} />,
   };

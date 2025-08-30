@@ -13,7 +13,7 @@ export function normalize(path: string): string {
   // remove .html and .rsc postfix
   path = path.replace(endWithHtmlPostfix, "").replace(endWithRscPostfix, "");
 
-  if (path.endsWith("/") || path === "") {
+  if (path.endsWith("/")) {
     return path + "index";
   }
   return path;

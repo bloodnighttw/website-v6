@@ -3,14 +3,20 @@
 import type { RouteModule } from "../core/route";
 import { normalize } from "./path";
 
+
+// generate static paths to route modules
+// the paths are normalized to ensure consistency
 export async function generateStaticPaths(all: RouteModule[], supressErrors: boolean = false) {
 
   const mapping: Record<string, RouteModule> = {};
 
-
   const addModule = async (module: RouteModule) => {
     const generator = module.config.config.generator;
     const matcher = module.config.matcher;
+
+    if(matcher.hasParams() === false) {
+      mapping[normalize(matcher.toString())] = module;
+    }
 
     const staticPaths = await generator();
     const result = staticPaths.map((staticPath) => {

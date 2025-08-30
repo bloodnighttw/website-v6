@@ -2,7 +2,6 @@ import path from "path";
 import { pathToFileURL } from "url";
 import type { Plugin, ResolvedConfig } from "vite";
 import fs from "node:fs";
-import { normalize } from "../utils/path";
 import { HTML_POSTFIX, RSC_POSTFIX } from "../config";
 import { Readable } from "node:stream";
 
@@ -46,7 +45,7 @@ async function renderStatic(config: ResolvedConfig) {
       new Request(new URL(pathname, "http://ssg.local")),
     );
     await writeFileStream(
-      path.join(baseDir, normalize(pathname) + HTML_POSTFIX),
+      path.join(baseDir, pathname + HTML_POSTFIX),
       html,
     );
     await writeFileStream(path.join(baseDir, pathname + RSC_POSTFIX), rsc);
