@@ -6,7 +6,6 @@ export default defineConfig({
     dynamic: "src/core/dynamic.tsx",
     helper: "src/core/helper.tsx",
     vite: "src/vite/index.ts",
-    error: "src/core/error.tsx",
     "entry/browser": "src/entry/browser.tsx",
     "entry/rsc": "src/entry/rsc.tsx",
     "entry/ssr": "src/entry/ssr.tsx",
