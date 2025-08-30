@@ -5,9 +5,10 @@ function Await({ fn }: { fn: Promise<{ default: React.ComponentType<any> }> }) {
   return <C />;
 }
 
-export default function noSSR<T extends {}, C extends React.ComponentType<T>>(importPromise: () => Promise<{ default: C }>) {
+export default function noSSR<T extends {}, C extends React.ComponentType<T>>(
+  importPromise: () => Promise<{ default: C }>,
+) {
   return function () {
-
     return (
       <Suspense fallback={<div>loading...</div>}>
         <Await fn={importPromise()} />

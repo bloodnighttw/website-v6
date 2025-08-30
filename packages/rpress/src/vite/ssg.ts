@@ -34,24 +34,19 @@ async function renderStatic(config: ResolvedConfig) {
 
   const mapping = entry.path2Modules;
 
-
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
   for (const pathname of Object.keys(mapping)) {
     config.logger.info(
-      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`
+      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`,
     );
     const { html, rsc } = await entry.handleSsg(
       new Request(new URL(pathname, "http://ssg.local")),
     );
-    await writeFileStream(
-      path.join(baseDir, pathname + HTML_POSTFIX),
-      html,
-    );
+    await writeFileStream(path.join(baseDir, pathname + HTML_POSTFIX), html);
     await writeFileStream(path.join(baseDir, pathname + RSC_POSTFIX), rsc);
   }
 }
-
 
 async function writeFileStream(filePath: string, stream: ReadableStream) {
   await fs.promises.mkdir(path.dirname(filePath), { recursive: true });

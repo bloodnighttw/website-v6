@@ -12,7 +12,9 @@ export default function RootLayout(props: Partial<RootProps>) {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {props.title && <title>{props.title}</title>}
-        {props.description && <meta name="description" content={props.description} />}
+        {props.description && (
+          <meta name="description" content={props.description} />
+        )}
       </head>
       <body>{props.children}</body>
     </html>

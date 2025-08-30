@@ -11,7 +11,6 @@ export class FlatComponentHelper {
     T extends { children: React.ReactNode } = { children: React.ReactNode },
     C extends React.ComponentType<T> = React.ComponentType<T>,
   >(child: C, props: Omit<React.ComponentProps<C>, "children">) {
-
     this.components.unshift(child);
     this.props.unshift((props as Record<string, any>) ?? {});
   }
