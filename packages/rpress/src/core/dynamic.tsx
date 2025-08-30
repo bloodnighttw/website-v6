@@ -1,4 +1,6 @@
-import { Suspense, use } from "react";
+import { lazy, Suspense, use } from "react";
+
+const ErrorBoundary = lazy(() => import("../helper/error"));
 
 function Await({ fn }: { fn: Promise<{ default: React.ComponentType<any> }> }) {
   const C = use(fn).default;
@@ -10,9 +12,11 @@ export default function noSSR<T extends {}, C extends React.ComponentType<T>>(
 ) {
   return function () {
     return (
-      <Suspense fallback={<div>loading...</div>}>
-        <Await fn={importPromise()} />
-      </Suspense>
+      <ErrorBoundary fallback={undefined}>
+        <Suspense fallback={<div>loading...</div>}>
+          <Await fn={importPromise()} />
+        </Suspense>
+      </ErrorBoundary>
     );
   };
 }
