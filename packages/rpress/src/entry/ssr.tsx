@@ -25,26 +25,30 @@ export async function renderHtml(
     await import.meta.viteRsc.loadBootstrapScriptContent("index");
 
   let htmlStream: ReadableStream<Uint8Array>;
-  if (options?.ssg) {
-    const prerenderResult = await prerender(<SsrRoot />, {
-      bootstrapScriptContent,
-      onError: (e,info)=>{
-        if(e instanceof ShouldCaughtError)return;
-        else console.error(e,info);
-      }
-    });
-    htmlStream = prerenderResult.prelude;
-  } else {
-    htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
-      bootstrapScriptContent,
-      onError: (e,info)=>{
-        if(e instanceof ShouldCaughtError)return;
-        else console.error(e,info);
-      }
-    });
+  try {
+    if (options?.ssg) {
+      const prerenderResult = await prerender(<SsrRoot />, {
+        bootstrapScriptContent,
+        onError: (e, info) => {
+          if (e instanceof ShouldCaughtError) return;
+          else console.error(e, info);
+        },
+      });
+      htmlStream = prerenderResult.prelude;
+    } else {
+      htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
+        bootstrapScriptContent,
+        onError: (e, info) => {
+          if (e instanceof ShouldCaughtError) return;
+          else console.error(e, info);
+        },
+      });
+    }
+    let responseStream: ReadableStream<Uint8Array> = htmlStream;
+    responseStream = responseStream.pipeThrough(injectRSCPayload(rscStream2));
+    return responseStream;
+  } catch (e) {
+    console.log(e);
+    throw e;
   }
-
-  let responseStream: ReadableStream<Uint8Array> = htmlStream;
-  responseStream = responseStream.pipeThrough(injectRSCPayload(rscStream2));
-  return responseStream;
 }
