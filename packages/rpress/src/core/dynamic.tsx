@@ -7,7 +7,7 @@ export class NoSSR extends ShouldCaughtError {
   }
 }
 
-function preventRendring(): null{
+function PreventRendring(): null{
   throw new NoSSR();
 }
 
@@ -33,7 +33,7 @@ export default function dynamic(
 
     return (
       <Suspense fallback={loading}>
-        {isServer && !ssr ?  preventRendring() : null}
+        {isServer && !ssr ?  <PreventRendring /> : null}
         <LazyComponent {...prop} />
       </Suspense>
     );
