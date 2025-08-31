@@ -28,6 +28,10 @@ export async function renderHtml(
   if (options?.ssg) {
     const prerenderResult = await prerender(<SsrRoot />, {
       bootstrapScriptContent,
+      onError: (e,info)=>{
+        if(e instanceof ShouldCaughtError)return;
+        else console.error(e,info);
+      }
     });
     htmlStream = prerenderResult.prelude;
   } else {
