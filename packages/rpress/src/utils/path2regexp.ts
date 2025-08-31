@@ -22,15 +22,16 @@ class PathMatcher<T extends string> {
     // Reset keys array
     this.keys.length = 0;
 
-    // Escape special regex characters except for our parameter syntax
-    let regexPattern = path.replace(/[.+*?^${}()|[\]\\]/g, "\\$&");
+    // Normalize input and escape special regex characters except our param syntax
+    const normalized = normalize(path);
+    let regexPattern = normalized.replace(/[.+*?^${}()|[\\]\\]/g, "\\$&");
 
-    // Replace parameter patterns like :id with capture groups
+    // Replace parameter patterns like :id with named capture groups
     regexPattern = regexPattern.replace(
       /:([a-zA-Z_][a-zA-Z0-9_]*)/g,
       (_match: string, paramName: string) => {
         this.keys.push(paramName);
-        return "([^/]+)"; // Match any character except forward slash
+        return `(?<${paramName}>[^/]+)`; // Named capture group
       },
     );
 
@@ -40,8 +41,9 @@ class PathMatcher<T extends string> {
 
   // path must be normalized
   private action(path: string): "test" | "match" | "not-match" {
+    const normalized = normalize(path);
     if (!this.hasParams()) {
-      return path === this.pattern ? "match" : "not-match";
+      return normalized === this.pattern ? "match" : "not-match";
     }
 
     return "test";
@@ -50,41 +52,42 @@ class PathMatcher<T extends string> {
   // test if a path matches the pattern
   public test(path: string): boolean {
     const normalizedPath = normalize(path);
-    if (this.action(normalizedPath) === "not-match") return false;
-    else if (this.action(normalizedPath) === "match") return true;
+    const act = this.action(normalizedPath);
+    if (act === "not-match") return false;
+    if (act === "match") return true;
     return this.regexp.test(normalizedPath);
   }
 
   // to get match results
   public exec(path: string): MatchResult | null {
-    if (this.action(normalize(path)) === "not-match") return null;
-    else if (this.action(normalize(path)) === "match") return { params: {} };
+    const normalizedPath = normalize(path);
+    const act = this.action(normalizedPath);
+    if (act === "not-match") return null;
+    if (act === "match") return { params: {} };
 
-    const match = this.regexp.exec(path);
+    const match = this.regexp.exec(normalizedPath);
 
     if (!match) return null;
 
-    // Create params object from captured groups
+    // Create params object from named capture groups if available, otherwise fallback
     const params: Record<string, string> = {};
     this.keys.forEach((key, index) => {
       params[key] = match[index + 1]; // index + 1 because match[0] is the full match
     });
 
-    return {
-      params,
-    };
+    return { params };
   }
 
   // Convert back to a path string by replacing parameters with values
-  public toString(params: InferPathParams<T>): string {
-    return this.keys.reduce(
-      (result, key) =>
-        result.replace(
-          `:${key}`,
-          String((params as Record<string, string>)[key]),
-        ),
-      this.pattern as string,
-    );
+  public toString(params: InferPathParams<T>) {
+    return this.keys.reduce((result, key) => {
+      const value = (params as Record<string, string>)[key];
+      if (value == null)
+        throw new Error(
+          `Missing parameter \"${key}\" for pattern ${this.pattern}`,
+        );
+      return result.replace(`:${key}`, String(value));
+    }, this.pattern as string);
   }
 
   public hasParams(): boolean {

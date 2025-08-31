@@ -29,7 +29,7 @@ export default class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return <div>Error loading component</div>;
+      return <div>{this.props.fallback}</div>;
     }
     // return <div>wtf</div>
 
