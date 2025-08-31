@@ -8,7 +8,7 @@ export const route = createRoute("/");
 
 export default async function WTF(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
-  helper.expand(RootLayout, {});
+  helper.add(RootLayout, {});
   const Flatten = helper.flatten();
 
   return (
