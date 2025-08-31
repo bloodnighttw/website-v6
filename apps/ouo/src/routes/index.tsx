@@ -1,11 +1,10 @@
 import { createRoute, type RouterProps } from "rpress";
 import RootLayout from "./layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
-import noSSR from "rpress/dynamic";
+import ClientLz from "./layouts/counter.lz";
 
 export const route = createRoute("/");
 
-const T = noSSR(() => import("../counter"));
 
 export default async function WTF(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
@@ -17,7 +16,7 @@ export default async function WTF(props: RouterProps<typeof route>) {
       <div>hi from /:lang</div>
       <div>props</div>
       <div>data: {JSON.stringify(props.params)}</div>
-      <T />
+      <ClientLz/>
     </Flatten>
   );
 }

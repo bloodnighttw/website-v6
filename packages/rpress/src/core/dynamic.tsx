@@ -1,22 +1,37 @@
-import { Suspense, use } from "react";
+import { lazy, Suspense } from "react";
+import ShouldCaughtError from "../utils/shouldCaughtError";
 
-const ErrorBoundary = (await import("../helper/error")).default;
-
-function Await({ fn }: { fn: Promise<{ default: React.ComponentType<any> }> }) {
-  const C = use(fn).default;
-  return <C />;
+class NoSSR extends ShouldCaughtError {
+  constructor() {
+    super("NoSSR");
+  }
 }
 
-export default function noSSR<T extends {}, C extends React.ComponentType<T>>(
-  importPromise: () => Promise<{ default: C }>,
+function DisableSSR(): null {
+  if(typeof window !== "undefined") return null;
+  throw new NoSSR();
+}
+
+interface DynamicOptions {
+  // default to true
+  ssr: boolean;
+  loading: React.ReactNode;
+}
+
+export default function noSSR(
+  importPromise: () => Promise<{ default: React.ComponentType<any> }>,
+  options?: Partial<DynamicOptions>,
 ) {
-  return function () {
+  const { ssr = true, loading = null } = options || {};
+
+  const LazyComponent = lazy(importPromise);
+
+  return function (prop: React.ComponentProps<typeof LazyComponent>) {
     return (
-      <ErrorBoundary fallback={undefined}>
-        <Suspense fallback={<div>loading...</div>}>
-          <Await fn={importPromise()} />
-        </Suspense>
-      </ErrorBoundary>
+      <Suspense fallback={loading}>
+        {(typeof window === "undefined" && !ssr) && <DisableSSR/>}
+        <LazyComponent {...prop} />
+      </Suspense>
     );
   };
 }

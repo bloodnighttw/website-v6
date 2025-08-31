@@ -4,6 +4,7 @@ import * as ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import type { RscPayload } from "../config";
 import { prerender } from "react-dom/static.edge";
+import ShouldCaughtError from "../utils/shouldCaughtError";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,
@@ -32,6 +33,10 @@ export async function renderHtml(
   } else {
     htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
       bootstrapScriptContent,
+      onError: (e,info)=>{
+        if(e instanceof ShouldCaughtError)return;
+        else console.error(e,info);
+      }
     });
   }
 

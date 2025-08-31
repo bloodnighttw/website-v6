@@ -41,7 +41,13 @@ async function hydrate(): Promise<void> {
     </React.StrictMode>
   );
 
-  ReactDomClient.hydrateRoot(document, browserRoot);
+  const dealWithInternelError = (e: unknown, info: unknown) => {
+    console.debug("An Internal Exception has been dealed", e, info);
+  };
+
+  ReactDomClient.hydrateRoot(document, browserRoot, {
+    onRecoverableError: dealWithInternelError,
+  });
 
   if (import.meta.hot) {
     import.meta.hot.on("rsc:update", () => {

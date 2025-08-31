@@ -54,21 +54,25 @@ export default async function handler(request: Request): Promise<Response> {
     });
   }
 
-  // to prevent circular import
-  const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
-    "ssr",
-    "index",
-  );
-  const htmlStream = await ssr.renderHtml(rscStream, {
-    ssg: false,
-  });
+  try {
+    // to prevent circular import
+    const ssr = await import.meta.viteRsc.loadModule<typeof import("./ssr")>(
+      "ssr",
+      "index",
+    );
+    const htmlStream = await ssr.renderHtml(rscStream, {
+      ssg: false,
+    });
 
-  return new Response(htmlStream, {
-    headers: {
-      "content-type": "text/html;charset=utf-8",
-      vary: "accept",
-    },
-  });
+    return new Response(htmlStream, {
+      headers: {
+        "content-type": "text/html;charset=utf-8",
+        vary: "accept",
+      },
+    });
+  } catch (e) {
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
 
 // return both rsc and html streams at once for ssg
