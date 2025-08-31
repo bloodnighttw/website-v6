@@ -93,7 +93,7 @@ export async function handleSsg(request: Request): Promise<{
     "index",
   );
   const htmlStream = await ssr.renderHtml(rscStream1, {
-    ssg: false,
+    ssg: true,
   });
 
   return { html: htmlStream, rsc: rscStream2 };
