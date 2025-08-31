@@ -32,11 +32,9 @@ async function renderStatic(config: ResolvedConfig) {
     pathToFileURL(entryPath).href
   );
 
-  const mapping = entry.path2Modules;
-
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
-  for (const pathname of Object.keys(mapping)) {
+  const renderPage = async (pathname: string) => {
     config.logger.info(
       `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`,
     );
@@ -45,7 +43,10 @@ async function renderStatic(config: ResolvedConfig) {
     );
     await writeFileStream(path.join(baseDir, pathname + HTML_POSTFIX), html);
     await writeFileStream(path.join(baseDir, pathname + RSC_POSTFIX), rsc);
-  }
+  };
+
+  const mapping = entry.path2Modules;
+  await Promise.all(Object.keys(mapping).map(renderPage));
 }
 
 async function writeFileStream(filePath: string, stream: ReadableStream) {
