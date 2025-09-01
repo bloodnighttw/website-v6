@@ -18,6 +18,11 @@ test("underscore", () => {
   expect(normalize("/hello_world/")).toBe("/hello_world/");
 });
 
+test("with :id", () => {
+  expect(normalize("/:id:hello")).toBe("/:id:hello");
+  expect(normalize("/:id:wtf/")).toBe("/:id:wtf/");
+});
+
 test("single segment", () => {
   expect(normalize("/hello")).toBe("/hello");
   expect(normalize("/hello/")).toBe("/hello/");
