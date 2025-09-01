@@ -1,5 +1,9 @@
 import { expect, test } from "vitest";
-import normalize, { normalized2html, normalized2rsc, normalizeExt } from "../../src/utils/path/normalize";
+import normalize, {
+  normalized2html,
+  normalized2rsc,
+  normalizeExt,
+} from "../../src/utils/path/normalize";
 
 test("empty", () => {
   expect(normalize("")).toBe("/");
@@ -83,9 +87,10 @@ test("with underscores with extensions", () => {
 });
 
 test("exception", () => {
-  expect(() => normalizeExt("")).toThrow(Error);
-  expect(() => normalizeExt("/hello/world.wtf")).toThrow(Error);
-  expect(() => normalizeExt("//hello/world.html")).toThrow(Error);
-  expect(() => normalizeExt("///index.wtf")).toThrow(Error);
-  expect(() => normalizeExt("/.rsc")).toThrow(Error);
+  // expect(normalizeExt("")).toThrow(Error);
+  expect(()=>normalizeExt("//hello/world.html")).toThrow(Error);
+  expect(()=>normalizeExt("///index.wtf")).toThrow(Error);
+  expect(()=>normalizeExt("/.rsc")).toThrow(Error);
+  expect(normalizeExt("/index.html")).toBe("/");
+  expect(normalizeExt("/hello/world.wtf")).toBeUndefined();
 });

@@ -17,6 +17,7 @@ export default function normalize(pathname: string) {
   return pathname;
 }
 
+// return undefined if the extension is not supported
 export function normalizeExt(pathname: string) {
   if (pathname.at(0) !== "/")
     throw new Error(
@@ -53,7 +54,7 @@ export function normalizeExt(pathname: string) {
     return normalize(`/${paths.join("/")}/${last.replace(EXT_HTML, "")}`);
   }
 
-  throw new Error("Unsupported file extension");
+  return undefined;
 }
 
 export function normalized2html(normalized: string) {
