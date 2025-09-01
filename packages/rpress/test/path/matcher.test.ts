@@ -75,15 +75,15 @@ test("Matcher should handle :", () => {
   expect(result3).toEqual(false);
 
   const result4 = matcher.match("/users/123/");
-  expect(result4).toEqual({id: "123"});
+  expect(result4).toEqual({"id:wtf": "123"});
 
   const results5 = matcher.match("/users/123/index.html");
-  expect(results5).toEqual({id: "123"});
+  expect(results5).toEqual({"id:wtf": "123"});
 
   const results6 = matcher.match("/users/123/index.WTF");
   expect(results6).toEqual(false);
 
   const results7 = matcher.match("/users/123/index.rsc");
-  expect(results7).toEqual({id: "123"});
+  expect(results7).toEqual({"id:wtf": "123"});
 
 });

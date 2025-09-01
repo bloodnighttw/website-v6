@@ -16,10 +16,8 @@ export class Matcher {
     // convert ":param" segments into named capture groups
     // preserve trailing slash if present
 
-    const transformed = path.replace(
-      /:([A-Za-z0-9_-]+)/g,
-      (_m, name) => `(?<${name}>[^/]+)`,
-    );
+    // Replace :param with plain capturing groups. Order of keys is captured separately.
+    const transformed = path.replace(/:([^/]+)/g, "([^/]+)");
 
     // Anchor start and end
     return new RegExp(`^${transformed}$`);
@@ -28,7 +26,7 @@ export class Matcher {
   // This function should return an array of keys
   private static grabKeys(path: string): string[] {
     const keys: string[] = [];
-    const regex = /:([A-Za-z0-9_-]+)/g;
+    const regex = /:([^/]+)/g;
     let match;
     while ((match = regex.exec(path))) {
       keys.push(match[1]);
@@ -45,8 +43,10 @@ export class Matcher {
     if (!match) return false;
 
     const params: Record<string, string> = {};
-    for (const key of this.keys) {
-      params[key] = match.groups![key];
+    // match.slice(1) contains capturing groups in order corresponding to this.keys
+    const groups = match.slice(1);
+    for (let i = 0; i < this.keys.length; i++) {
+      params[this.keys[i]] = groups[i] as string;
     }
     return params;
   }
