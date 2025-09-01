@@ -87,7 +87,7 @@ test("with underscores with extensions", () => {
 });
 
 test("exception", () => {
-  // expect(normalizeExt("")).toThrow(Error);
+  expect(()=>normalizeExt("")).toThrow(Error);
   expect(()=>normalizeExt("//hello/world.html")).toThrow(Error);
   expect(()=>normalizeExt("///index.wtf")).toThrow(Error);
   expect(()=>normalizeExt("/.rsc")).toThrow(Error);

@@ -9,7 +9,29 @@
 import { EXT_HTML, EXT_RSC, INDEX } from "./constant";
 
 export default function normalize(pathname: string) {
-  if (pathname.at(0) !== "/") pathname = "/" + pathname;
+  if (import.meta.env.MODE === "development") {
+    if (pathname.at(0) !== "/") {
+      console.warn(
+        "Unnormalized path detected:",
+        pathname,
+        "this may cause type inference issues",
+      );
+      pathname = "/" + pathname;
+    }
+    if (
+      pathname
+        .split("/")
+        .slice(1, -1)
+        .some((p) => p === "")
+    ) {
+      console.warn(
+        "Unnormalized path detected:",
+        pathname,
+        "this may cause type inference issues",
+      );
+      pathname = "/" + pathname;
+    }
+  } else if (pathname.at(0) !== "/") pathname = "/" + pathname;
 
   // collapse multiple slashes
   pathname = pathname.replace(/\/+/g, "/");
