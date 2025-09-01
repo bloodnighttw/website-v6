@@ -1,4 +1,3 @@
-import { RSC_POSTFIX } from "../../config";
 import normalize, { normalizeExt } from "./normalize";
 
 export class Matcher {
@@ -51,9 +50,59 @@ export class Matcher {
     }
     return params;
   }
-
 }
 
-export function isRscRequest(request: Request) {
-  return request.url.endsWith(`${RSC_POSTFIX}`) && !request.url.endsWith(`/${RSC_POSTFIX}`);
+// a type to infer the parameters from the path
+// for example, given the path "/users/:id/", it will produce { id: string }
+// or given "/posts/:postId/comments/:commentId" -> { postId: string, commentId: string }
+// but when giving ":id/wtf", it shouldn't produce any parameters
+
+// Trim leading/trailing slashes from a path fragment
+type TrimSlashes<S extends string> = S extends `/${infer Rest}`
+  ? TrimSlashes<Rest>
+  : S extends `${infer Rest}/`
+    ? TrimSlashes<Rest>
+    : S;
+
+// Extract params only from segments that are exactly ":name"
+type ParamsFromSegment<S extends string> = S extends `:${infer Name}`
+  ? Name extends ""
+    ? {}
+    : { [K in Name]: string }
+  : {};
+
+// Recursively walk segments separated by "/"
+type ExtractParamsFromSegments<S extends string> =
+  S extends `${infer Head}/${infer Tail}`
+    ? ParamsFromSegment<Head> & ExtractParamsFromSegments<Tail>
+    : ParamsFromSegment<S>;
+
+// Public type: only parse when the original path starts with a leading "/"
+type ParamsFromPath<Path extends string> = Path extends `/${infer Rest}`
+  ? ExtractParamsFromSegments<TrimSlashes<Rest>>
+  : {};
+
+type DirtyChecker = {
+  _________________________it_is_so_dirty________________________: any;
+};
+
+type FlatUnion<T> = {
+  [K in keyof T]: T[K] extends object ? FlatUnion<T[K]> : T[K];
+};
+
+type EmptyToUndefined<T> =
+  DirtyChecker extends FlatUnion<T & DirtyChecker> ? undefined : FlatUnion<T>;
+
+type InferPathParams<T extends string> = EmptyToUndefined<ParamsFromPath<T>>;
+
+// Examples (for quick reference):
+type A = InferPathParams<"/users/:id/">; // { id: string }
+type B = InferPathParams<"/posts/:postId/comments/:commentId">; // { postId: string; commentId: string }
+type C = InferPathParams<":id/wtf">; // {}
+
+interface a {
+  a: InferPathParams<"/static/:path/:id">;
 }
+
+type E = InferPathParams<"/mixed/:id:wtf/:wtf">; // { "id:wtf": string }
+type F = InferPathParams<"/:id_world/">; // { id_world: string }
