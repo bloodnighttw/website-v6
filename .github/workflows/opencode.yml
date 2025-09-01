@@ -5,6 +5,11 @@ on:
     types: [created]
 
 jobs:
+  permissions:
+    id-token: write
+    contents: write
+    pull-requests: write
+    issues: write
   opencode:
     if: |
       contains(github.event.comment.body, ' /oc') ||
