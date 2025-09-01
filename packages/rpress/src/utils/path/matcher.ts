@@ -1,3 +1,4 @@
+import { RSC_POSTFIX } from "../../config";
 import normalize, { normalizeExt } from "./normalize";
 
 export class Matcher {
@@ -51,4 +52,8 @@ export class Matcher {
     return params;
   }
 
+}
+
+export function isRscRequest(request: Request) {
+  return request.url.endsWith(`${RSC_POSTFIX}`) && !request.url.endsWith(`/${RSC_POSTFIX}`);
 }
