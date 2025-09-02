@@ -2,13 +2,14 @@ import { RSC_POSTFIX } from "../../config";
 import normalize, { normalizeExt } from "./normalize";
 
 export class Matcher {
+  private normalizedPath: string;
   private keys: string[];
   private regexp: RegExp;
 
   constructor(path: string) {
-    const normalizedPath = normalize(path);
-    this.keys = Matcher.grabKeys(normalizedPath);
-    this.regexp = Matcher.toRegExp(normalizedPath);
+    this.normalizedPath = normalize(path);
+    this.keys = Matcher.grabKeys(this.normalizedPath);
+    this.regexp = Matcher.toRegExp(this.normalizedPath);
   }
 
   // this function should pass a normalized path
@@ -50,6 +51,18 @@ export class Matcher {
       params[this.keys[i]] = groups[i] as string;
     }
     return params;
+  }
+
+  public toString(params: Record<string, string>): string {
+    let path = this.keys.reduce((acc, key) => {
+      if (!params[key]) throw new Error(`Missing parameter: ${key}`);
+      return acc.replace(`:${key}`, params[key]);
+    }, this.normalizedPath);
+    return path;
+  }
+
+  public noKeysUsePath(): boolean | string {
+    return this.keys.length === 0 ? this.normalizedPath : false;
   }
 }
 

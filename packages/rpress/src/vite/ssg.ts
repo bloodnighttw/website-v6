@@ -32,11 +32,34 @@ async function renderStatic(config: ResolvedConfig) {
     pathToFileURL(entryPath).href
   );
 
-  const mapping = [] as string[];
+  const all = entry.allRouteModules;
+  const strss = await Promise.all(
+    all.map(async (module) => {
+      const usePath = module.route.matcher.noKeysUsePath();
+      if (typeof usePath === "string") {
+        return [usePath];
+      }
+      
+      const path = module.route.config.generator as unknown as () => Promise<
+        Record<string, string>[]
+      >;
+      const matcher = module.route.matcher;
+
+      const strs = (await path()).map((params) => {
+        return matcher.toString(params);
+      });
+
+      return strs;
+    }),
+  );
+
+  const mapping = strss.reduce((acc, curr) => {
+    return [...acc,...curr]
+  }, []);
 
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
-  for (const pathname of Object.keys(mapping)) {
+  for (const pathname of mapping) {
     config.logger.info(
       `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`,
     );

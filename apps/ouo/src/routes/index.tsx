@@ -13,7 +13,7 @@ export default async function WTF(props: RouterProps<typeof route>) {
 
   return (
     <Flatten>
-      <div>hi from /:lang</div>
+      <div>hi from home</div>
       <div>props</div>
       <div>data: {JSON.stringify(props.params)}</div>
       <ClientLz/>
