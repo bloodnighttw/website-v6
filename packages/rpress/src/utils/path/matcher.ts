@@ -38,7 +38,7 @@ export class Matcher {
   // return false if no match is found
   // otherwise return an object with the captured parameters
   // note: this function should only use in server side
-  public match(path: string) {
+  public match(path: string): Record<string, string> | false {
     const normalizedPath = normalizeExt(path) ?? normalize(path);
     const match = this.regexp.exec(normalizedPath);
     if (!match) return false;
@@ -51,6 +51,35 @@ export class Matcher {
     }
     return params;
   }
+}
+
+export function matchParams(
+  left: Record<string, string>,
+  right: Record<string, string>[] | object,
+): Record<string, string> | false {
+  if (
+    left instanceof Object &&
+    Object.keys(left).length === 0 // left is {}
+  ) {
+    if (right instanceof Array) return right.at(0) ?? {};
+    else return right as Record<string, string>;
+  }
+  if (!(right instanceof Array)) {
+    throw new Error(
+      "Object in second parameter is only allow when first parameter is empty object",
+    );
+  }
+
+  l1: for (const obj of right) {
+    for (const [k, v] of Object.entries(left)) {
+      if (obj[k] === undefined || obj[k] !== v) {
+        continue l1;
+      }
+    }
+    return obj;
+  }
+
+  return false;
 }
 
 export function isRSCRequest(request: Request) {
@@ -84,7 +113,9 @@ type ExtractParamsFromSegments<S extends string> =
     : ParamsFromSegment<S>;
 
 // Public type: only parse when the original path starts with a leading "/"
-type ParamsFromPath<Path extends string> = ExtractParamsFromSegments<TrimSlashes<Path>>
+type ParamsFromPath<Path extends string> = ExtractParamsFromSegments<
+  TrimSlashes<Path>
+>;
 
 type DirtyChecker = {
   _________________________it_is_so_dirty________________________: any;
@@ -97,4 +128,6 @@ type FlatUnion<T> = {
 type EmptyToUndefined<T> =
   DirtyChecker extends FlatUnion<T & DirtyChecker> ? undefined : FlatUnion<T>;
 
-export type InferPathParams<T extends string> = EmptyToUndefined<ParamsFromPath<T>>;
+export type InferPathParams<T extends string> = EmptyToUndefined<
+  ParamsFromPath<T>
+>;

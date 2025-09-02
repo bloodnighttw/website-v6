@@ -2,7 +2,7 @@ import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import { type RscPayload } from "../config";
 import { type RouteModule } from "../core/route";
 import { normalize } from "path";
-import { isRSCRequest } from "../utils/path/matcher";
+import { isRSCRequest, matchParams } from "../utils/path/matcher";
 
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
@@ -12,7 +12,7 @@ export const allRouteModules = Object.values(
   (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
 );
 
-function generateRSCStream({ request }: { request: Request }) {
+async function generateRSCStream({ request }: { request: Request }) {
   const url = new URL(request.url);
   const normalizeUrl = normalize(url.pathname);
 
@@ -20,11 +20,12 @@ function generateRSCStream({ request }: { request: Request }) {
   let params: Record<string, string> = {};
   for (const m of allRouteModules) {
     const matchResult = m.route.matcher.match(normalizeUrl);
-    if (matchResult!==false) {
-      module = m;
-      params = matchResult; 
-      break;
-    }
+    if (matchResult === false) continue;
+    const gens = m.route.config.generator() as unknown as Promise<Record<string, string>[]>;
+    const match = matchParams(matchResult, await gens);
+    if(match === false) continue;
+    module = m;
+    params = match;
   }
 
   if(!module){
@@ -43,7 +44,7 @@ function generateRSCStream({ request }: { request: Request }) {
 }
 
 export default async function handler(request: Request): Promise<Response> {
-  const rscStream = generateRSCStream({ request });
+  const rscStream = await generateRSCStream({ request });
 
   if (!rscStream) {
     return new Response("Not Found", { status: 404 });
@@ -84,7 +85,8 @@ export async function handleSsg(request: Request): Promise<{
   html: ReadableStream<Uint8Array>;
   rsc: ReadableStream<Uint8Array>;
 }> {
-  const rscStream = generateRSCStream({ request });
+
+  const rscStream = await generateRSCStream({ request });
 
   if (!rscStream) {
     throw new Error("Static path not found");
