@@ -5,7 +5,6 @@ import ClientLz from "./layouts/counter.lz";
 
 export const route = createRoute("/");
 
-
 export default async function WTF(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
   helper.add(RootLayout, {});
@@ -13,10 +12,10 @@ export default async function WTF(props: RouterProps<typeof route>) {
 
   return (
     <Flatten>
-      <div>hi from /:lang</div>
+      <div>hi from home</div>
       <div>props</div>
       <div>data: {JSON.stringify(props.params)}</div>
-      <ClientLz/>
+      <ClientLz />
     </Flatten>
   );
 }

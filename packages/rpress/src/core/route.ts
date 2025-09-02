@@ -1,8 +1,4 @@
-import {
-  path2RegExp,
-  PathMatcher,
-  type InferPathParams,
-} from "../utils/path2regexp";
+import { Matcher, type InferPathParams } from "../utils/path/matcher";
 
 interface RouteConfig<T extends string> {
   generator: () => Promise<Array<InferPathParams<T>>>;
@@ -16,7 +12,7 @@ export interface RouteModule {
 }
 
 interface Route<T extends string> {
-  matcher: PathMatcher<T>;
+  matcher: Matcher;
   config: RouteConfig<T>;
 }
 
@@ -29,26 +25,16 @@ export function createRoute<T extends string>(
   path: T,
   config?: RouteConfig<T> | undefined,
 ): Route<T> {
-  const pathMatcher = path2RegExp(path);
+  const matcher = new Matcher(path);
 
-  if (pathMatcher.hasParams() === false) {
-    if (config) {
-      console.warn("Route config is ignored for static routes");
-    }
-    config = {
-      generator: async () => {
-        return [];
-      },
-    } as RouteConfig<T>;
-  } else {
-    if (!config)
-      throw new Error(
-        "Dynamic route must have a config with generator since we don't support SSR currently",
-      );
-  }
+  config ??= {
+    generator: async () => {
+      return [];
+    },
+  };
 
   return {
-    matcher: pathMatcher,
+    matcher,
     config,
   };
 }
