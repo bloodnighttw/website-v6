@@ -78,9 +78,7 @@ type ExtractParamsFromSegments<S extends string> =
     : ParamsFromSegment<S>;
 
 // Public type: only parse when the original path starts with a leading "/"
-type ParamsFromPath<Path extends string> = Path extends `/${infer Rest}`
-  ? ExtractParamsFromSegments<TrimSlashes<Rest>>
-  : {};
+type ParamsFromPath<Path extends string> = ExtractParamsFromSegments<TrimSlashes<Path>>
 
 type DirtyChecker = {
   _________________________it_is_so_dirty________________________: any;
@@ -93,16 +91,4 @@ type FlatUnion<T> = {
 type EmptyToUndefined<T> =
   DirtyChecker extends FlatUnion<T & DirtyChecker> ? undefined : FlatUnion<T>;
 
-type InferPathParams<T extends string> = EmptyToUndefined<ParamsFromPath<T>>;
-
-// Examples (for quick reference):
-type A = InferPathParams<"/users/:id/">; // { id: string }
-type B = InferPathParams<"/posts/:postId/comments/:commentId">; // { postId: string; commentId: string }
-type C = InferPathParams<":id/wtf">; // {}
-
-interface a {
-  a: InferPathParams<"/static/:path/:id">;
-}
-
-type E = InferPathParams<"/mixed/:id:wtf/:wtf">; // { "id:wtf": string }
-type F = InferPathParams<"/:id_world/">; // { id_world: string }
+export type InferPathParams<T extends string> = EmptyToUndefined<ParamsFromPath<T>>;
