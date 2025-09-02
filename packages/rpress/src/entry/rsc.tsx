@@ -28,7 +28,7 @@ function generateRSCStream({ request }: { request: Request }) {
   }
 
   if(!module){
-    throw new Error("Route module not found");
+    return undefined
   }
 
   const Component = module.default;
@@ -106,7 +106,3 @@ export async function handleSsg(request: Request): Promise<{
 if (import.meta.hot) {
   import.meta.hot.accept();
 }
-function isRscRequest(request: Request) {
-  throw new Error("Function not implemented.");
-}
-
