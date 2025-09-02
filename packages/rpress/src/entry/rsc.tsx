@@ -21,15 +21,17 @@ async function generateRSCStream({ request }: { request: Request }) {
   for (const m of allRouteModules) {
     const matchResult = m.route.matcher.match(normalizeUrl);
     if (matchResult === false) continue;
-    const gens = m.route.config.generator() as unknown as Promise<Record<string, string>[]>;
+    const gens = m.route.config.generator() as unknown as Promise<
+      Record<string, string>[]
+    >;
     const match = matchParams(matchResult, await gens);
-    if(match === false) continue;
+    if (match === false) continue;
     module = m;
     params = match;
   }
 
-  if(!module){
-    return undefined
+  if (!module) {
+    return undefined;
   }
 
   const Component = module.default;
@@ -85,7 +87,6 @@ export async function handleSsg(request: Request): Promise<{
   html: ReadableStream<Uint8Array>;
   rsc: ReadableStream<Uint8Array>;
 }> {
-
   const rscStream = await generateRSCStream({ request });
 
   if (!rscStream) {

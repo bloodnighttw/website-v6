@@ -7,7 +7,7 @@ export class NoSSR extends ShouldCaughtError {
   }
 }
 
-function PreventRendring(): null{
+function PreventRendring(): null {
   throw new NoSSR();
 }
 
@@ -21,10 +21,7 @@ export default function dynamic(
   importPromise: () => Promise<{ default: React.ComponentType<any> }>,
   options?: Partial<DynamicOptions>,
 ) {
-  const {
-    ssr = true,
-    loading = null,
-  } = options || {};
+  const { ssr = true, loading = null } = options || {};
 
   const LazyComponent = lazy(importPromise);
 
@@ -33,7 +30,7 @@ export default function dynamic(
 
     return (
       <Suspense fallback={loading}>
-        {isServer && !ssr ?  <PreventRendring /> : null}
+        {isServer && !ssr ? <PreventRendring /> : null}
         <LazyComponent {...prop} />
       </Suspense>
     );

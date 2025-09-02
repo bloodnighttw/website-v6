@@ -40,7 +40,7 @@ async function renderStatic(config: ResolvedConfig) {
       if (typeof usePath === "string") {
         return [usePath];
       }
-      
+
       const path = module.route.config.generator as unknown as () => Promise<
         Record<string, string>[]
       >;
@@ -55,7 +55,7 @@ async function renderStatic(config: ResolvedConfig) {
   );
 
   const pathnames = strss.reduce((acc, curr) => {
-    return [...acc,...curr]
+    return [...acc, ...curr];
   }, []);
 
   // render rsc and html
@@ -67,8 +67,14 @@ async function renderStatic(config: ResolvedConfig) {
     const { html, rsc } = await entry.handleSsg(
       new Request(new URL(pathname, "http://ssg.local")),
     );
-    await writeFileStream(path.join(baseDir, normalized2html(normalize(pathname))), html);
-    await writeFileStream(path.join(baseDir, normalized2rsc(normalize(pathname))), rsc);
+    await writeFileStream(
+      path.join(baseDir, normalized2html(normalize(pathname))),
+      html,
+    );
+    await writeFileStream(
+      path.join(baseDir, normalized2rsc(normalize(pathname))),
+      rsc,
+    );
   }
 }
 

@@ -2,7 +2,6 @@ import { expect, test } from "vitest";
 import { Matcher } from "../../src/utils/path/matcher";
 
 test("Matcher class should match paths correctly", () => {
-  
   const matcher = new Matcher("/users/:id");
 
   // Test matching a valid path
@@ -18,7 +17,6 @@ test("Matcher class should match paths correctly", () => {
 });
 
 test("Matcher class should handle index paths", () => {
-
   const matcher = new Matcher("/users/:id");
 
   // Test matching a valid index path
@@ -33,7 +31,6 @@ test("Matcher class should handle index paths", () => {
 });
 
 test("Matcher should handle between index/params path", () => {
-
   const matcher = new Matcher("/users/:id/");
 
   // Test matching a valid index path
@@ -47,21 +44,19 @@ test("Matcher should handle between index/params path", () => {
   expect(result3).toEqual(false);
 
   const result4 = matcher.match("/users/123/");
-  expect(result4).toEqual({id: "123"});
+  expect(result4).toEqual({ id: "123" });
 
   const results5 = matcher.match("/users/123/index.html");
-  expect(results5).toEqual({id: "123"});
+  expect(results5).toEqual({ id: "123" });
 
   const results6 = matcher.match("/users/123/index.WTF");
   expect(results6).toEqual(false);
 
   const results7 = matcher.match("/users/123/index.rsc");
-  expect(results7).toEqual({id: "123"});
-
+  expect(results7).toEqual({ id: "123" });
 });
 
 test("Matcher should handle :", () => {
-
   const matcher = new Matcher("/users/:id:wtf/");
 
   // Test matching a valid index path
@@ -75,15 +70,14 @@ test("Matcher should handle :", () => {
   expect(result3).toEqual(false);
 
   const result4 = matcher.match("/users/123/");
-  expect(result4).toEqual({"id:wtf": "123"});
+  expect(result4).toEqual({ "id:wtf": "123" });
 
   const results5 = matcher.match("/users/123/index.html");
-  expect(results5).toEqual({"id:wtf": "123"});
+  expect(results5).toEqual({ "id:wtf": "123" });
 
   const results6 = matcher.match("/users/123/index.WTF");
   expect(results6).toEqual(false);
 
   const results7 = matcher.match("/users/123/index.rsc");
-  expect(results7).toEqual({"id:wtf": "123"});
-
+  expect(results7).toEqual({ "id:wtf": "123" });
 });
