@@ -1,3 +1,4 @@
+import { RSC_POSTFIX } from "../../config";
 import normalize, { normalizeExt } from "./normalize";
 
 export class Matcher {
@@ -50,6 +51,11 @@ export class Matcher {
     }
     return params;
   }
+}
+
+export function isRSCRequest(request: Request) {
+  const url = new URL(request.url);
+  return url.pathname.endsWith(RSC_POSTFIX);
 }
 
 // a type to infer the parameters from the path

@@ -3,7 +3,7 @@ import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { RSC_POSTFIX, type RscPayload } from "../config";
-import { normalize } from "../utils/path";
+import normalize from "../utils/path/normalize";
 
 async function fetchRSC() {
   const normalizedHref = normalize(window.location.pathname);

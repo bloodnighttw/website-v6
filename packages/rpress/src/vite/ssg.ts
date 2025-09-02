@@ -32,7 +32,7 @@ async function renderStatic(config: ResolvedConfig) {
     pathToFileURL(entryPath).href
   );
 
-  const mapping = entry.path2Modules;
+  const mapping = [] as string[];
 
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;

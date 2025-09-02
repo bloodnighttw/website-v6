@@ -1,10 +1,10 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import { type RscPayload } from "../config";
-import { isRscRequest, normalizeByRequest } from "../utils/path";
 import { type RouteModule } from "../core/route";
-import { generateStaticPaths } from "../utils/genPath2Modules";
+import { normalize } from "path";
+import { isRSCRequest } from "../utils/path/matcher";
 
-const allRouteModules = Object.values(
+export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
   }),
@@ -12,27 +12,31 @@ const allRouteModules = Object.values(
   (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
 );
 
-export const path2Modules = await generateStaticPaths(allRouteModules);
-
 function generateRSCStream({ request }: { request: Request }) {
-  const normalizeUrl = normalizeByRequest(request);
+  const url = new URL(request.url);
+  const normalizeUrl = normalize(url.pathname);
 
-  if (!path2Modules[normalizeUrl]) {
-    return undefined;
+  let module: RouteModule | undefined = undefined;
+  let params: Record<string, string> = {};
+  for (const m of allRouteModules) {
+    const matchResult = m.route.matcher.match(normalizeUrl);
+    if (matchResult!==false) {
+      module = m;
+      params = matchResult; 
+      break;
+    }
   }
 
-  const module = path2Modules[normalizeUrl];
-
-  const url = new URL(normalizeUrl, new URL(request.url).origin);
+  if(!module){
+    throw new Error("Route module not found");
+  }
 
   const Component = module.default;
-  const matcher = module.route.matcher;
 
-  const params = matcher.exec(url.pathname);
   // when params are not match, matcher.exec will return null;
   if (!params) return undefined;
   const rscPayload: RscPayload = {
-    root: <Component params={params.params} />,
+    root: <Component params={params} />,
   };
   const rscStream = ReactServer.renderToReadableStream<RscPayload>(rscPayload);
   return rscStream;
@@ -45,7 +49,7 @@ export default async function handler(request: Request): Promise<Response> {
     return new Response("Not Found", { status: 404 });
   }
 
-  if (isRscRequest(request)) {
+  if (isRSCRequest(request)) {
     return new Response(rscStream, {
       headers: {
         "content-type": "text/x-component;charset=utf-8",
@@ -102,3 +106,7 @@ export async function handleSsg(request: Request): Promise<{
 if (import.meta.hot) {
   import.meta.hot.accept();
 }
+function isRscRequest(request: Request) {
+  throw new Error("Function not implemented.");
+}
+
