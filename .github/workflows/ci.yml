@@ -12,9 +12,16 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [22.x, 20.x]
-        platform: [linux-x64, linux-arm, windows-x64, macos-arm]
+        include:
+          - runner: ubuntu-latest
+            platform: linux-x64
+          - runner: ubuntu-latest
+            platform: linux-arm
+          - runner: windows-latest
+            platform: windows-x64
+          - runner: macos-latest
+            platform: macos-arm
 
     steps:
       - name: Checkout repository
