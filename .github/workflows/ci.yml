@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, edited, closed]
   # Allow manual runs by repo owners via workflow_dispatch
   workflow_dispatch:
 
