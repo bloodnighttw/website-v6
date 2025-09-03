@@ -1,8 +1,8 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
 import { type RscPayload } from "../config";
 import { type RouteModule } from "../core/route";
-import { normalize } from "path";
 import { isRSCRequest, matchParams } from "../utils/path/matcher";
+import normalize from "../utils/path/normalize";
 
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
