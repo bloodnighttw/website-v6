@@ -3,7 +3,7 @@ import { pathToFileURL } from "url";
 import type { Plugin, ResolvedConfig } from "vite";
 import fs from "node:fs";
 import { Readable } from "node:stream";
-import normalize, { normalized2html, normalized2rsc } from "../utils/path/normalize";
+import { normalized2html, normalized2rsc } from "../utils/path/normalize";
 
 export function rscSsgPlugin(): Plugin[] {
   return [
@@ -67,11 +67,11 @@ async function renderStatic(config: ResolvedConfig) {
       new Request(new URL(pathname, "http://ssg.local")),
     );
     await writeFileStream(
-      path.join(baseDir, normalized2html(normalize(pathname))),
+      path.join(baseDir, normalized2html(entry.normalize(pathname))),
       html,
     );
     await writeFileStream(
-      path.join(baseDir, normalized2rsc(normalize(pathname))),
+      path.join(baseDir, normalized2rsc(entry.normalize(pathname))),
       rsc,
     );
   }

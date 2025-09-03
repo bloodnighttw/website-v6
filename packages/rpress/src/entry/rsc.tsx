@@ -4,6 +4,8 @@ import { type RouteModule } from "../core/route";
 import { isRSCRequest, matchParams } from "../utils/path/matcher";
 import normalize from "../utils/path/normalize";
 
+export { normalize };
+
 export const allRouteModules = Object.values(
   import.meta.glob("/src/routes/**", {
     eager: true,
