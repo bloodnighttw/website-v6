@@ -1,20 +1,18 @@
 name: CI
 
 on:
-  pull_request: 
-    types:
-      [opened, reopened, edited]
+  pull_request:
+    types: [opened, reopened, edited]
   # Allow manual runs by repo owners via workflow_dispatch
   workflow_dispatch:
 
-
 jobs:
   test:
-    name: Run tests 
+    name: Run tests
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ubuntu-latest, windows-latest]
+        runner: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [22.x, 20.x]
         platform: [linux-x64, linux-arm, windows-x64, macos-arm]
 
@@ -30,23 +28,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
-          path: ~/.pnpm-store
-          key: pnpm-store-${{ runner.os }}-node-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ~/.local/share/pnpm/store/v10
+          key: pnpm-store-${{ runner.os }}-${{ matrix.platform }}-node-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            pnpm-store-${{ runner.os }}-node-${{ matrix.node-version }}-
+            pnpm-store-${{ runner.os }}-${{ matrix.platform }}-node-${{ matrix.node-version }}-
 
       - name: Cache turbo build setup
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ matrix.platform }}-turbo-${{ github.sha }}
+          key: ${{ runner.os }}-${{ matrix.platform }}-${{ matrix.node-version }}-turbo-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.node-version }}-${{ matrix.platform }}-turbo-
+            ${{ runner.os }}-${{ matrix.platform }}-${{ matrix.node-version }}-turbo-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=silent
