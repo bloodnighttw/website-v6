@@ -72,12 +72,13 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=silent
 
       - name: Run Build
-        run: DO_NOT_TRACK=1 pnpm build
+        run: pnpm build
         env:
           CI: true
+          DO_NOT_TRACK: 1
 
       - name: Run tests
-        run: DO_NOT_TRACK=1 pnpm test
+        run: pnpm test
         env:
           CI: true
           DO_NOT_TRACK: 1
