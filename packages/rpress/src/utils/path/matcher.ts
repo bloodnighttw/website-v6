@@ -1,4 +1,4 @@
-import { RSC_POSTFIX } from "../../config";
+import { EXT_RSC } from "./constant";
 import normalize, { normalizeExt } from "./normalize";
 
 export class Matcher {
@@ -97,7 +97,7 @@ export function matchParams(
 
 export function isRSCRequest(request: Request) {
   const url = new URL(request.url);
-  return url.pathname.endsWith(RSC_POSTFIX);
+  return url.pathname.endsWith(EXT_RSC);
 }
 
 // a type to infer the parameters from the path
