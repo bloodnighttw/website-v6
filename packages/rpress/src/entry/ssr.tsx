@@ -2,9 +2,9 @@ import * as ReactClient from "@vitejs/plugin-rsc/ssr";
 import React from "react";
 import * as ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
-import type { RscPayload } from "../config";
 import { prerender } from "react-dom/static.edge";
 import ShouldCaughtError from "../utils/shouldCaughtError";
+import type { RscPayload } from "../utils/path/constant";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,

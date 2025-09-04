@@ -2,12 +2,16 @@ import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import { RSC_POSTFIX, type RscPayload } from "../config";
-import normalize from "../utils/path/normalize";
+import normalize, { normalized2rsc } from "../utils/path/normalize";
+import { type RscPayload } from "../utils/path/constant";
+import config from "virtual:rpress:config";
 
 async function fetchRSC() {
   const normalizedHref = normalize(window.location.pathname);
-  const rscURL = new URL(normalizedHref + RSC_POSTFIX, window.location.origin);
+  const rscURL = new URL(
+    normalized2rsc(normalizedHref),
+    window.location.origin,
+  );
   const payload = await ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
   return payload;
 }
@@ -35,10 +39,12 @@ async function hydrate(): Promise<void> {
   const initialPayload =
     await ReactClient.createFromReadableStream<RscPayload>(rscStream);
 
-  const browserRoot = (
+  const browserRoot = config.strictMode ? (
     <React.StrictMode>
       <BrowserRoot initialPayload={initialPayload} />
     </React.StrictMode>
+  ) : (
+    <BrowserRoot initialPayload={initialPayload} />
   );
 
   const dealWithInternelError = (e: unknown, info: unknown) => {

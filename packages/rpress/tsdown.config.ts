@@ -19,5 +19,5 @@ export default defineConfig({
   clean: false,
   minify: true,
   target: "esnext",
-  external: ["lightningcss", "vite", "@vitejs/plugin-rsc"],
+  external: ["lightningcss", "vite", "@vitejs/plugin-rsc", "virtual:rpress:config", "virtual:rpress:routes"],
 });
