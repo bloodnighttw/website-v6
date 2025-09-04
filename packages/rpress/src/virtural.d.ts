@@ -1,13 +1,10 @@
-
 declare module "virtual:rpress:config" { 
-  import type { RPressConfig } from "./core/defineConfig";
-  const config: RPressConfig;
+  const config: import("./core/defineConfig").RPressConfig;
   export default config;
 }
 
 declare module "virtual:rpress:routes" { 
-  import type { RouteModule } from "./core/route";
-  const routes: RouteModule[];
+  const routes: import("./core/route").RouteModule[];
   export default routes;
 }
 

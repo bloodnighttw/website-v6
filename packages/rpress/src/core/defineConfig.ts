@@ -1,5 +1,6 @@
 export interface RPressConfig {
   routesDir: string;
+  strictMode: boolean;
 }
 
 export default function defineConfig(
@@ -8,6 +9,7 @@ export default function defineConfig(
   
   return {
     routesDir: "src/routes/**",
+    strictMode: true,
     ...config,
   };
 }
