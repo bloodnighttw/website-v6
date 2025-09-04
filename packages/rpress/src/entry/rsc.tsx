@@ -1,18 +1,19 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { type RscPayload } from "../config";
 import { type RouteModule } from "../core/route";
 import { isRSCRequest, matchParams } from "../utils/path/matcher";
 import normalize from "../utils/path/normalize";
+import allRouteModules from "virtual:rpress:routes";
+import type { RscPayload } from "../utils/path/constant";
 
-export { normalize };
+export { normalize, allRouteModules };
 
-export const allRouteModules = Object.values(
-  import.meta.glob("/src/routes/**", {
-    eager: true,
-  }),
-).filter(
-  (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
-);
+// export const allRouteModules = Object.values(
+//   import.meta.glob("/src/routes/**", {
+//     eager: true,
+//   }),
+// ).filter(
+//   (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
+// );
 
 async function generateRSCStream({ request }: { request: Request }) {
   const url = new URL(request.url);
