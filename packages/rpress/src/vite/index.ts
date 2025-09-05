@@ -12,7 +12,6 @@ const RESOLVED_VIRTUAL_RPRESS_CONFIG = "\0" + VIRTUAL_RPRESS_CONFIG;
 const RESOLVED_VIRTUAL_RPRESS_ROUTES = "\0" + VIRTUAL_RPRESS_ROUTES;
 
 export default function rpress(): Plugin[] {
-
   let config: RPressConfig | null = null;
   let configFilePath: string | null = null;
 
@@ -34,14 +33,13 @@ export default function rpress(): Plugin[] {
 
         let foundPath: string | null = null;
         for (const name of candidates) {
-
           const full = path.resolve(root, name);
           try {
             await fs.promises.access(full, fs.constants.R_OK);
           } catch {
             continue;
           }
-          if(foundPath) {
+          if (foundPath) {
             resolvedConfig.logger.warn(
               `[rpress] multiple rpress config files found, using ${foundPath} and ignoring ${full}`,
             );
@@ -70,23 +68,7 @@ export default function rpress(): Plugin[] {
 
           if (loaded && loaded.config) {
             const userConfig = (loaded.config as any).default ?? loaded.config;
-
-            try {
-              const pretty = JSON.stringify(userConfig, null, 2);
-              resolvedConfig.logger.info(
-                `[rpress] loaded ${path.basename(foundPath)}: ${pretty}`,
-              );
-            } catch (e) {
-              resolvedConfig.logger.info(
-                `[rpress] loaded ${path.basename(foundPath)} (non-serializable value)`,
-              );
-            }
-
             config = userConfig as RPressConfig;
-          } else {
-            resolvedConfig.logger.info(
-              `[rpress] no rpress config found at ${foundPath}`,
-            );
           }
         } catch (err) {
           resolvedConfig.logger.warn(
