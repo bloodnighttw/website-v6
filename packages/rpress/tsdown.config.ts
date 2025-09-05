@@ -5,6 +5,7 @@ export default defineConfig({
     index: "src/index.ts",
     dynamic: "src/core/dynamic.tsx",
     helper: "src/helper/index.ts",
+    link: "src/core/link.tsx",
     // prevent hydration errors when import this module
     error: "src/helper/error.tsx",
     vite: "src/vite/index.ts",
@@ -19,5 +20,11 @@ export default defineConfig({
   clean: false,
   minify: true,
   target: "esnext",
-  external: ["lightningcss", "vite", "@vitejs/plugin-rsc", "virtual:rpress:config", "virtual:rpress:routes"],
+  external: [
+    "lightningcss",
+    "vite",
+    "@vitejs/plugin-rsc",
+    "virtual:rpress:config",
+    "virtual:rpress:routes",
+  ],
 });

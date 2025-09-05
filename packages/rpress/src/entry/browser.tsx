@@ -5,14 +5,11 @@ import { rscStream } from "rsc-html-stream/client";
 import normalize, { normalized2rsc } from "../utils/path/normalize";
 import { type RscPayload } from "../utils/path/constant";
 import config from "virtual:rpress:config";
+import fetchrsc from "../utils/prefetch-rsc";
 
 async function fetchRSC() {
-  const normalizedHref = normalize(window.location.pathname);
-  const rscURL = new URL(
-    normalized2rsc(normalizedHref),
-    window.location.origin,
-  );
-  const payload = await ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
+  const normalizedHref = normalized2rsc(normalize(window.location.pathname));
+  const payload = await fetchrsc.load(normalizedHref);
   return payload;
 }
 

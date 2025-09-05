@@ -48,6 +48,10 @@
     "./dynamic": {
       "import": "./dist/dynamic.js",
       "types": "./dist/dynamic.d.ts"
+    },
+    "./link": {
+      "import": "./dist/link.js",
+      "types": "./dist/link.d.ts"
     }
   }
 }
