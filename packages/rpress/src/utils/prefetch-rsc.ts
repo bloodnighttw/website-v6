@@ -1,6 +1,8 @@
 import type { RscPayload } from "./path/constant";
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
+import normalize, { normalized2rsc } from "./path/normalize";
 
+// TODO: move this into context
 class FetchRSC {
   constructor() {
     console.log("FetchRSC initialized");
@@ -9,12 +11,14 @@ class FetchRSC {
   private cache = new Map<string, Promise<RscPayload>>();
 
   public load(string: string | URL) {
-    if (this.cache.has(string.toString())) {
-      const promise = this.cache.get(string.toString())!;
+    const rscURL = normalized2rsc(normalize(string.toString()));
+
+    if (this.cache.has(rscURL)) {
+      const promise = this.cache.get(rscURL)!;
       return promise;
     }
-    const promise = ReactClient.createFromFetch<RscPayload>(fetch(string));
-    this.cache.set(string.toString(), promise);
+    const promise = ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
+    this.cache.set(rscURL, promise);
     return promise;
   }
 

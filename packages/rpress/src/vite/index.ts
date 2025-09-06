@@ -106,6 +106,23 @@ export default function rpress(): Plugin[] {
         throw new Error("RPress config not found");
       },
     },
+    {
+      name: "rpress:virtual-config-json",
+      resolveId(id) {
+        if (id === VIRTUAL_RPRESS_CONFIG + "/json") {
+          return RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json";
+        }
+      },
+      load(id) {
+        if (id === RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json") {
+          if (config) {
+            return `export default ${JSON.stringify(config)};`;
+          } else {
+            throw new Error("RPress config not found");
+          }
+        }
+      },
+    },
 
     {
       name: "rpress:inject-route",

@@ -17,7 +17,7 @@ export default async function WTF(props: RouterProps<typeof route>) {
       <div>props</div>
       <div>data: {JSON.stringify(props.params)}</div>
       <ClientLz />
-      <Link />
+      <Link to="/fr">to fr</Link>
     </Flatten>
   );
 }
