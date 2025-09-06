@@ -3,7 +3,7 @@ import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import normalize, { normalized2rsc } from "./path/normalize";
 
 // TODO: move this into context
-class FetchRSC {
+export class FetchRSC {
   constructor() {
     console.log("FetchRSC initialized");
   }
@@ -26,5 +26,3 @@ class FetchRSC {
     this.load(string);
   }
 }
-
-export default new FetchRSC();
