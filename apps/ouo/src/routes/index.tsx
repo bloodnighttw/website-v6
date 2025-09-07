@@ -1,4 +1,5 @@
 import { Counter } from "../counter";
+import OUO from "rpress/ouo"
 
 export default async function WTF({message}: {message: string}) {
   return (
@@ -20,6 +21,7 @@ export default async function WTF({message}: {message: string}) {
       <div>
         See README.md for more details.
       </div>
+      <OUO />
     </>
   );
 }

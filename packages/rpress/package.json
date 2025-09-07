@@ -38,6 +38,10 @@
     "./vite": {
       "import": "./dist/vite.js",
       "types": "./dist/vite.d.ts"
+    },
+    "./ouo": {
+      "import": "./dist/ouo.js",
+      "types": "./dist/ouo.d.ts"
     }
   }
 }

@@ -3,6 +3,7 @@ import { defineConfig } from "tsdown";
 export default defineConfig({
   entry: {
     vite: "src/framework/vite/index.ts",
+    ouo: "src/framework/ouo.tsx",
     "entry/browser": "src/framework/entry/browser.tsx",
     "entry/rsc": "src/framework/entry/rsc.tsx",
     "entry/ssr": "src/framework/entry/ssr.tsx",
