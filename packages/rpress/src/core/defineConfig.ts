@@ -1,7 +1,7 @@
 export interface RPressConfig {
   routesDir: string;
   strictMode: boolean;
-  prefetchStrategy?: "hover" | "viewport" | "none";
+  prefetchStrategy?: "hover" | "viewport" | "eager" | "none";
 }
 
 export default function defineConfig(

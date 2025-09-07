@@ -18,6 +18,10 @@ export default async function WTF(props: RouterProps<typeof route>) {
       <div>data: {JSON.stringify(props.params)}</div>
       <ClientLz />
       <Link to="/fr">to fr</Link>
+      <div style={{ height: 1200 }} />
+      <Link to="/en" prefetch="viewport">
+        to en
+      </Link>
     </Flatten>
   );
 }

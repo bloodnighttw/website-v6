@@ -2,6 +2,7 @@
 
 import config from "virtual:rpress:config/json";
 import load from "./rsc-loader";
+import { useEffect } from "react";
 
 console.log("link config", config);
 
@@ -25,14 +26,42 @@ export default function Link(props: LinkProps) {
     ...rest
   } = props;
 
+  useEffect(() => {
+    if (prefetch === "viewport") {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              load(to);
+              io.disconnect();
+            }
+          });
+        },
+        {
+          rootMargin: "200px",
+        },
+      );
+      const el = document.querySelector(`a[href='${to}']`);
+      if (el) {
+        io.observe(el);
+      }
+      return () => {
+        io.disconnect();
+      };
+    }
+
+    if (prefetch === "eager") {
+      load(to);
+    }
+  }, [prefetch, to]);
+
   return (
     <a
+      {...rest}
       href={to}
       onMouseEnter={(e) => {
         if (prefetch === "hover") {
-          console.log("[rpress] prefetch", to);
           load(to);
-          // preload(normalized2rsc(normalize(to)), { as: "fetch" });
         }
         onMouseEnter?.(e);
       }}
@@ -41,7 +70,6 @@ export default function Link(props: LinkProps) {
         window.history.pushState({}, "", to);
         onClick?.(e);
       }}
-      {...rest}
     >
       {children}
     </a>
