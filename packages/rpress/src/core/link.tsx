@@ -1,7 +1,9 @@
 "use client";
 
-import fetchrsc from "../utils/prefetch-rsc";
 import config from "virtual:rpress:config/json";
+import load from "./rsc-loader";
+
+console.log("link config", config);
 
 if (import.meta.hot) {
   import.meta.hot.accept();
@@ -28,8 +30,9 @@ export default function Link(props: LinkProps) {
       href={to}
       onMouseEnter={(e) => {
         if (prefetch === "hover") {
-          console.log("prefetch", prefetch);
-          fetchrsc.preload(to);
+          console.log("[rpress] prefetch", to);
+          load(to);
+          // preload(normalized2rsc(normalize(to)), { as: "fetch" });
         }
         onMouseEnter?.(e);
       }}

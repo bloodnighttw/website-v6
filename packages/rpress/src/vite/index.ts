@@ -69,6 +69,11 @@ export default function rpress(): Plugin[] {
           if (loaded && loaded.config) {
             const userConfig = (loaded.config as any).default ?? loaded.config;
             config = userConfig as RPressConfig;
+            console.log(
+              "[rpress] config loaded from",
+              path.basename(foundPath),
+            );
+            console.log(config);
           }
         } catch (err) {
           resolvedConfig.logger.warn(

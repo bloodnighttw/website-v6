@@ -6,6 +6,7 @@ export default defineConfig({
     dynamic: "src/core/dynamic.tsx",
     helper: "src/helper/index.ts",
     link: "src/core/link.tsx",
+    "rsc-loader": "src/core/rsc-loader.tsx",
     // prevent hydration errors when import this module
     error: "src/helper/error.tsx",
     vite: "src/vite/index.ts",

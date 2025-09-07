@@ -4,10 +4,10 @@ import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "../utils/path/constant";
 import config from "virtual:rpress:config";
-import fetchrsc from "../utils/prefetch-rsc";
+import load from "../core/rsc-loader";
 
 async function fetchRSC() {
-  const payload = await fetchrsc.load(window.location.pathname);
+  const payload = await load(window.location.pathname);
   return payload;
 }
 
