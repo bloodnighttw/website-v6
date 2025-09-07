@@ -110,11 +110,17 @@ export async function handleSsg(request: Request): Promise<{
     "ssr",
     "index",
   );
-  const htmlStream = await ssr.renderHtml(rscStream1, {
-    ssg: true,
-  });
-
-  return { html: htmlStream, rsc: rscStream2 };
+  try {
+    const htmlStream = await ssr.renderHtml(rscStream1, {
+      ssg: true,
+    });
+    return { html: htmlStream, rsc: rscStream2 };
+  } catch (e) {
+    if (e === undefined) {
+      return handleSsg(request);
+    }
+    throw new Error("SSG Render Error: " + e);
+  }
 }
 
 if (import.meta.hot) {
