@@ -4,12 +4,6 @@ import config from "virtual:rpress:config/json";
 import load from "virtual:rpress:rsc-loader";
 import { useEffect } from "react";
 
-console.log("link config", config);
-
-if (import.meta.hot) {
-  import.meta.hot.accept();
-}
-
 interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   to: string;
