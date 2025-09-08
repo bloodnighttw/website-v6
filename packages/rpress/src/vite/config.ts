@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "node:fs";
-import { type Plugin } from "vite";
+import { loadConfigFromFile, type Plugin } from "vite";
 import { type RPressConfig } from "../core/defineConfig";
 
 const VIRTUAL_RPRESS_CONFIG = "virtual:rpress:config";
@@ -11,9 +11,10 @@ const RESOLVED_VIRTUAL_RPRESS_ROUTES = "\0" + VIRTUAL_RPRESS_ROUTES;
 export default function RPressConfig(): Plugin[] {
   let config: RPressConfig | null = null;
   let configFilePath: string | null = null;
+
   return [
     {
-      name: "rpress:resolve-config",
+      name: "rpress:config",
       async configResolved(resolvedConfig) {
         const root = resolvedConfig.root || process.cwd();
         const mode =
@@ -28,13 +29,16 @@ export default function RPressConfig(): Plugin[] {
         ];
 
         let foundPath: string | null = null;
+
         for (const name of candidates) {
           const full = path.resolve(root, name);
           try {
             await fs.promises.access(full, fs.constants.R_OK);
           } catch {
+            // file does not exist or not readable
             continue;
           }
+
           if (foundPath) {
             resolvedConfig.logger.warn(
               `[rpress] multiple rpress config files found, using ${foundPath} and ignoring ${full}`,
@@ -56,20 +60,30 @@ export default function RPressConfig(): Plugin[] {
         configFilePath = foundPath;
 
         try {
-          const { loadConfigFromFile } = await import("vite");
           const loaded = await loadConfigFromFile(
             { command: "build", mode },
             foundPath,
           );
 
           if (loaded && loaded.config) {
-            const userConfig = (loaded.config as any).default ?? loaded.config;
+            const exported = loaded.config as {
+              default: Partial<RPressConfig>;
+            };
+            const userConfig = Object.prototype.hasOwnProperty.call(
+              exported,
+              "default",
+            )
+              ? exported.default
+              : exported;
+
             config = userConfig as RPressConfig;
-            console.log(
-              "[rpress] config loaded from",
-              path.basename(foundPath),
+            resolvedConfig.logger.info(
+              `[rpress] config loaded from ${path.basename(foundPath)}`,
             );
-            console.log(config);
+            // use debug log to avoid noisy output in production
+            resolvedConfig.logger.info(
+              `[rpress] config: ${JSON.stringify(config)}`,
+            );
           }
         } catch (err) {
           resolvedConfig.logger.warn(
@@ -77,36 +91,19 @@ export default function RPressConfig(): Plugin[] {
           );
         }
       },
-    },
 
-    // Virtual module that exposes loaded rpress config as an importable module.
-    {
-      name: "rpress:virtual-config",
-      resolveId(id) {
-        if (id === VIRTUAL_RPRESS_CONFIG) {
-          return RESOLVED_VIRTUAL_RPRESS_CONFIG;
-        }
-      },
-      async load(id) {
-        if (id !== RESOLVED_VIRTUAL_RPRESS_CONFIG) return null;
+      async resolveId(id) {
+        if (id !== VIRTUAL_RPRESS_CONFIG) return;
 
-        if (configFilePath) {
-          // Resolve the config file through Vite so it can be transformed/handled by other plugins
-          const resolved = await this.resolve(configFilePath, undefined, {
-            skipSelf: true,
-          });
-          const importId =
-            resolved && (resolved as any).id
-              ? (resolved as any).id
-              : configFilePath;
-
-          // Import the module namespace and re-export its default (or the namespace as fallback)
-          return `import * as __rpress_cfg from ${JSON.stringify(importId)};\nexport default (__rpress_cfg && __rpress_cfg.default) ? __rpress_cfg.default : __rpress_cfg;\nexport const rpressConfigFile = ${JSON.stringify(importId)};\n`;
-        }
-
-        throw new Error("RPress config not found");
+        // prefer resolving directly to the discovered config file if available
+        const target = configFilePath ?? "/rpress.config";
+        const resolved = await this.resolve(target, undefined, {
+          skipSelf: true,
+        });
+        return resolved?.id ?? null;
       },
     },
+
     {
       name: "rpress:virtual-config-json",
       resolveId(id) {
