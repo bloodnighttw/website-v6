@@ -2,7 +2,7 @@
 
 import config from "virtual:rpress:config/json";
 import load from "virtual:rpress:rsc-loader";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
