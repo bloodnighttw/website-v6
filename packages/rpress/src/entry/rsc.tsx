@@ -82,7 +82,11 @@ export default async function handler(request: Request): Promise<Response> {
       },
     });
   } catch (e) {
-    return new Response("Internal Server Error", { status: 500 });
+    // a tricky way to make sure e is Error,
+    // this is because there will be some non-error thrown in the first time the page is loaded
+    // when there has some reject in suspense boundary.
+
+    return new Response("Internal Server Error, stacks: " + e, { status: 500 });
   }
 }
 
@@ -103,11 +107,14 @@ export async function handleSsg(request: Request): Promise<{
     "ssr",
     "index",
   );
-  const htmlStream = await ssr.renderHtml(rscStream1, {
-    ssg: true,
-  });
-
-  return { html: htmlStream, rsc: rscStream2 };
+  try {
+    const htmlStream = await ssr.renderHtml(rscStream1, {
+      ssg: true,
+    });
+    return { html: htmlStream, rsc: rscStream2 };
+  } catch (e) {
+    throw new Error("SSG Render Error: " + e);
+  }
 }
 
 if (import.meta.hot) {

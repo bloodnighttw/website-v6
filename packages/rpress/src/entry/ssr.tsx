@@ -48,7 +48,6 @@ export async function renderHtml(
     responseStream = responseStream.pipeThrough(injectRSCPayload(rscStream2));
     return responseStream;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 }

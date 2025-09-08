@@ -2,17 +2,12 @@ import * as ReactClient from "@vitejs/plugin-rsc/browser";
 import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
-import normalize, { normalized2rsc } from "../utils/path/normalize";
 import { type RscPayload } from "../utils/path/constant";
 import config from "virtual:rpress:config";
+import load from "virtual:rpress:rsc-loader";
 
 async function fetchRSC() {
-  const normalizedHref = normalize(window.location.pathname);
-  const rscURL = new URL(
-    normalized2rsc(normalizedHref),
-    window.location.origin,
-  );
-  const payload = await ReactClient.createFromFetch<RscPayload>(fetch(rscURL));
+  const payload = await load(window.location.pathname);
   return payload;
 }
 
@@ -79,30 +74,7 @@ function listenNavigation(onNavigation: () => void): () => void {
     return res;
   };
 
-  function onClick(e: MouseEvent) {
-    const link = (e.target as Element).closest("a");
-    if (
-      link &&
-      link instanceof HTMLAnchorElement &&
-      link.href &&
-      (!link.target || link.target === "_self") &&
-      link.origin === location.origin &&
-      !link.hasAttribute("download") &&
-      e.button === 0 && // left clicks only
-      !e.metaKey && // open in new tab (mac)
-      !e.ctrlKey && // open in new tab (windows)
-      !e.altKey && // download
-      !e.shiftKey &&
-      !e.defaultPrevented
-    ) {
-      e.preventDefault();
-      history.pushState(null, "", link.href);
-    }
-  }
-  document.addEventListener("click", onClick);
-
   return () => {
-    document.removeEventListener("click", onClick);
     window.removeEventListener("popstate", onNavigation);
     window.history.pushState = oldPushState;
     window.history.replaceState = oldReplaceState;

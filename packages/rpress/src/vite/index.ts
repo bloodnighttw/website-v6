@@ -12,7 +12,6 @@ const RESOLVED_VIRTUAL_RPRESS_CONFIG = "\0" + VIRTUAL_RPRESS_CONFIG;
 const RESOLVED_VIRTUAL_RPRESS_ROUTES = "\0" + VIRTUAL_RPRESS_ROUTES;
 
 export default function rpress(): Plugin[] {
-
   let config: RPressConfig | null = null;
   let configFilePath: string | null = null;
 
@@ -34,14 +33,13 @@ export default function rpress(): Plugin[] {
 
         let foundPath: string | null = null;
         for (const name of candidates) {
-
           const full = path.resolve(root, name);
           try {
             await fs.promises.access(full, fs.constants.R_OK);
           } catch {
             continue;
           }
-          if(foundPath) {
+          if (foundPath) {
             resolvedConfig.logger.warn(
               `[rpress] multiple rpress config files found, using ${foundPath} and ignoring ${full}`,
             );
@@ -70,23 +68,12 @@ export default function rpress(): Plugin[] {
 
           if (loaded && loaded.config) {
             const userConfig = (loaded.config as any).default ?? loaded.config;
-
-            try {
-              const pretty = JSON.stringify(userConfig, null, 2);
-              resolvedConfig.logger.info(
-                `[rpress] loaded ${path.basename(foundPath)}: ${pretty}`,
-              );
-            } catch (e) {
-              resolvedConfig.logger.info(
-                `[rpress] loaded ${path.basename(foundPath)} (non-serializable value)`,
-              );
-            }
-
             config = userConfig as RPressConfig;
-          } else {
-            resolvedConfig.logger.info(
-              `[rpress] no rpress config found at ${foundPath}`,
+            console.log(
+              "[rpress] config loaded from",
+              path.basename(foundPath),
             );
+            console.log(config);
           }
         } catch (err) {
           resolvedConfig.logger.warn(
@@ -124,6 +111,23 @@ export default function rpress(): Plugin[] {
         throw new Error("RPress config not found");
       },
     },
+    {
+      name: "rpress:virtual-config-json",
+      resolveId(id) {
+        if (id === VIRTUAL_RPRESS_CONFIG + "/json") {
+          return RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json";
+        }
+      },
+      load(id) {
+        if (id === RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json") {
+          if (config) {
+            return `export default ${JSON.stringify(config)};`;
+          } else {
+            throw new Error("RPress config not found");
+          }
+        }
+      },
+    },
 
     {
       name: "rpress:inject-route",
@@ -138,7 +142,22 @@ export default function rpress(): Plugin[] {
         return `export default Object.values( import.meta.glob('/${config?.routesDir}', { eager: true })).filter(module => !!module?.route);`;
       },
     },
-
+    {
+      name: "virtual-rsc-loader",
+      resolveId(id) {
+        if (id === "virtual:rpress:rsc-loader") {
+          if (this.environment.name === "client") {
+            return this.resolve("rpress/rsc-loader");
+          }
+          return "\0" + id;
+        }
+      },
+      async load(id) {
+        if (id === "\0virtual:rpress:rsc-loader") {
+          return `export default () => { throw new Error("rsc-loader cannot be used in non client environment")}`;
+        }
+      },
+    },
     ...rsc({
       entries: {
         client: "./node_modules/rpress/dist/entry/browser.js",
