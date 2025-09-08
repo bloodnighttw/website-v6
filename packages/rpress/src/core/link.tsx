@@ -20,32 +20,7 @@ export default function Link(props: LinkProps) {
     ...rest
   } = props;
 
-  const anchorRef = useRef<HTMLAnchorElement>(null);
-
   useEffect(() => {
-    if (prefetch === "viewport") {
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              load(to);
-              io.disconnect();
-            }
-          });
-        },
-        {
-          rootMargin: "200px",
-        },
-      );
-      const el = anchorRef.current;
-      if (el) {
-        io.observe(el);
-      }
-      return () => {
-        io.disconnect();
-      };
-    }
-
     if (prefetch === "eager") {
       load(to);
     }
@@ -66,7 +41,29 @@ export default function Link(props: LinkProps) {
         window.history.pushState({}, "", to);
         onClick?.(e);
       }}
-      ref={anchorRef}
+      ref={(ref) => {
+        if (prefetch === "viewport") {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  load(to);
+                  io.disconnect();
+                }
+              });
+            },
+            {
+              rootMargin: "200px",
+            },
+          );
+          if (ref) {
+            io.observe(ref);
+          }
+          return () => {
+            io.disconnect();
+          };
+        }
+      }}
     >
       {children}
     </a>
