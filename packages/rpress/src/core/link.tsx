@@ -2,7 +2,7 @@
 
 import config from "virtual:rpress:config/json";
 import load from "virtual:rpress:rsc-loader";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
@@ -20,6 +20,8 @@ export default function Link(props: LinkProps) {
     ...rest
   } = props;
 
+  const anchorRef = useRef<HTMLAnchorElement>(null);
+
   useEffect(() => {
     if (prefetch === "viewport") {
       const io = new IntersectionObserver(
@@ -35,7 +37,7 @@ export default function Link(props: LinkProps) {
           rootMargin: "200px",
         },
       );
-      const el = document.querySelector(`a[href='${to}']`);
+      const el = anchorRef.current;
       if (el) {
         io.observe(el);
       }
@@ -64,6 +66,7 @@ export default function Link(props: LinkProps) {
         window.history.pushState({}, "", to);
         onClick?.(e);
       }}
+      ref={anchorRef}
     >
       {children}
     </a>
