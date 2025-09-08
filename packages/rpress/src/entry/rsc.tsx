@@ -85,9 +85,6 @@ export default async function handler(request: Request): Promise<Response> {
     // a tricky way to make sure e is Error,
     // this is because there will be some non-error thrown in the first time the page is loaded
     // when there has some reject in suspense boundary.
-    if (e === undefined) {
-      return handler(request);
-    }
 
     return new Response("Internal Server Error, stacks: " + e, { status: 500 });
   }
@@ -116,9 +113,6 @@ export async function handleSsg(request: Request): Promise<{
     });
     return { html: htmlStream, rsc: rscStream2 };
   } catch (e) {
-    if (e === undefined) {
-      return handleSsg(request);
-    }
     throw new Error("SSG Render Error: " + e);
   }
 }

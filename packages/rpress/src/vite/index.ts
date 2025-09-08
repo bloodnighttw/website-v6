@@ -142,7 +142,22 @@ export default function rpress(): Plugin[] {
         return `export default Object.values( import.meta.glob('/${config?.routesDir}', { eager: true })).filter(module => !!module?.route);`;
       },
     },
-
+    {
+      name: "virtual-rsc-loader",
+      resolveId(id) {
+        if (id === "virtual:rpress:rsc-loader") {
+          if (this.environment.name === "client") {
+            return this.resolve("rpress/rsc-loader");
+          }
+          return "\0" + id;
+        }
+      },
+      async load(id) {
+        if (id === "\0virtual:rpress:rsc-loader") {
+          return `export default () => { throw new Error("rsc-loader cannot be used in non client environment")}`;
+        }
+      },
+    },
     ...rsc({
       entries: {
         client: "./node_modules/rpress/dist/entry/browser.js",
