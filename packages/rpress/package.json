@@ -5,7 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "tsdown --watch",
     "build": "tsdown --clean",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test": "vitest run",
