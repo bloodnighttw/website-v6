@@ -14,7 +14,7 @@ export default function RPressConfig(): Plugin[] {
 
   return [
     {
-      name: "rpress:config",
+      name: "rpress:config-json",
       async configResolved(resolvedConfig) {
         const root = resolvedConfig.root || process.cwd();
         const mode =
@@ -77,13 +77,6 @@ export default function RPressConfig(): Plugin[] {
               : exported;
 
             config = userConfig as RPressConfig;
-            resolvedConfig.logger.info(
-              `[rpress] config loaded from ${path.basename(foundPath)}`,
-            );
-            // use debug log to avoid noisy output in production
-            resolvedConfig.logger.info(
-              `[rpress] config: ${JSON.stringify(config)}`,
-            );
           }
         } catch (err) {
           resolvedConfig.logger.warn(
@@ -91,21 +84,6 @@ export default function RPressConfig(): Plugin[] {
           );
         }
       },
-
-      async resolveId(id) {
-        if (id !== VIRTUAL_RPRESS_CONFIG) return;
-
-        // prefer resolving directly to the discovered config file if available
-        const target = configFilePath ?? "/rpress.config";
-        const resolved = await this.resolve(target, undefined, {
-          skipSelf: true,
-        });
-        return resolved?.id ?? null;
-      },
-    },
-
-    {
-      name: "rpress:virtual-config-json",
       resolveId(id) {
         if (id === VIRTUAL_RPRESS_CONFIG + "/json") {
           return RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json";
@@ -119,6 +97,20 @@ export default function RPressConfig(): Plugin[] {
             throw new Error("RPress config not found");
           }
         }
+      },
+    },
+
+    {
+      name: "rpress:config",
+      async resolveId(id) {
+        if (id !== VIRTUAL_RPRESS_CONFIG) return;
+
+        // prefer resolving directly to the discovered config file if available
+        const target = configFilePath ?? "/rpress.config";
+        const resolved = await this.resolve(target, undefined, {
+          skipSelf: true,
+        });
+        return resolved?.id ?? null;
       },
     },
 
