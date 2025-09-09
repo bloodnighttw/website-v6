@@ -1,4 +1,4 @@
-import { Matcher, type InferPathParams } from "../utils/path/matcher";
+import { Matcher, type InferPathParams } from "../../utils/path/matcher";
 
 interface RouteConfig<T extends string> {
   generator: () => Promise<Array<InferPathParams<T>>>;
@@ -16,12 +16,12 @@ interface Route<T extends string> {
   config: RouteConfig<T>;
 }
 
-export function createRoute<T extends string>(
+function createRoute<T extends string>(
   path: T,
   ...rest: InferPathParams<T> extends void ? [] : [config: RouteConfig<T>]
 ): Route<T>;
 
-export function createRoute<T extends string>(
+function createRoute<T extends string>(
   path: T,
   config?: RouteConfig<T> | undefined,
 ): Route<T> {
@@ -38,6 +38,8 @@ export function createRoute<T extends string>(
     config,
   };
 }
+
+export { createRoute };
 
 export type RouteParams<R extends Route<string>> =
   R extends Route<infer T> ? InferPathParams<T> : never;

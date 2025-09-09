@@ -1,4 +1,4 @@
-import { createRoute, type RouterProps } from "rpress";
+import { createRoute, type RouterProps } from "rpress/route";
 
 export const route = createRoute("/:lang", {
   generator: async () => {

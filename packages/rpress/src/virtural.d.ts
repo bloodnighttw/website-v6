@@ -4,7 +4,7 @@ declare module "virtual:rpress:config" {
 }
 
 declare module "virtual:rpress:routes" {
-  const routes: import("./core/route").RouteModule[];
+  const routes: import("./core/route/route").RouteModule[];
   export default routes;
 }
 

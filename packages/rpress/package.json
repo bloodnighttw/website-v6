@@ -51,6 +51,10 @@
     "./link": {
       "import": "./dist/link.js",
       "types": "./dist/link.d.ts"
+    },
+    "./route": {
+      "import": "./dist/route.js",
+      "types": "./dist/route.d.ts"
     }
   }
 }
