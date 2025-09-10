@@ -1,4 +1,4 @@
-import { createRoute, type RouterProps } from "rpress";
+import { createRoute, type RouterProps } from "rpress/route";
 import RootLayout from "./layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
 import ClientLz from "./layouts/counter.lz";

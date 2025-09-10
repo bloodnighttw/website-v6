@@ -5,7 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "tsdown --watch",
     "build": "tsdown --clean",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "test": "vitest run",
@@ -53,9 +52,9 @@
       "import": "./dist/link.js",
       "types": "./dist/link.d.ts"
     },
-    "./rsc-loader": {
-      "import": "./dist/rsc-loader.js",
-      "types": "./dist/rsc-loader.d.ts"
+    "./route": {
+      "import": "./dist/route.js",
+      "types": "./dist/route.d.ts"
     }
   }
 }

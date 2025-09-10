@@ -5,7 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo run build --filter='./packages/*' && turbo watch dev",
     "preview": "turbo preview",
     "build": "turbo build",
     "lint": "prettier --check . && turbo lint",
