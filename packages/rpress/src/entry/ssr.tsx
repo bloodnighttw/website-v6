@@ -31,7 +31,7 @@ export async function renderHtml(
         bootstrapScriptContent,
         onError: (e, info) => {
           if (e instanceof ShouldCaughtError) return;
-          else console.error(e, info);
+          throw e;
         },
       });
       htmlStream = prerenderResult.prelude;
@@ -40,7 +40,7 @@ export async function renderHtml(
         bootstrapScriptContent,
         onError: (e, info) => {
           if (e instanceof ShouldCaughtError) return;
-          else console.error(e, info);
+          throw e;
         },
       });
     }
