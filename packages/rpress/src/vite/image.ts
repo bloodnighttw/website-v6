@@ -5,6 +5,7 @@ import path from "node:path";
 export function image(): Plugin[] {
   let imageOutDir: string;
   let clientOutDir: string;
+  let isBuild = false;
   return [
     {
       name: "rpress:image",
@@ -15,14 +16,20 @@ export function image(): Plugin[] {
           "./node_modules/rpress/dist/image/server",
         ];
       },
+      buildStart() {
+        isBuild = true;
+      },
       resolveId(id) {
         if (id === "virtual:rpress:image") {
-          if (this.environment.name === "client") {
+          if (this.environment.name === "client" || !isBuild) {
             return this.resolve("./node_modules/rpress/dist/image/loader");
           } else {
             return this.resolve("./node_modules/rpress/dist/image/server");
           }
         }
+      },
+      buildEnd() {
+        isBuild = false;
       },
     },
     {
@@ -58,6 +65,8 @@ export function image(): Plugin[] {
                     path.join(imageOutDir, file),
                     path.join(dest, file),
                   ));
+                // delete original file
+                fs.promises.unlink(path.join(imageOutDir, file));
               }),
             );
           }
