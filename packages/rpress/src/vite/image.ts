@@ -53,23 +53,23 @@ export function image(): Plugin[] {
         if (this.environment.name === "ssr") {
           // copy all files from base to clientOutDir/images
           const dest = path.join(clientOutDir, "images");
+          if (!fs.existsSync(imageOutDir)) return;
+
           if (!fs.existsSync(dest)) {
             await fs.promises.mkdir(dest, { recursive: true });
           }
-          if (fs.existsSync(imageOutDir)) {
-            const files = await fs.promises.readdir(imageOutDir);
-            await Promise.all(
-              files.map((file) => {
-                (console.log("Copying image:", file),
-                  fs.promises.copyFile(
-                    path.join(imageOutDir, file),
-                    path.join(dest, file),
-                  ));
-                // delete original file
-                fs.promises.unlink(path.join(imageOutDir, file));
-              }),
-            );
-          }
+
+          console.log("Copying images to client build:", dest, imageOutDir);
+          // copy all files from imageOutDir to dest
+          const files = await fs.promises.readdir(imageOutDir);
+          await Promise.all(
+            files.map((file) =>
+              fs.promises.copyFile(
+                path.join(imageOutDir, file),
+                path.join(dest, file),
+              ),
+            ),
+          );
         }
       },
     },
