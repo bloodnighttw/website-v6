@@ -9,6 +9,8 @@ export function url2Hash(url: string) {
 }
 
 export default function loader(url: string) {
+  if (!url.startsWith("http")) return url; // local file, return as is
+
   if (import.meta.env.DEV) {
     return "_rpress?url=" + encodeURIComponent(url);
   }
