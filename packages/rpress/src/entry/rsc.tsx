@@ -3,10 +3,78 @@ import { type RouteModule } from "../core/route/route";
 import { isRSCRequest, matchParams } from "../utils/path/matcher";
 import normalize from "../utils/path/normalize";
 import type { RscPayload } from "../utils/path/constant";
+import sharp from "sharp";
 
 import allRouteModules from "virtual:rpress:routes";
 
 export { normalize, allRouteModules };
+
+async function handleImageRequest(request: Request): Promise<Response | null> {
+  const url = new URL(request.url);
+
+  // Check if this is an image processing request
+  if (!url.pathname.startsWith("/_rpress")) {
+    return null;
+  }
+
+  const imageUrl = url.searchParams.get("url");
+  if (!imageUrl) {
+    return new Response("Missing url parameter", { status: 400 });
+  }
+
+  try {
+    // Fetch the original image
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      return new Response("Failed to fetch image", { status: 404 });
+    }
+
+    const buffer = await response.arrayBuffer();
+    let sharpInstance = sharp(Buffer.from(buffer));
+
+    // Handle size parameter (width x height or just width)
+    const size = url.searchParams.get("size");
+    if (size) {
+      const [width, height] = size.split("x").map(Number);
+      if (width && !isNaN(width)) {
+        const options: sharp.ResizeOptions = { width };
+        if (height && !isNaN(height)) {
+          options.height = height;
+        }
+        sharpInstance = sharpInstance.resize(options);
+      }
+    }
+
+    // Handle quality parameter
+    const quality = url.searchParams.get("quality");
+    const qualityNum = quality ? parseInt(quality, 10) : 80;
+
+    if (
+      qualityNum &&
+      !isNaN(qualityNum) &&
+      qualityNum > 0 &&
+      qualityNum <= 100
+    ) {
+      // Convert to WebP with specified quality
+      sharpInstance = sharpInstance.webp({ quality: qualityNum });
+    } else {
+      // Default WebP conversion
+      sharpInstance = sharpInstance.webp({ quality: 80 });
+    }
+
+    const processedBuffer = await sharpInstance.toBuffer();
+
+    return new Response(processedBuffer as BodyInit, {
+      headers: {
+        "Content-Type": "image/webp",
+        "Cache-Control": "public, max-age=31536000",
+      },
+    });
+  } catch (error) {
+    console.error("Image processing error:", error);
+    return new Response("Image processing failed", { status: 500 });
+  }
+}
 
 // export const allRouteModules = Object.values(
 //   import.meta.glob("/src/routes/**", {
@@ -50,6 +118,12 @@ async function generateRSCStream({ request }: { request: Request }) {
 }
 
 export default async function handler(request: Request): Promise<Response> {
+  // Handle image processing requests first
+  const imageResponse = await handleImageRequest(request);
+  if (imageResponse) {
+    return imageResponse;
+  }
+
   const rscStream = await generateRSCStream({ request });
 
   if (!rscStream) {
