@@ -1,3 +1,5 @@
+import type { ImageLoaderOptions } from "./handler";
+
 export function url2Hash(url: string) {
   let hash = 0;
   for (let i = 0; i < url.length; i++) {
@@ -6,13 +8,6 @@ export function url2Hash(url: string) {
     hash |= 0; // Convert to 32bit integer
   }
   return Math.abs(hash).toString(36);
-}
-
-export interface ImageLoaderOptions {
-  url: string;
-  quality?: number; // 1-100
-  width?: number; // in pixels
-  height?: number; // in pixels
 }
 
 export default function loader(options: ImageLoaderOptions) {

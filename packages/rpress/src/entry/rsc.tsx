@@ -3,9 +3,9 @@ import { type RouteModule } from "../core/route/route";
 import { isRSCRequest, matchParams } from "../utils/path/matcher";
 import normalize from "../utils/path/normalize";
 import type { RscPayload } from "../utils/path/constant";
-import sharp from "sharp";
 
 import allRouteModules from "virtual:rpress:routes";
+import handleImageConversion from "../core/image/handler";
 
 export { normalize, allRouteModules };
 
@@ -30,41 +30,21 @@ async function handleImageRequest(request: Request): Promise<Response | null> {
     }
 
     const buffer = await response.arrayBuffer();
-    let sharpInstance = sharp(Buffer.from(buffer));
+    const options = {
+      url: imageUrl,
+      width: url.searchParams.get("width")
+        ? parseInt(url.searchParams.get("width") as string)
+        : undefined,
+      height: url.searchParams.get("height")
+        ? parseInt(url.searchParams.get("height") as string)
+        : undefined,
+      quality: url.searchParams.get("quality")
+        ? parseInt(url.searchParams.get("quality") as string)
+        : undefined,
+    };
 
-    // Handle size parameter (width x height or just width)
-    const height = url.searchParams.get("height");
-    const width = url.searchParams.get("width");
-
-    if (width || height) {
-      const options: sharp.ResizeOptions = {};
-      if (width && !isNaN(Number(width))) {
-        options.width = Number(width);
-      }
-      if (height && !isNaN(Number(height))) {
-        options.height = Number(height);
-      }
-      sharpInstance = sharpInstance.resize(options);
-    }
-
-    // Handle quality parameter
-    const quality = url.searchParams.get("quality");
-    const qualityNum = quality ? parseInt(quality, 10) : 100;
-
-    if (
-      qualityNum &&
-      !isNaN(qualityNum) &&
-      qualityNum > 0 &&
-      qualityNum <= 100
-    ) {
-      // Convert to WebP with specified quality
-      sharpInstance = sharpInstance.webp({ quality: qualityNum });
-    } else {
-      // Default WebP conversion
-      sharpInstance = sharpInstance.webp({ quality: 80 });
-    }
-
-    const processedBuffer = await sharpInstance.toBuffer();
+    // Process the image
+    const processedBuffer = await handleImageConversion(buffer, options);
 
     return new Response(processedBuffer as BodyInit, {
       headers: {

@@ -4,9 +4,13 @@ import fs from "fs";
 
 import loader, { url2Hash } from "./loader";
 import { use } from "react";
-import { type ImageLoaderOptions } from "./loader";
+import type { ImageLoaderOptions } from "./handler";
 
-async function image2file(url: string, hash: string) {
+async function image2file(options: ImageLoaderOptions) {
+  const { url } = options;
+  const hash = url2Hash(url);
+  if (!url.startsWith("http")) return url; // local file, return as is
+  if (!import.meta.env.PROD) return url; // only generate in production
   const path = base + hash + ".webp";
   // if folder not exist, create it
   const dir = base;
@@ -28,10 +32,8 @@ async function image2file(url: string, hash: string) {
 }
 
 export default function handleGeneration(options: ImageLoaderOptions) {
-  const { url } = options;
-  const hash = url2Hash(url);
   if (import.meta.env.PROD) {
-    use(image2file(url, hash));
+    use(image2file(options));
   }
-  return loader({ url });
+  return loader(options);
 }
