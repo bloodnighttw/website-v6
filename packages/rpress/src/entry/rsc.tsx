@@ -121,11 +121,12 @@ async function generateRSCStream({ request }: { request: Request }) {
 
 export default async function handler(request: Request): Promise<Response> {
   // Handle image processing requests first
-  const imageResponse = await handleImageRequest(request);
-  if (import.meta.env.DEV)
+  if (import.meta.env.DEV) {
+    const imageResponse = await handleImageRequest(request);
     if (imageResponse) {
       return imageResponse;
     }
+  }
 
   const rscStream = await generateRSCStream({ request });
 
