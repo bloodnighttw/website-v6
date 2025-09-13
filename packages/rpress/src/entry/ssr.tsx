@@ -5,6 +5,7 @@ import { injectRSCPayload } from "rsc-html-stream/server";
 import { prerender } from "react-dom/static.edge";
 import ShouldCaughtError from "../utils/shouldCaughtError";
 import type { RscPayload } from "../utils/path/constant";
+import ShouldThrowError from "../utils/shouldThrowError";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,
@@ -29,18 +30,20 @@ export async function renderHtml(
     if (options?.ssg) {
       const prerenderResult = await prerender(<SsrRoot />, {
         bootstrapScriptContent,
-        onError: (e, info) => {
+        onError: (e) => {
           if (e instanceof ShouldCaughtError) return;
-          throw e;
+          else if (e instanceof ShouldThrowError) throw e;
+          else console.error(e);
         },
       });
       htmlStream = prerenderResult.prelude;
     } else {
       htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
         bootstrapScriptContent,
-        onError: (e, info) => {
+        onError: (e) => {
           if (e instanceof ShouldCaughtError) return;
-          throw e;
+          else if (e instanceof ShouldThrowError) throw e;
+          else console.error(e);
         },
       });
     }

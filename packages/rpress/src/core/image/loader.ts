@@ -11,7 +11,6 @@ export function url2Hash(url: string) {
 }
 
 export default function loader(options: ImageLoaderOptions) {
-  console.log("Image loader options:", options);
   const { url, quality, width, height } = options;
   if (!url.startsWith("http")) return url; // local file, return as is
 
