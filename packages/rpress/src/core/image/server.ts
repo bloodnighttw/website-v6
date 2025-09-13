@@ -5,6 +5,7 @@ import fs from "fs";
 import loader, { url2Hash } from "./loader";
 import { use } from "react";
 import type { ImageLoaderOptions } from "./handler";
+import handleImageConversion from "./handler";
 
 async function image2file(options: ImageLoaderOptions) {
   const { url } = options;
@@ -25,10 +26,9 @@ async function image2file(options: ImageLoaderOptions) {
     throw new Error("Failed to fetch image from URL: " + url);
   }
   const arrayBuffer = await fetchFromurl.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
 
-  await sharp(buffer).webp({ quality: 80 }).toFile(path);
-  return path;
+  const convertedBuffer = await handleImageConversion(arrayBuffer, options);
+  await fs.promises.writeFile(path, convertedBuffer);
 }
 
 export default function handleGeneration(options: ImageLoaderOptions) {
