@@ -1,11 +1,12 @@
 import base from "virtual:rpress:image-base";
 import fs from "fs";
 
-import loader, { url2Hash } from "./loader";
+import loader from "./loader";
 import { use } from "react";
 import type { ImageLoaderOptions } from "./handler";
 import handleImageConversion from "./handler";
 import ShouldThrowError from "../../utils/shouldThrowError";
+import { url2Hash } from "./url2Hash";
 
 class ImageConversionError extends ShouldThrowError {
   constructor(url: string, options: ErrorOptions) {
@@ -25,8 +26,6 @@ async function image2file(options: ImageLoaderOptions) {
     if (!fs.existsSync(dir)) {
       await fs.promises.mkdir(dir);
     }
-
-    console.log("Generating image:", url, "->", path);
 
     const fetchFromurl = await fetch(url);
     if (!fetchFromurl.ok) {

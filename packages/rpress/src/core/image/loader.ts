@@ -1,14 +1,5 @@
 import type { ImageLoaderOptions } from "./handler";
-
-export function url2Hash(url: string) {
-  let hash = 0;
-  for (let i = 0; i < url.length; i++) {
-    const char = url.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0; // Convert to 32bit integer
-  }
-  return Math.abs(hash).toString(36);
-}
+import { url2Hash } from "./url2Hash";
 
 export default function loader(options: ImageLoaderOptions) {
   const { url, quality, width, height } = options;
@@ -23,6 +14,6 @@ export default function loader(options: ImageLoaderOptions) {
       (height ? `&height=${height}` : "")
     );
   }
-  const hash = url2Hash(url);
+  const hash = url2Hash(url, options);
   return "/images/" + hash + ".webp";
 }
