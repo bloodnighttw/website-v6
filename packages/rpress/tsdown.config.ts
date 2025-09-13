@@ -33,5 +33,7 @@ export default defineConfig({
     "virtual:rpress:routes",
     "virtual:rpress:config/json",
     "virtual:rpress:rsc-loader",
+    "virtual:rpress:image",
+    "virtual:rpress:image-base",
   ],
 });
