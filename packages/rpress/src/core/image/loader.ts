@@ -8,11 +8,26 @@ export function url2Hash(url: string) {
   return Math.abs(hash).toString(36);
 }
 
-export default function loader(url: string) {
+export interface ImageLoaderOptions {
+  url: string;
+  quality?: number; // 1-100
+  width?: number; // in pixels
+  height?: number; // in pixels
+}
+
+export default function loader(options: ImageLoaderOptions) {
+  console.log("Image loader options:", options);
+  const { url, quality, width, height } = options;
   if (!url.startsWith("http")) return url; // local file, return as is
 
   if (import.meta.env.DEV) {
-    return "_rpress?url=" + encodeURIComponent(url);
+    return (
+      "_rpress?url=" +
+      encodeURIComponent(url) +
+      (quality ? `&quality=${quality}` : "") +
+      (width ? `&width=${width} ` : "") +
+      (height ? `&height=${height}` : "")
+    );
   }
   const hash = url2Hash(url);
   return "/images/" + hash + ".webp";

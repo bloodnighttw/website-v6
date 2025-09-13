@@ -19,7 +19,10 @@ declare module "virtual:rpress:rsc-loader" {
 }
 
 declare module "virtual:rpress:image" {
-  export default (url: string) => string;
+  const loader: (
+    options: import("./core/image/loader").ImageLoaderOptions,
+  ) => string;
+  export default loader;
 }
 
 declare module "virtual:rpress:image-base" {

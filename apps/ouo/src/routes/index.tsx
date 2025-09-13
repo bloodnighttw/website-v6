@@ -23,7 +23,12 @@ export default async function WTF(props: RouterProps<typeof route>) {
       <Link to="/en" prefetch="viewport">
         to en
       </Link>
-      <Image src="https://r2.bntw.dev/NqhBNru.jpeg" alt="logo" />
+      <Image
+        src="https://r2.bntw.dev/NqhBNru.jpeg"
+        alt="logo"
+        width={100}
+        height={100}
+      />
     </Flatten>
   );
 }

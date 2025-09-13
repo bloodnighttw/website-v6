@@ -33,21 +33,23 @@ async function handleImageRequest(request: Request): Promise<Response | null> {
     let sharpInstance = sharp(Buffer.from(buffer));
 
     // Handle size parameter (width x height or just width)
-    const size = url.searchParams.get("size");
-    if (size) {
-      const [width, height] = size.split("x").map(Number);
-      if (width && !isNaN(width)) {
-        const options: sharp.ResizeOptions = { width };
-        if (height && !isNaN(height)) {
-          options.height = height;
-        }
-        sharpInstance = sharpInstance.resize(options);
+    const height = url.searchParams.get("height");
+    const width = url.searchParams.get("width");
+
+    if (width || height) {
+      const options: sharp.ResizeOptions = {};
+      if (width && !isNaN(Number(width))) {
+        options.width = Number(width);
       }
+      if (height && !isNaN(Number(height))) {
+        options.height = Number(height);
+      }
+      sharpInstance = sharpInstance.resize(options);
     }
 
     // Handle quality parameter
     const quality = url.searchParams.get("quality");
-    const qualityNum = quality ? parseInt(quality, 10) : 80;
+    const qualityNum = quality ? parseInt(quality, 10) : 100;
 
     if (
       qualityNum &&

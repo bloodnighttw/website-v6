@@ -4,6 +4,7 @@ import fs from "fs";
 
 import loader, { url2Hash } from "./loader";
 import { use } from "react";
+import { type ImageLoaderOptions } from "./loader";
 
 async function image2file(url: string, hash: string) {
   const path = base + hash + ".webp";
@@ -26,10 +27,11 @@ async function image2file(url: string, hash: string) {
   return path;
 }
 
-export default function handleGeneration(url: string) {
+export default function handleGeneration(options: ImageLoaderOptions) {
+  const { url } = options;
   const hash = url2Hash(url);
   if (import.meta.env.PROD) {
     use(image2file(url, hash));
   }
-  return loader(url);
+  return loader({ url });
 }
