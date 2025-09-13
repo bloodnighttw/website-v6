@@ -21,7 +21,9 @@
     "@vitejs/plugin-react": "latest",
     "vite-plugin-inspect": "^11.3.2",
     "tsdown": "^0.14.1",
-    "@rpress/eslint": "workspace:*"
+    "@rpress/eslint": "workspace:*",
+    "sharp": "0.34.3",
+    "server-only": "0.0.1"
   },
   "peerDependencies": {
     "react": "^19.0.0",
@@ -55,6 +57,10 @@
     "./route": {
       "import": "./dist/route.js",
       "types": "./dist/route.d.ts"
+    },
+    "./image": {
+      "import": "./dist/image.js",
+      "types": "./dist/image.d.ts"
     }
   }
 }

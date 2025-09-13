@@ -3,6 +3,7 @@ import RootLayout from "./layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
 import ClientLz from "./layouts/counter.lz";
 import Link from "rpress/link";
+import Image from "rpress/image";
 
 export const route = createRoute("/");
 
@@ -22,6 +23,12 @@ export default async function WTF(props: RouterProps<typeof route>) {
       <Link to="/en" prefetch="viewport">
         to en
       </Link>
+      <Image
+        src="https://r2.bntw.dev/NqhBNru.jpeg"
+        alt="logo"
+        width={100}
+        height={100}
+      />
     </Flatten>
   );
 }
