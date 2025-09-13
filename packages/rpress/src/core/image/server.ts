@@ -7,6 +7,7 @@ import type { ImageLoaderOptions } from "./handler";
 import handleImageConversion from "./handler";
 import ShouldThrowError from "../../utils/shouldThrowError";
 import { url2Hash } from "./url2Hash";
+import path from "path";
 
 class ImageConversionError extends ShouldThrowError {
   constructor(url: string, options: ErrorOptions) {
@@ -27,10 +28,10 @@ async function image2file(options: ImageLoaderOptions) {
     const hash = url2Hash(url);
     if (!url.startsWith("http")) return; // local file, return as is
     if (!import.meta.env.PROD) return; // only generate in production
-    const path = base + hash + ".webp";
+    const filePath = path.join(base, hash + ".webp");
     // if folder not exist, create it
     const dir = base;
-    if (!cacheCheckExist(path)) {
+    if (!cacheCheckExist(filePath)) {
       await fs.promises.mkdir(dir);
     }
 
@@ -39,9 +40,8 @@ async function image2file(options: ImageLoaderOptions) {
       throw new Error("Failed to fetch image from URL: " + url);
     }
     const arrayBuffer = await fetchFromurl.arrayBuffer();
-
     const convertedBuffer = await handleImageConversion(arrayBuffer, options);
-    await fs.promises.writeFile(path, convertedBuffer);
+    await fs.promises.writeFile(filePath, convertedBuffer);
   } catch (e) {
     throw new ImageConversionError(url, { cause: e });
   }

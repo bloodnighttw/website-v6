@@ -1,3 +1,4 @@
+import path from "path";
 import { type Plugin } from "vite";
 
 export function image(): Plugin[] {
@@ -25,7 +26,10 @@ export function image(): Plugin[] {
     {
       name: "rpress:image-base",
       configResolved(config) {
-        imageOutDir = config.environments.client.build.outDir + "/images/";
+        imageOutDir = path.join(
+          config.environments.client.build.outDir,
+          "images",
+        );
       },
       resolveId(id) {
         if (id === "virtual:rpress:image-base") {
