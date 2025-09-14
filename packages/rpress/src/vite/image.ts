@@ -9,14 +9,14 @@ export function image(): Plugin[] {
       configResolved(config) {
         config.build.rollupOptions.external = [
           // ...((config.build.rollupOptions.external as string[]) || []),
-          "./node_modules/rpress/dist/image/loader",
+          "./node_modules/rpress/dist/image/client",
           "./node_modules/rpress/dist/image/server",
         ];
       },
       resolveId(id) {
         if (id === "virtual:rpress:image") {
           if (this.environment.name === "client") {
-            return this.resolve("./node_modules/rpress/dist/image/loader");
+            return this.resolve("./node_modules/rpress/dist/image/client");
           } else {
             return this.resolve("./node_modules/rpress/dist/image/server");
           }

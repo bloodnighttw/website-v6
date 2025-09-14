@@ -1,7 +1,6 @@
 import base from "virtual:rpress:image-base";
 import fs from "fs";
 
-import loader from "./loader";
 import { cache, use } from "react";
 import type { ImageLoaderOptions } from "./handler";
 import handleImageConversion from "./handler";
@@ -13,6 +12,23 @@ class ImageConversionError extends ShouldThrowError {
   constructor(url: string, options: ErrorOptions) {
     super("Image conversion failed on " + url, options);
   }
+}
+
+function serverLoader(options: ImageLoaderOptions) {
+  const { url, quality, width, height } = options;
+  if (!url.startsWith("http")) return url; // local file, return as is
+
+  if (import.meta.env.DEV) {
+    return (
+      "_rpress?url=" +
+      encodeURIComponent(url) +
+      (quality ? `&quality=${quality}` : "") +
+      (width ? `&width=${width} ` : "") +
+      (height ? `&height=${height}` : "")
+    );
+  }
+
+  return "/images/" + url2Hash(url, options) + ".webp";
 }
 
 function checkExist(path: string) {
@@ -65,5 +81,5 @@ export default function handleGeneration(options: ImageLoaderOptions) {
   if (import.meta.env.PROD) {
     use(getOrSetCache(options));
   }
-  return loader(options);
+  return serverLoader(options);
 }

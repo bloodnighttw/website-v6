@@ -15,7 +15,7 @@ export default defineConfig({
     "entry/rsc": "src/entry/rsc.tsx",
     "entry/ssr": "src/entry/ssr.tsx",
     "image/server": "src/core/image/server.ts",
-    "image/loader": "src/core/image/loader.ts",
+    "image/loader": "src/core/image/client.ts",
     image: "src/core/image/index.tsx",
   },
   format: ["esm"],
