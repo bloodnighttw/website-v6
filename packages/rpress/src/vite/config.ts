@@ -19,20 +19,6 @@ export default function RPressConfig(
 
   return [
     {
-      name: "rpress:config-json",
-      resolveId(id) {
-        if (id === VIRTUAL_RPRESS_CONFIG + "/json") {
-          return RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json";
-        }
-      },
-      load(id) {
-        if (id === RESOLVED_VIRTUAL_RPRESS_CONFIG + "/json") {
-          return `export default ${JSON.stringify(config)};`;
-        }
-      },
-    },
-
-    {
       name: "rpress:config",
       resolveId(id) {
         if (id === VIRTUAL_RPRESS_CONFIG) {
