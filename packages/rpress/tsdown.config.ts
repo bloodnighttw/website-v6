@@ -35,5 +35,6 @@ export default defineConfig({
     "virtual:rpress:rsc-loader",
     "virtual:rpress:image",
     "virtual:rpress:image-base",
+    "virtual:rpress:client-env",
   ],
 });
