@@ -29,3 +29,8 @@ declare module "virtual:rpress:image-base" {
   const string: string;
   export default string;
 }
+
+declare module "virtual:rpress:client-env" {
+  const isClient: boolean;
+  export default isClient;
+}

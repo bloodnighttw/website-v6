@@ -2,20 +2,24 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: {
-    index: "src/index.ts",
     route: "src/core/route/index.ts",
-    dynamic: "src/core/dynamic.tsx",
     helper: "src/helper/index.ts",
     link: "src/core/link.tsx",
+    nossr: "src/core/nossr.tsx",
+    // virtual module need this.
     "rsc-loader": "src/core/rsc-loader.tsx",
     // prevent hydration errors when import this module
     error: "src/helper/error.tsx",
     vite: "src/vite/index.ts",
+    // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
+    // for vite-rsc plugin
     "entry/rsc": "src/entry/rsc.tsx",
+    // for vite-rsc plugin
     "entry/ssr": "src/entry/ssr.tsx",
+    // for virtual module
     "image/server": "src/core/image/server.ts",
-    "image/loader": "src/core/image/client.ts",
+    "image/client": "src/core/image/client.ts",
     image: "src/core/image/index.tsx",
   },
   format: ["esm"],
@@ -34,5 +38,6 @@ export default defineConfig({
     "virtual:rpress:rsc-loader",
     "virtual:rpress:image",
     "virtual:rpress:image-base",
+    "virtual:rpress:client-env",
   ],
 });
