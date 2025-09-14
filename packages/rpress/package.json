@@ -61,6 +61,10 @@
     "./image": {
       "import": "./dist/image.js",
       "types": "./dist/image.d.ts"
+    },
+    "./nossr": {
+      "import": "./dist/nossr.js",
+      "types": "./dist/nossr.d.ts"
     }
   }
 }
