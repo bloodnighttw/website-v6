@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, edited, synchronize]
   # Allow manual runs by repo owners via workflow_dispatch
   workflow_dispatch:
 
@@ -12,6 +12,7 @@ jobs:
   test:
     name: Run tests
     runs-on: ${{ matrix.runner }}
+    if: github.actor == github.repository_owner || github.event_name == 'push'
     strategy:
       matrix:
         include:
