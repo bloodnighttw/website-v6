@@ -34,10 +34,6 @@
     "dist"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
     "./vite": {
       "import": "./dist/vite.js",
       "types": "./dist/vite.d.ts"
@@ -45,10 +41,6 @@
     "./helper": {
       "import": "./dist/helper.js",
       "types": "./dist/helper.d.ts"
-    },
-    "./dynamic": {
-      "import": "./dist/dynamic.js",
-      "types": "./dist/dynamic.d.ts"
     },
     "./link": {
       "import": "./dist/link.js",
