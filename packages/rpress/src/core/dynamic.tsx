@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import ShouldCaughtError from "../utils/shouldCaughtError";
+import isClient from "virtual:rpress:client-env";
 
 export class NoSSR extends ShouldCaughtError {
   constructor() {
@@ -26,11 +27,9 @@ export default function dynamic(
   const LazyComponent = lazy(importPromise);
 
   return function (prop: React.ComponentProps<typeof LazyComponent>) {
-    const isServer = typeof window === "undefined";
-
     return (
       <Suspense fallback={loading}>
-        {isServer && !ssr ? <PreventRendring /> : null}
+        {!isClient && !ssr ? <PreventRendring /> : null}
         <LazyComponent {...prop} />
       </Suspense>
     );
