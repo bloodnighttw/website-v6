@@ -2,7 +2,6 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: {
-    index: "src/index.ts",
     route: "src/core/route/index.ts",
     helper: "src/helper/index.ts",
     link: "src/core/link.tsx",
