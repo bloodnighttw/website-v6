@@ -4,13 +4,14 @@ import { rscSsgPlugin as ssg } from "./ssg";
 import rscLoader from "./rsc-loader";
 import rscConfig from "./config";
 import { image } from "./image";
+import { type RPressConfig } from "../core/defineConfig";
 
 const PKG_NAME = "rpress";
 
-export default function rpress(): Plugin[] {
+export default function rpress(config: Partial<RPressConfig>): Plugin[] {
   return [
     ...image(),
-    ...rscConfig(),
+    ...rscConfig(config),
     rscLoader(),
     ...rsc({
       entries: {
