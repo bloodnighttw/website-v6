@@ -8,7 +8,7 @@ declare module "virtual:rpress:routes" {
   export default routes;
 }
 
-declare module "virtual:rpress:config/json" {
+declare module "virtual:rpress:config" {
   const config: import("./core/defineConfig").RPressConfig;
   export default config;
 }

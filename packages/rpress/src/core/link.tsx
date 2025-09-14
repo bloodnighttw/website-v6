@@ -1,6 +1,6 @@
 "use client";
 
-import config from "virtual:rpress:config/json";
+import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import { useEffect } from "react";
 

@@ -3,7 +3,7 @@ import React from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "../utils/path/constant";
-import config from "virtual:rpress:config/json";
+import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 
 async function fetchRSC() {

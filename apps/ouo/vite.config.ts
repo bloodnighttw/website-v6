@@ -4,5 +4,12 @@ import rpress from "rpress/vite";
 // import inspect from "vite-plugin-inspect";
 
 export default defineConfig({
-  plugins: [react(), rpress()],
+  plugins: [
+    react(),
+    rpress({
+      routesDir: "src/routes/**",
+      strictMode: true,
+      prefetchStrategy: "hover",
+    }),
+  ],
 });

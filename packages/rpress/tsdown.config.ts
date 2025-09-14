@@ -31,7 +31,6 @@ export default defineConfig({
     "@vitejs/plugin-rsc",
     "virtual:rpress:config",
     "virtual:rpress:routes",
-    "virtual:rpress:config/json",
     "virtual:rpress:rsc-loader",
     "virtual:rpress:image",
     "virtual:rpress:image-base",
