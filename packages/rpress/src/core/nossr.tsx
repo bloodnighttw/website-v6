@@ -23,8 +23,7 @@ export default function NoSSR({
 }) {
   return (
     <Suspense fallback={fallback}>
-      {isClient ? null : <ThrowNoSSR />}
-      {children}
+      {isClient ? children : <ThrowNoSSR />}
     </Suspense>
   );
 }
