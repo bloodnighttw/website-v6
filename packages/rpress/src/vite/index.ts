@@ -45,3 +45,5 @@ export default function rpress(config: Partial<RPressConfig>): Plugin[] {
     },
   ];
 }
+
+export type { RPressConfig };
