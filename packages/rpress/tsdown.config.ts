@@ -14,6 +14,9 @@ export default defineConfig({
     "entry/browser": "src/entry/browser.tsx",
     "entry/rsc": "src/entry/rsc.tsx",
     "entry/ssr": "src/entry/ssr.tsx",
+    "image/server": "src/core/image/server.ts",
+    "image/loader": "src/core/image/client.ts",
+    image: "src/core/image/index.tsx",
   },
   format: ["esm"],
   dts: true,
@@ -30,5 +33,7 @@ export default defineConfig({
     "virtual:rpress:routes",
     "virtual:rpress:config/json",
     "virtual:rpress:rsc-loader",
+    "virtual:rpress:image",
+    "virtual:rpress:image-base",
   ],
 });

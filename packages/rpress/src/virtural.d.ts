@@ -17,3 +17,15 @@ declare module "virtual:rpress:rsc-loader" {
   import load from "./core/rsc-loader";
   export default load;
 }
+
+declare module "virtual:rpress:image" {
+  const loader: (
+    options: import("./core/image/handler").ImageLoaderOptions,
+  ) => string;
+  export default loader;
+}
+
+declare module "virtual:rpress:image-base" {
+  const string: string;
+  export default string;
+}

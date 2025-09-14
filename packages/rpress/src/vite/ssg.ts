@@ -33,11 +33,12 @@ async function renderStatic(config: ResolvedConfig) {
   );
 
   const all = entry.allRouteModules;
-  const strss = await Promise.all(
-    all.map(async (module) => {
+  const pathnames = await all.reduce(
+    async (accPromise, module) => {
+      const acc = await accPromise;
       const usePath = module.route.matcher.noKeysUsePath();
       if (typeof usePath === "string") {
-        return [usePath];
+        return [...acc, usePath];
       }
 
       const path = module.route.config.generator as unknown as () => Promise<
@@ -49,13 +50,10 @@ async function renderStatic(config: ResolvedConfig) {
         return matcher.toString(params);
       });
 
-      return strs;
-    }),
+      return [...acc, ...strs];
+    },
+    Promise.resolve([] as string[]),
   );
-
-  const pathnames = strss.reduce((acc, curr) => {
-    return [...acc, ...curr];
-  }, []);
 
   // render rsc and html
   const baseDir = config.environments.client.build.outDir;
