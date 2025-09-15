@@ -5,6 +5,7 @@ import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "../utils/path/constant";
 import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
+import RouteContext from "../core/route/context";
 
 async function fetchRSC() {
   const payload = await load(window.location.pathname);
@@ -27,7 +28,11 @@ export default function BrowserRoot({
     return listenNavigation(onNavigation);
   }, []);
 
-  return payload.root;
+  return (
+    <RouteContext value={{ setRscPayload: setPayload }}>
+      {payload.root}
+    </RouteContext>
+  );
 }
 
 async function hydrate(): Promise<void> {
