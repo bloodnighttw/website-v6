@@ -14,4 +14,10 @@ function load(url: string) {
   return b.get(url)!;
 }
 
+if (import.meta.hot) {
+  import.meta.hot.on("rsc:update", () => {
+    b.clear();
+  });
+}
+
 export default load;
