@@ -3,6 +3,7 @@
 import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import { useEffect } from "react";
+import useNavigate from "./route/navigate";
 
 interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
@@ -11,6 +12,8 @@ interface LinkProps
 }
 
 export default function Link(props: LinkProps) {
+  const navi = useNavigate();
+
   const {
     to,
     children,
@@ -38,8 +41,8 @@ export default function Link(props: LinkProps) {
       }}
       onClick={(e) => {
         e.preventDefault();
-        window.history.pushState({}, "", to);
         onClick?.(e);
+        navi(to);
       }}
       ref={(ref) => {
         if (prefetch === "viewport") {
