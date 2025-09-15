@@ -58,14 +58,6 @@ async function handleImageRequest(request: Request): Promise<Response | null> {
   }
 }
 
-// export const allRouteModules = Object.values(
-//   import.meta.glob("/src/routes/**", {
-//     eager: true,
-//   }),
-// ).filter(
-//   (module): module is RouteModule => !!(module as Partial<RouteModule>)?.route,
-// );
-
 async function generateRSCStream({ request }: { request: Request }) {
   const url = new URL(request.url);
   const normalizeUrl = normalize(url.pathname);
@@ -140,10 +132,6 @@ export default async function handler(request: Request): Promise<Response> {
       },
     });
   } catch (e) {
-    // a tricky way to make sure e is Error,
-    // this is because there will be some non-error thrown in the first time the page is loaded
-    // when there has some reject in suspense boundary.
-
     return new Response("Internal Server Error, stacks: " + e, { status: 500 });
   }
 }
