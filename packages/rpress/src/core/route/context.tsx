@@ -1,14 +1,9 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 
-const RouteContext = createContext<{
+export const RouteContext = createContext<{
   setUrl: (url: string) => void;
 }>({
   setUrl: () => {},
 });
 
 export default RouteContext;
-
-export function useNavigate() {
-  const { setUrl } = useContext(RouteContext);
-  return setUrl;
-}

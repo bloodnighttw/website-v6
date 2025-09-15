@@ -3,7 +3,7 @@
 import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import { useEffect } from "react";
-import { useNavigate } from "./route/context";
+import useNavigate from "./route/navigate";
 
 interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {

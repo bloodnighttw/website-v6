@@ -57,6 +57,10 @@
     "./nossr": {
       "import": "./dist/nossr.js",
       "types": "./dist/nossr.d.ts"
+    },
+    "./navigate": {
+      "import": "./dist/navigate.js",
+      "types": "./dist/navigate.d.ts"
     }
   }
 }

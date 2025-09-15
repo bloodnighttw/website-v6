@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     route: "src/core/route/index.ts",
     helper: "src/helper/index.ts",
+    navigate: "src/core/route/navigate.tsx",
     link: "src/core/link.tsx",
     nossr: "src/core/nossr.tsx",
     // virtual module need this.
