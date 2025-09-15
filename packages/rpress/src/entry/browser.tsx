@@ -42,8 +42,8 @@ async function hydrate(): Promise<void> {
     <BrowserRoot initialPayload={initialPayload} />
   );
 
-  const dealWithInternelError = (e: unknown, info: unknown) => {
-    console.debug("An Internal Exception has been dealed", e, info);
+  const dealWithInternelError = () => {
+    // ignore the error from rsc
   };
 
   ReactDomClient.hydrateRoot(document, browserRoot, {
