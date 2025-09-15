@@ -41,12 +41,8 @@ export default function Link(props: LinkProps) {
       }}
       onClick={(e) => {
         e.preventDefault();
-        let prevent = false;
-        e.preventDefault = () => {
-          prevent = true;
-        };
         onClick?.(e);
-        if (!prevent) navi(to);
+        navi(to);
       }}
       ref={(ref) => {
         if (prefetch === "viewport") {
