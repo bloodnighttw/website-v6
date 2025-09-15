@@ -1,5 +1,10 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  startTransition,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "../utils/path/constant";
@@ -19,7 +24,10 @@ export default function BrowserRoot({
   const setUrl = useCallback((url: string) => {
     load(url).then((payload: RscPayload) => {
       window.history.pushState({}, "", url);
-      setPayload(payload);
+      // to mark it as non-urgent
+      startTransition(() => {
+        setPayload(payload);
+      });
     });
   }, []);
 
