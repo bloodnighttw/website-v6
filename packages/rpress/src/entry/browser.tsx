@@ -1,16 +1,11 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "../utils/path/constant";
 import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import RouteContext from "../core/route/context";
-
-async function fetchRSC() {
-  const payload = await load(window.location.pathname);
-  return payload;
-}
 
 // we export it to prevent hmr invalidate.
 // (fast-refresh require a default export)
@@ -19,20 +14,45 @@ export default function BrowserRoot({
 }: {
   initialPayload: RscPayload;
 }) {
-  const [payload, setPayload] = React.useState(initialPayload);
+  const [payload, setPayload] = useState(initialPayload);
 
-  React.useEffect(() => {
-    const onNavigation = () => {
-      fetchRSC().then(setPayload);
-    };
-    return listenNavigation(onNavigation);
+  const setUrl = useCallback((url: string) => {
+    load(url).then((payload: RscPayload) => {
+      window.history.pushState({}, "", url);
+      setPayload(payload);
+    });
   }, []);
 
-  return (
-    <RouteContext value={{ setRscPayload: setPayload }}>
-      {payload.root}
-    </RouteContext>
-  );
+  useEffect(() => {
+    // add a event listener to handle popstate
+    // so that we can handle back/forward button
+
+    const onPopState = () => {
+      load(window.location.pathname).then(setPayload);
+    };
+
+    window.addEventListener("popstate", onPopState);
+
+    return () => {
+      window.removeEventListener("popstate", onPopState);
+    };
+  }, []);
+
+  // this is fine because import.meta.hot will not change, and the useEffect will only run once
+  // to subscribe to the rsc:update event
+  if (import.meta.hot) {
+    useEffect(() => {
+      const onRscUpdate = () => {
+        load(window.location.pathname).then(setPayload);
+      };
+      import.meta.hot!.on("rsc:update", onRscUpdate);
+      return () => {
+        import.meta.hot?.off("rsc:update", onRscUpdate);
+      };
+    }, []);
+  }
+
+  return <RouteContext value={{ setUrl: setUrl }}>{payload.root}</RouteContext>;
 }
 
 async function hydrate(): Promise<void> {
@@ -54,36 +74,6 @@ async function hydrate(): Promise<void> {
   ReactDomClient.hydrateRoot(document, browserRoot, {
     onRecoverableError: dealWithInternelError,
   });
-
-  if (import.meta.hot) {
-    import.meta.hot.on("rsc:update", () => {
-      window.history.replaceState({}, "", window.location.href);
-    });
-  }
-}
-
-function listenNavigation(onNavigation: () => void): () => void {
-  window.addEventListener("popstate", onNavigation);
-
-  const oldPushState = window.history.pushState;
-  window.history.pushState = function (...args) {
-    const res = oldPushState.apply(this, args);
-    onNavigation();
-    return res;
-  };
-
-  const oldReplaceState = window.history.replaceState;
-  window.history.replaceState = function (...args) {
-    const res = oldReplaceState.apply(this, args);
-    onNavigation();
-    return res;
-  };
-
-  return () => {
-    window.removeEventListener("popstate", onNavigation);
-    window.history.pushState = oldPushState;
-    window.history.replaceState = oldReplaceState;
-  };
 }
 
 hydrate();

@@ -1,11 +1,14 @@
-import { createContext } from "react";
-import React from "react";
-import type { RscPayload } from "../../utils/path/constant";
+import { createContext, useContext } from "react";
 
 const RouteContext = createContext<{
-  setRscPayload: React.Dispatch<React.SetStateAction<RscPayload>>;
+  setUrl: (url: string) => void;
 }>({
-  setRscPayload: () => {},
+  setUrl: () => {},
 });
 
 export default RouteContext;
+
+export function useNavigate() {
+  const { setUrl } = useContext(RouteContext);
+  return setUrl;
+}
