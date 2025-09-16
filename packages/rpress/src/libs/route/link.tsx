@@ -5,7 +5,7 @@ import load from "virtual:rpress:rsc-loader";
 import { useEffect } from "react";
 import useNavigate from "@/libs/route/navigate";
 
-interface LinkProps
+export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   to: string;
   prefetch?: "hover" | "viewport" | "none";

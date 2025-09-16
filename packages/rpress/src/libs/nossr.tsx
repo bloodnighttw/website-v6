@@ -4,13 +4,13 @@ import { Suspense } from "react";
 import ShouldCaughtError from "./utils/shouldCaughtError";
 import isClient from "virtual:rpress:client-env";
 
-export class NoSSRError extends ShouldCaughtError {
+class NoSSRError extends ShouldCaughtError {
   constructor() {
     super("NoSSR");
   }
 }
 
-export function ThrowNoSSR(): null {
+function ThrowNoSSR(): null {
   throw new NoSSRError();
 }
 

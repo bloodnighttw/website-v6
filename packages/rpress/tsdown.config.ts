@@ -2,26 +2,28 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: {
-    route: "src/libs/route/index.ts",
+    route: "src/exports/route.ts",
     helper: "src/exports/helper.ts",
-    navigate: "src/libs/route/navigate.tsx",
-    link: "src/libs/route/link.tsx",
-    nossr: "src/libs/nossr.tsx",
-    // virtual module need this.
+    navigate: "src/exports/navigate.ts",
+    link: "src/exports/link.ts",
+    nossr: "src/exports/nossr.ts",
+    vite: "src/exports/vite.ts",
+    image: "src/exports/image.ts",
+
+    // for virtual module in vite-rsc plugin
     "rsc-loader": "src/libs/route/rsc-loader.tsx",
-    // prevent hydration errors when import this module
-    error: "src/libs/utils/shouldThrowError.tsx",
-    vite: "src/vite/index.ts",
+
+    // for virtual module of image
+    "image/server": "src/libs/image/server.ts",
+    // for virtual module of image
+    "image/client": "src/libs/image/client.ts",
+
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
     // for vite-rsc plugin
     "entry/rsc": "src/entry/rsc.tsx",
     // for vite-rsc plugin
     "entry/ssr": "src/entry/ssr.tsx",
-    // for virtual module
-    "image/server": "src/libs/image/server.ts",
-    "image/client": "src/libs/image/client.ts",
-    image: "src/libs/image/index.tsx",
   },
   format: ["esm"],
   dts: true,
