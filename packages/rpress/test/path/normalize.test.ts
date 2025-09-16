@@ -3,7 +3,7 @@ import normalize, {
   normalized2html,
   normalized2rsc,
   normalizeExt,
-} from "../../src/utils/path/normalize";
+} from "@/libs/utils/path/normalize";
 
 test("empty", () => {
   expect(normalize("")).toBe("/");
