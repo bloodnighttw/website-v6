@@ -1,11 +1,11 @@
 import * as ReactServer from "@vitejs/plugin-rsc/rsc";
-import { type RouteModule } from "../core/route/route";
-import { isRSCRequest, matchParams } from "../utils/path/matcher";
-import normalize from "../utils/path/normalize";
-import type { RscPayload } from "../utils/path/constant";
+import { type RouteModule } from "@/libs/route/route";
+import { isRSCRequest, matchParams } from "@/libs/utils/path/matcher";
+import normalize from "@/libs/utils/path/normalize";
+import type { RscPayload } from "@/libs/utils/path/constant";
 
 import allRouteModules from "virtual:rpress:routes";
-import handleImageConversion from "../core/image/handler";
+import handleImageConversion from "@/libs/image/handler";
 
 export { normalize, allRouteModules };
 

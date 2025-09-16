@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Matcher } from "../../src/utils/path/matcher";
+import { Matcher } from "@/libs/utils/path/matcher";
 
 test("Matcher class should match paths correctly", () => {
   const matcher = new Matcher("/users/:id");
