@@ -3,7 +3,7 @@ import { pathToFileURL } from "url";
 import type { Plugin, ResolvedConfig } from "vite";
 import fs from "node:fs";
 import { Readable } from "node:stream";
-import { normalized2html, normalized2rsc } from "../utils/path/normalize";
+import { normalized2html, normalized2rsc } from "@/libs/utils/path/normalize";
 
 export function rscSsgPlugin(): Plugin[] {
   return [

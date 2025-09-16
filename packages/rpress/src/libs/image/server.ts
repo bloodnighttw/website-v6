@@ -5,7 +5,7 @@ import * as crypto from "crypto";
 import { cache, use } from "react";
 import type { ImageLoaderOptions } from "./handler";
 import handleImageConversion from "./handler";
-import ShouldThrowError from "../../utils/shouldThrowError";
+import ShouldThrowError from "@/libs/utils/shouldThrowError";
 import path from "path";
 
 class ImageConversionError extends ShouldThrowError {

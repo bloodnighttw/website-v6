@@ -1,4 +1,4 @@
-import type { InferPathParams } from "../../utils/path/matcher";
+import type { InferPathParams } from "@/libs/utils/path/matcher";
 
 import { createRoute, type RouterProps } from "./route";
 

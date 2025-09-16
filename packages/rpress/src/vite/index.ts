@@ -4,7 +4,7 @@ import { rscSsgPlugin as ssg } from "./ssg";
 import rscLoader from "./rsc-loader";
 import rscConfig from "./config";
 import { image } from "./image";
-import { type RPressConfig } from "../core/defineConfig";
+import { type RPressConfig } from "@/libs/defineConfig";
 
 const PKG_NAME = "rpress";
 

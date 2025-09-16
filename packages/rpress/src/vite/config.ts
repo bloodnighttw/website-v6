@@ -1,5 +1,5 @@
 import { type Plugin } from "vite";
-import defineConfig, { type RPressConfig } from "../core/defineConfig";
+import defineConfig, { type RPressConfig } from "@/libs/defineConfig";
 
 const VIRTUAL_RPRESS_CONFIG = "virtual:rpress:config";
 const VIRTUAL_RPRESS_ROUTES = "virtual:rpress:routes";

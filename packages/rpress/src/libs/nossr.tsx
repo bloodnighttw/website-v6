@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import ShouldCaughtError from "../utils/shouldCaughtError";
+import ShouldCaughtError from "./utils/shouldCaughtError";
 import isClient from "virtual:rpress:client-env";
 
 export class NoSSRError extends ShouldCaughtError {
