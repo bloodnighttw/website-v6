@@ -1,3 +1,3 @@
-import { FlatComponentHelper } from "../libs/helper/flat-component-helper";
+import { FlatComponentHelper } from "@/libs/helper/flat-component-helper";
 
 export { FlatComponentHelper };

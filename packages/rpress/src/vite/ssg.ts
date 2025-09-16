@@ -28,7 +28,7 @@ export function rscSsgPlugin(): Plugin[] {
 async function renderStatic(config: ResolvedConfig) {
   // import server entry
   const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
-  const entry: typeof import("../entry/rsc") = await import(
+  const entry: typeof import("@/entry/rsc") = await import(
     pathToFileURL(entryPath).href
   );
 
