@@ -4,11 +4,19 @@ import { rscSsgPlugin as ssg } from "./ssg";
 import rscLoader from "./rsc-loader";
 import rscConfig from "./config";
 import { image } from "./image";
-import { type RPressConfig } from "@/libs/defineConfig";
+import { type RPressConfig } from "./type";
 
 const PKG_NAME = "rpress";
 
-export default function rpress(config: Partial<RPressConfig>): Plugin[] {
+const defaultConfig: RPressConfig = {
+  strictMode: true,
+  routesDir: "src/routes/**",
+  prefetchStrategy: "hover",
+};
+
+export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
+  const config = { ...defaultConfig, ...partConfig };
+
   return [
     ...image(),
     ...rscConfig(config),
