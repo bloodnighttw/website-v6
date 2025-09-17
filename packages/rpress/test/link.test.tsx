@@ -35,6 +35,18 @@ const TestWrapper = ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+
+  // Suppress jsdom navigation warnings
+  const originalConsoleError = console.error;
+  vi.spyOn(console, "error").mockImplementation((message) => {
+    if (
+      typeof message === "string" &&
+      message.includes("Not implemented: navigation")
+    ) {
+      return;
+    }
+    originalConsoleError(message);
+  });
 });
 
 afterEach(() => {

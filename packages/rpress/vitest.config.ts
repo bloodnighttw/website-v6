@@ -7,6 +7,15 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./test/setup.ts"],
+    env: {
+      NODE_ENV: "test",
+    },
+    // Silence specific jsdom warnings
+    onConsoleLog(log) {
+      if (log.includes("Not implemented: navigation")) {
+        return false; // Don't log navigation warnings
+      }
+    },
   },
   resolve: {
     alias: {
