@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
-import Image from "../../src/core/image/index";
+import Image from "@/libs/image";
 
 test("Image component renders with basic props", () => {
   const { container } = render(<Image src="/test.jpg" alt="Test image" />);

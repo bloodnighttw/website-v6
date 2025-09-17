@@ -33,9 +33,7 @@ beforeEach(() => {
 });
 
 test("generateSHA256 creates consistent hash for same options", async () => {
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const mockEnv = {
     DEV: true,
@@ -59,9 +57,7 @@ test("handleGeneration returns dev URL in development mode", async () => {
   };
   vi.stubGlobal("import.meta", { env: mockEnv });
 
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const options = { url: "/test.jpg", width: 800, height: 600, quality: 85 };
   const result = handleGeneration(options);
@@ -78,9 +74,7 @@ test("local file URLs are returned as-is in production", async () => {
   };
   vi.stubGlobal("import.meta", { env: mockEnv });
 
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const options = { url: "/local-image.jpg" };
 
@@ -107,9 +101,7 @@ test("remote images are processed in production", async () => {
   };
   vi.stubGlobal("import.meta", { env: mockEnv });
 
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const options = { url: "https://example.com/image.jpg", quality: 80 };
 
@@ -136,9 +128,7 @@ test("failed fetch throws ImageConversionError", async () => {
   };
   vi.stubGlobal("import.meta", { env: mockEnv });
 
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const options = { url: "https://example.com/bad-image.jpg" };
 
@@ -166,9 +156,7 @@ test("file existence check works with caching", async () => {
     arrayBuffer: () => Promise.resolve(new ArrayBuffer(1024)),
   });
 
-  const { default: handleGeneration } = await import(
-    "../../src/core/image/server"
-  );
+  const { default: handleGeneration } = await import("@/libs/image/server");
 
   const options = { url: "https://example.com/cached-image.jpg" };
 

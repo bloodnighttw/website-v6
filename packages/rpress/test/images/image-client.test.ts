@@ -1,5 +1,5 @@
 import { expect, test, vi } from "vitest";
-import loader from "../../src/core/image/client";
+import loader from "@/libs/image/client";
 
 test("client loader returns original URL", () => {
   const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});

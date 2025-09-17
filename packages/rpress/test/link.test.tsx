@@ -1,7 +1,7 @@
 import { expect, test, vi, beforeEach, afterEach } from "vitest";
 import { render, fireEvent, screen, cleanup } from "@testing-library/react";
-import Link from "../src/core/link";
-import RouteContext from "../src/core/route/context";
+import Link from "@/libs/route/link";
+import RouteContext from "@/libs/route/context";
 import mockLoad from "virtual:rpress:rsc-loader";
 
 // Mock IntersectionObserver
