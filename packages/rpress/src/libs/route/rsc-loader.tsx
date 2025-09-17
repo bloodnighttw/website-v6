@@ -1,6 +1,6 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import type { RscPayload } from "../utils/path/constant";
-import normalize, { normalized2rsc } from "../utils/path/normalize";
+import type { RscPayload } from "@/libs/utils/path/constant";
+import normalize, { normalized2rsc } from "@/libs/utils/path/normalize";
 
 const b = new Map<string, Promise<RscPayload>>();
 

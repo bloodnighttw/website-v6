@@ -3,9 +3,9 @@ import React from "react";
 import * as ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { prerender } from "react-dom/static.edge";
-import ShouldCaughtError from "../utils/shouldCaughtError";
-import type { RscPayload } from "../utils/path/constant";
-import ShouldThrowError from "../utils/shouldThrowError";
+import ShouldCaughtError from "@/libs/utils/shouldCaughtError";
+import type { RscPayload } from "@/libs/utils/path/constant";
+import ShouldThrowError from "@/libs/utils/shouldThrowError";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,

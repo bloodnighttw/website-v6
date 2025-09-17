@@ -1,4 +1,4 @@
-import { Matcher, type InferPathParams } from "../../utils/path/matcher";
+import { Matcher, type InferPathParams } from "@/libs/utils/path/matcher";
 
 interface RouteConfig<T extends string> {
   generator: () => Promise<Array<InferPathParams<T>>>;

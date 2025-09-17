@@ -1,4 +1,4 @@
-import type { InferPathParams } from "../../src/utils/path/matcher";
+import type { InferPathParams } from "@/libs/utils/path/matcher";
 
 const caseA: InferPathParams<"/users/:id"> = { id: "123" };
 const caseB: InferPathParams<"/users/:id:wtf"> = { "id:wtf": "123" };
