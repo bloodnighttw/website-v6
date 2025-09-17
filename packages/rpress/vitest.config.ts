@@ -17,6 +17,14 @@ export default defineConfig({
         "./test/mocks/virtual-image-base.ts",
         import.meta.url,
       ).pathname,
+      "virtual:rpress:config": new URL(
+        "./test/mocks/virtual-config.ts",
+        import.meta.url,
+      ).pathname,
+      "virtual:rpress:rsc-loader": new URL(
+        "./test/mocks/virtual-rsc-loader.ts",
+        import.meta.url,
+      ).pathname,
     },
   },
 });
