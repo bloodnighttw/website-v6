@@ -15,4 +15,31 @@ const caseF: InferPathParams<"/users/:id/:name"> = { id: "123", name: "John" };
 const caseG: InferPathParams<":id"> = { id: "123" };
 const caseH: InferPathParams<":id:wtf/"> = { "id:wtf": "123" };
 
-export { caseA, caseB, caseC, caseD, caseE, caseF, caseG, caseH };
+// New test cases for catch-all parameters
+const caseI: InferPathParams<"/files/:...segments"> = {
+  segments: ["docs", "guide"],
+};
+const caseJ: InferPathParams<"/api/:version/files/:...path"> = {
+  version: "v1",
+  path: ["docs", "guide.pdf"],
+};
+const caseK: InferPathParams<"/:...catch"> = { catch: ["any", "path", "here"] };
+const caseL: InferPathParams<"/users/:id/:...rest"> = {
+  id: "123",
+  rest: ["profile", "settings"],
+};
+
+export {
+  caseA,
+  caseB,
+  caseC,
+  caseD,
+  caseE,
+  caseF,
+  caseG,
+  caseH,
+  caseI,
+  caseJ,
+  caseK,
+  caseL,
+};
