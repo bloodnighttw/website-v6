@@ -159,3 +159,49 @@ test("Matcher toString should work with mixed parameters", () => {
   });
   expect(path2).toBe("/api/v2/files/");
 });
+
+test("Matcher should handle catch-all with trailing literal segments", () => {
+  const matcher = new Matcher("/ouo/:...other/aa");
+
+  // Test matching with empty catch-all
+  const result1 = matcher.match("/ouo/aa");
+  expect(result1).toEqual({ other: [] });
+
+  // Test matching with single segment in catch-all
+  const result2 = matcher.match("/ouo/path/aa");
+  expect(result2).toEqual({ other: ["path"] });
+
+  // Test matching with multiple segments in catch-all
+  const result3 = matcher.match("/ouo/path/to/resource/aa");
+  expect(result3).toEqual({ other: ["path", "to", "resource"] });
+
+  // Test non-matching paths
+  const result4 = matcher.match("/ouo/path/bb");
+  expect(result4).toBe(false);
+
+  const result5 = matcher.match("/ouo/");
+  expect(result5).toBe(false);
+
+  // Test with extensions
+  const result6 = matcher.match("/ouo/aa.html");
+  expect(result6).toEqual({ other: [] });
+
+  const result7 = matcher.match("/ouo/path/to/resource/aa.rsc");
+  expect(result7).toEqual({ other: ["path", "to", "resource"] });
+});
+
+test("Matcher toString should work with catch-all and trailing segments", () => {
+  const matcher = new Matcher("/ouo/:...other/aa");
+
+  // Test empty array
+  const path1 = matcher.toString({ other: [] });
+  expect(path1).toBe("/ouo/aa");
+
+  // Test single segment
+  const path2 = matcher.toString({ other: ["path"] });
+  expect(path2).toBe("/ouo/path/aa");
+
+  // Test multiple segments
+  const path3 = matcher.toString({ other: ["path", "to", "resource"] });
+  expect(path3).toBe("/ouo/path/to/resource/aa");
+});

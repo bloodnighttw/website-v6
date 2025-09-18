@@ -18,11 +18,15 @@ export class Matcher {
     // convert ":param" segments into named capture groups
     // preserve trailing slash if present
 
-    // Replace :...param with catch-all pattern (captures remaining path)
-    // Replace :param with single segment pattern
-    const transformed = path
-      .replace(/:\.\.\.([^/]+)/g, "(.*)")
-      .replace(/:([^/]+)/g, "([^/]+)");
+    let transformed = path;
+
+    // Handle catch-all with trailing segments in a simple way
+    // For /ouo/:...other/aa -> /ouo/(.*)/aa
+    // But we'll handle the parsing logic to extract the right parts
+    transformed = transformed.replace(/:\.\.\.([^/]+)/g, "(.*)");
+
+    // Replace regular :param with single segment pattern
+    transformed = transformed.replace(/:([^/]+)/g, "([^/]+)");
 
     // Anchor start and end
     return new RegExp(`^${transformed}$`);
@@ -54,6 +58,19 @@ export class Matcher {
   // note: this function should only use in server side
   public match(path: string): Record<string, string | string[]> | false {
     const normalizedPath = normalizeExt(path) ?? normalize(path);
+
+    // Check if we have catch-all parameters with trailing segments
+    const hasCatchAllWithTrailing = this.keys.some(
+      (key) =>
+        Matcher.isCatchAll(key) &&
+        this.normalizedPath.indexOf(`:${key}`) <
+          this.normalizedPath.lastIndexOf("/"),
+    );
+
+    if (hasCatchAllWithTrailing) {
+      return this.matchWithCatchAllTrailing(normalizedPath);
+    }
+
     const match = this.regexp.exec(normalizedPath);
     if (!match) return false;
 
@@ -76,6 +93,70 @@ export class Matcher {
     return params;
   }
 
+  private matchWithCatchAllTrailing(
+    path: string,
+  ): Record<string, string | string[]> | false {
+    // Custom matching logic for patterns like /ouo/:...other/aa
+    const segments = this.normalizedPath.split("/").filter(Boolean);
+    const pathSegments = path.split("/").filter(Boolean);
+
+    const params: Record<string, string | string[]> = {};
+    let pathIndex = 0;
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+
+      if (segment.startsWith(":...")) {
+        // This is a catch-all parameter
+        const cleanKey = Matcher.getCleanKey(segment.slice(1));
+        const remainingPatternSegments = segments.slice(i + 1);
+        const remainingPathSegments = pathSegments.slice(
+          -remainingPatternSegments.length,
+        );
+
+        // Check if the remaining path segments match the remaining pattern segments
+        if (remainingPatternSegments.length > 0) {
+          let matches = true;
+          for (let j = 0; j < remainingPatternSegments.length; j++) {
+            if (remainingPatternSegments[j] !== remainingPathSegments[j]) {
+              matches = false;
+              break;
+            }
+          }
+          if (!matches) return false;
+
+          // Extract the catch-all part
+          const endIndex =
+            pathSegments.length - remainingPatternSegments.length;
+          const catchAllSegments = pathSegments.slice(pathIndex, endIndex);
+          params[cleanKey] = catchAllSegments;
+
+          break; // We're done processing
+        } else {
+          // Catch-all at the end
+          params[cleanKey] = pathSegments.slice(pathIndex);
+        }
+      } else if (segment.startsWith(":")) {
+        // Regular parameter
+        if (pathIndex >= pathSegments.length) return false;
+        const cleanKey = Matcher.getCleanKey(segment.slice(1));
+        params[cleanKey] = pathSegments[pathIndex];
+        pathIndex++;
+      } else {
+        // Literal segment
+        if (
+          pathIndex >= pathSegments.length ||
+          pathSegments[pathIndex] !== segment
+        ) {
+          return false;
+        }
+        pathIndex++;
+      }
+    }
+
+    return params;
+  }
+
   public toString(params: Record<string, string | string[]>): string {
     let path = this.keys.reduce((acc, key) => {
       const cleanKey = Matcher.getCleanKey(key);
@@ -88,7 +169,18 @@ export class Matcher {
         const arrayValue = Array.isArray(paramValue)
           ? paramValue
           : [paramValue];
-        return acc.replace(`:${key}`, arrayValue.join("/"));
+        const joinedValue = arrayValue.join("/");
+
+        // Handle empty arrays - check if there's a trailing slash after the catch-all
+        if (joinedValue === "" && acc.includes(`:${key}/`)) {
+          // Remove the slash after the catch-all parameter
+          return acc.replace(`:${key}/`, "");
+        } else if (joinedValue === "") {
+          // Just replace with empty string
+          return acc.replace(`:${key}`, "");
+        } else {
+          return acc.replace(`:${key}`, joinedValue);
+        }
       } else {
         // For single parameters, use string value
         const stringValue = Array.isArray(paramValue)
