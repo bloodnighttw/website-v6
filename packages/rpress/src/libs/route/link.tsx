@@ -8,7 +8,7 @@ import useNavigate from "@/libs/route/navigate";
 export interface LinkProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   to: string;
-  prefetch?: "hover" | "viewport" | "none";
+  prefetch?: "hover" | "viewport" | "none" | "eager";
 }
 
 export default function Link(props: LinkProps) {
