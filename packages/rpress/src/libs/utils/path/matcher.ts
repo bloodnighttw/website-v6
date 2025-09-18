@@ -18,8 +18,15 @@ export class Matcher {
     // convert ":param" segments into named capture groups
     // preserve trailing slash if present
 
-    // Replace :param with plain capturing groups. Order of keys is captured separately.
-    const transformed = path.replace(/:([^/]+)/g, "([^/]+)");
+    let transformed = path;
+
+    // Handle catch-all with trailing segments in a simple way
+    // For /ouo/:...other/aa -> /ouo/(.*)/aa
+    // But we'll handle the parsing logic to extract the right parts
+    transformed = transformed.replace(/:\.\.\.([^/]+)/g, "(.*)");
+
+    // Replace regular :param with single segment pattern
+    transformed = transformed.replace(/:([^/]+)/g, "([^/]+)");
 
     // Anchor start and end
     return new RegExp(`^${transformed}$`);
@@ -36,27 +43,151 @@ export class Matcher {
     return keys;
   }
 
+  // Check if a key is a catch-all parameter (starts with ...)
+  private static isCatchAll(key: string): boolean {
+    return key.startsWith("...");
+  }
+
+  // Get the clean key name without the ... prefix
+  private static getCleanKey(key: string): string {
+    return key.startsWith("...") ? key.slice(3) : key;
+  }
+
   // return false if no match is found
   // otherwise return an object with the captured parameters
   // note: this function should only use in server side
-  public match(path: string): Record<string, string> | false {
+  public match(path: string): Record<string, string | string[]> | false {
     const normalizedPath = normalizeExt(path) ?? normalize(path);
+
+    // Check if we have catch-all parameters with trailing segments
+    const hasCatchAllWithTrailing = this.keys.some(
+      (key) =>
+        Matcher.isCatchAll(key) &&
+        this.normalizedPath.indexOf(`:${key}`) <
+          this.normalizedPath.lastIndexOf("/"),
+    );
+
+    if (hasCatchAllWithTrailing) {
+      return this.matchWithCatchAllTrailing(normalizedPath);
+    }
+
     const match = this.regexp.exec(normalizedPath);
     if (!match) return false;
 
-    const params: Record<string, string> = {};
+    const params: Record<string, string | string[]> = {};
     // match.slice(1) contains capturing groups in order corresponding to this.keys
     const groups = match.slice(1);
     for (let i = 0; i < this.keys.length; i++) {
-      params[this.keys[i]] = groups[i] as string;
+      const key = this.keys[i];
+      const cleanKey = Matcher.getCleanKey(key);
+      if (Matcher.isCatchAll(key)) {
+        // For catch-all parameters, split the captured string by '/' to create an array
+        const capturedPath = groups[i] as string;
+        params[cleanKey] = capturedPath
+          ? capturedPath.split("/").filter(Boolean)
+          : [];
+      } else {
+        params[cleanKey] = groups[i] as string;
+      }
     }
     return params;
   }
 
-  public toString(params: Record<string, string>): string {
+  private matchWithCatchAllTrailing(
+    path: string,
+  ): Record<string, string | string[]> | false {
+    // Custom matching logic for patterns like /ouo/:...other/aa
+    const segments = this.normalizedPath.split("/").filter(Boolean);
+    const pathSegments = path.split("/").filter(Boolean);
+
+    const params: Record<string, string | string[]> = {};
+    let pathIndex = 0;
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+
+      if (segment.startsWith(":...")) {
+        // This is a catch-all parameter
+        const cleanKey = Matcher.getCleanKey(segment.slice(1));
+        const remainingPatternSegments = segments.slice(i + 1);
+        const remainingPathSegments = pathSegments.slice(
+          -remainingPatternSegments.length,
+        );
+
+        // Check if the remaining path segments match the remaining pattern segments
+        if (remainingPatternSegments.length > 0) {
+          let matches = true;
+          for (let j = 0; j < remainingPatternSegments.length; j++) {
+            if (remainingPatternSegments[j] !== remainingPathSegments[j]) {
+              matches = false;
+              break;
+            }
+          }
+          if (!matches) return false;
+
+          // Extract the catch-all part
+          const endIndex =
+            pathSegments.length - remainingPatternSegments.length;
+          const catchAllSegments = pathSegments.slice(pathIndex, endIndex);
+          params[cleanKey] = catchAllSegments;
+
+          break; // We're done processing
+        } else {
+          // Catch-all at the end
+          params[cleanKey] = pathSegments.slice(pathIndex);
+        }
+      } else if (segment.startsWith(":")) {
+        // Regular parameter
+        if (pathIndex >= pathSegments.length) return false;
+        const cleanKey = Matcher.getCleanKey(segment.slice(1));
+        params[cleanKey] = pathSegments[pathIndex];
+        pathIndex++;
+      } else {
+        // Literal segment
+        if (
+          pathIndex >= pathSegments.length ||
+          pathSegments[pathIndex] !== segment
+        ) {
+          return false;
+        }
+        pathIndex++;
+      }
+    }
+
+    return params;
+  }
+
+  public toString(params: Record<string, string | string[]>): string {
     let path = this.keys.reduce((acc, key) => {
-      if (!params[key]) throw new Error(`Missing parameter: ${key}`);
-      return acc.replace(`:${key}`, params[key]);
+      const cleanKey = Matcher.getCleanKey(key);
+      const paramValue = params[cleanKey];
+      if (paramValue === undefined)
+        throw new Error(`Missing parameter: ${cleanKey}`);
+
+      if (Matcher.isCatchAll(key)) {
+        // For catch-all parameters, join array elements with '/'
+        const arrayValue = Array.isArray(paramValue)
+          ? paramValue
+          : [paramValue];
+        const joinedValue = arrayValue.join("/");
+
+        // Handle empty arrays - check if there's a trailing slash after the catch-all
+        if (joinedValue === "" && acc.includes(`:${key}/`)) {
+          // Remove the slash after the catch-all parameter
+          return acc.replace(`:${key}/`, "");
+        } else if (joinedValue === "") {
+          // Just replace with empty string
+          return acc.replace(`:${key}`, "");
+        } else {
+          return acc.replace(`:${key}`, joinedValue);
+        }
+      } else {
+        // For single parameters, use string value
+        const stringValue = Array.isArray(paramValue)
+          ? paramValue[0]
+          : paramValue;
+        return acc.replace(`:${key}`, stringValue);
+      }
     }, this.normalizedPath);
     return path;
   }
@@ -67,15 +198,15 @@ export class Matcher {
 }
 
 export function matchParams(
-  left: Record<string, string>,
-  right: Record<string, string>[] | object,
-): Record<string, string> | false {
+  left: Record<string, string | string[]>,
+  right: Record<string, string | string[]>[] | object,
+): Record<string, string | string[]> | false {
   if (
     left instanceof Object &&
     Object.keys(left).length === 0 // left is {}
   ) {
     if (right instanceof Array) return right.at(0) ?? {};
-    else return right as Record<string, string>;
+    else return right as Record<string, string | string[]>;
   }
   if (!(right instanceof Array)) {
     throw new Error(
@@ -85,7 +216,16 @@ export function matchParams(
 
   l1: for (const obj of right) {
     for (const [k, v] of Object.entries(left)) {
-      if (obj[k] === undefined || obj[k] !== v) {
+      if (obj[k] === undefined) {
+        continue l1;
+      }
+
+      // Handle array comparison for catch-all params
+      if (Array.isArray(v) && Array.isArray(obj[k])) {
+        if (JSON.stringify(v) !== JSON.stringify(obj[k])) {
+          continue l1;
+        }
+      } else if (obj[k] !== v) {
         continue l1;
       }
     }
@@ -112,12 +252,16 @@ type TrimSlashes<S extends string> = S extends `/${infer Rest}`
     ? TrimSlashes<Rest>
     : S;
 
-// Extract params only from segments that are exactly ":name"
-type ParamsFromSegment<S extends string> = S extends `:${infer Name}`
+// Extract params from segments, handling both :name and :...name
+type ParamsFromSegment<S extends string> = S extends `:...${infer Name}`
   ? Name extends ""
     ? {}
-    : { [K in Name]: string }
-  : {};
+    : { [K in Name]: string[] }
+  : S extends `:${infer Name}`
+    ? Name extends ""
+      ? {}
+      : { [K in Name]: string }
+    : {};
 
 // Recursively walk segments separated by "/"
 type ExtractParamsFromSegments<S extends string> =
