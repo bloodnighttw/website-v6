@@ -35,6 +35,10 @@ export default defineConfig({
         "./test/mocks/virtual-rsc-loader.ts",
         import.meta.url,
       ).pathname,
+      "virtual:rpress:client-env": new URL(
+        "./test/mocks/virtual-client-env.ts",
+        import.meta.url,
+      ).pathname,
     },
   },
 });
