@@ -8,15 +8,9 @@ export default defineConfig({
     link: "src/exports/link.ts",
     nossr: "src/exports/nossr.ts",
     vite: "src/exports/vite.ts",
-    image: "src/exports/image.ts",
 
     // for virtual module in vite-rsc plugin
     "rsc-loader": "src/libs/route/rsc-loader.tsx",
-
-    // for virtual module of image
-    "image/server": "src/libs/image/server.ts",
-    // for virtual module of image
-    "image/client": "src/libs/image/client.ts",
 
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",

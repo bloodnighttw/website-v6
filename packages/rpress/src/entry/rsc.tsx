@@ -5,58 +5,8 @@ import normalize from "@/libs/utils/path/normalize";
 import type { RscPayload } from "@/libs/utils/path/constant";
 
 import allRouteModules from "virtual:rpress:routes";
-import handleImageConversion from "@/libs/image/handler";
 
 export { normalize, allRouteModules };
-
-async function handleImageRequest(request: Request): Promise<Response | null> {
-  const url = new URL(request.url);
-
-  // Check if this is an image processing request
-  if (!url.pathname.startsWith("/_rpress")) {
-    return null;
-  }
-
-  const imageUrl = url.searchParams.get("url");
-  if (!imageUrl) {
-    return new Response("Missing url parameter", { status: 400 });
-  }
-
-  try {
-    // Fetch the original image
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      return new Response("Failed to fetch image", { status: 404 });
-    }
-
-    const buffer = await response.arrayBuffer();
-    const options = {
-      url: imageUrl,
-      width: url.searchParams.get("width")
-        ? parseInt(url.searchParams.get("width") as string)
-        : undefined,
-      height: url.searchParams.get("height")
-        ? parseInt(url.searchParams.get("height") as string)
-        : undefined,
-      quality: url.searchParams.get("quality")
-        ? parseInt(url.searchParams.get("quality") as string)
-        : undefined,
-    };
-
-    // Process the image
-    const processedBuffer = await handleImageConversion(buffer, options);
-
-    return new Response(processedBuffer as BodyInit, {
-      headers: {
-        "Content-Type": "image/webp",
-        "Cache-Control": "public, max-age=31536000",
-      },
-    });
-  } catch (error) {
-    console.error("Image processing error:", error);
-    return new Response("Image processing failed", { status: 500 });
-  }
-}
 
 async function generateRSCStream({ request }: { request: Request }) {
   const url = new URL(request.url);
@@ -92,14 +42,6 @@ async function generateRSCStream({ request }: { request: Request }) {
 }
 
 export default async function handler(request: Request): Promise<Response> {
-  // Handle image processing requests first
-  if (import.meta.env.DEV) {
-    const imageResponse = await handleImageRequest(request);
-    if (imageResponse) {
-      return imageResponse;
-    }
-  }
-
   const rscStream = await generateRSCStream({ request });
 
   if (!rscStream) {

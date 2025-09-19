@@ -3,7 +3,6 @@ import rsc from "@vitejs/plugin-rsc";
 import { rscSsgPlugin as ssg } from "./ssg";
 import rscLoader from "./rsc-loader";
 import rscConfig from "./config";
-import { image } from "./image";
 import { type RPressConfig } from "./type";
 
 const PKG_NAME = "rpress";
@@ -18,7 +17,6 @@ export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
   const config = { ...defaultConfig, ...partConfig };
 
   return [
-    ...image(),
     ...rscConfig(config),
     rscLoader(),
     ...rsc({
