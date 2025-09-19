@@ -13,10 +13,10 @@ export default defineConfig({
   format: ["esm"],
   dts: true,
   sourcemap: true,
-  // in dev we don't need to clean
-  clean: false,
+  clean: true,
+  // I have try both true and false, it is the same.
   minify: true,
   target: "esnext",
   external: ["lightningcss", "vite"],
-  platform: "node",
+  platform: "neutral",
 });
