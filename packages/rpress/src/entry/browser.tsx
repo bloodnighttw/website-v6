@@ -4,7 +4,7 @@ import {
   createFromFetch,
 } from "@vitejs/plugin-rsc/browser";
 import type { RscPayload } from "@vitejs/plugin-rsc/rsc-c22DF1A7";
-import React from "react";
+import { startTransition, StrictMode, useEffect, useState } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 
@@ -21,14 +21,14 @@ async function main() {
 
   // browser root component to (re-)render RSC payload as state
   function BrowserRoot() {
-    const [payload, setPayload_] = React.useState(initialPayload);
+    const [payload, setPayload_] = useState(initialPayload);
 
-    React.useEffect(() => {
-      setPayload = (v) => React.startTransition(() => setPayload_(v));
+    useEffect(() => {
+      setPayload = (v) => startTransition(() => setPayload_(v));
     }, [setPayload_]);
 
     // re-fetch/render on client side navigation
-    React.useEffect(() => {
+    useEffect(() => {
       return listenNavigation(() => fetchRscPayload());
     }, []);
 
@@ -45,9 +45,9 @@ async function main() {
 
   // hydration
   const browserRoot = (
-    <React.StrictMode>
+    <StrictMode>
       <BrowserRoot />
-    </React.StrictMode>
+    </StrictMode>
   );
   hydrateRoot(document, browserRoot);
 

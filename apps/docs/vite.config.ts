@@ -13,4 +13,21 @@ export default defineConfig({
     }),
     react(),
   ],
+  environments: {
+    ssr: {
+      build: {
+        rollupOptions: {
+          platform: "neutral", // 👈👈
+          experimental: {
+            strictExecutionOrder: true, // likely advancedChunks/strictExecutionOrder is the trigger
+          },
+        },
+      },
+    },
+  },
+  builder: {
+    async buildApp(builder) {
+      await builder.build(builder.environments.ssr);
+    },
+  },
 });

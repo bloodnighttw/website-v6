@@ -41,30 +41,6 @@
     "./vite": {
       "import": "./dist/vite.js",
       "types": "./dist/vite.d.ts"
-    },
-    "./helper": {
-      "import": "./dist/helper.js",
-      "types": "./dist/helper.d.ts"
-    },
-    "./link": {
-      "import": "./dist/link.js",
-      "types": "./dist/link.d.ts"
-    },
-    "./route": {
-      "import": "./dist/route.js",
-      "types": "./dist/route.d.ts"
-    },
-    "./image": {
-      "import": "./dist/image.js",
-      "types": "./dist/image.d.ts"
-    },
-    "./nossr": {
-      "import": "./dist/nossr.js",
-      "types": "./dist/nossr.d.ts"
-    },
-    "./navigate": {
-      "import": "./dist/navigate.js",
-      "types": "./dist/navigate.d.ts"
     }
   }
 }

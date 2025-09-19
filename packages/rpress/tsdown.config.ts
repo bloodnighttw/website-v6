@@ -2,7 +2,6 @@ import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: {
-    route: "src/exports/route.ts",
     vite: "src/exports/vite.ts",
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
@@ -18,15 +17,6 @@ export default defineConfig({
   clean: false,
   minify: true,
   target: "esnext",
-  external: [
-    "lightningcss",
-    "vite",
-    "@vitejs/plugin-rsc",
-    "virtual:rpress:config",
-    "virtual:rpress:routes",
-    "virtual:rpress:rsc-loader",
-    "virtual:rpress:image",
-    "virtual:rpress:image-base",
-    "virtual:rpress:client-env",
-  ],
+  external: ["lightningcss", "vite"],
+  platform: "node",
 });
