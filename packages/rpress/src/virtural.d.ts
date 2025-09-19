@@ -13,23 +13,6 @@ declare module "virtual:rpress:config" {
   export default config;
 }
 
-declare module "virtual:rpress:rsc-loader" {
-  import load from "./core/rsc-loader";
-  export default load;
-}
-
-declare module "virtual:rpress:image" {
-  const loader: (
-    options: import("./core/image/handler").ImageLoaderOptions,
-  ) => string;
-  export default loader;
-}
-
-declare module "virtual:rpress:image-base" {
-  const string: string;
-  export default string;
-}
-
 declare module "virtual:rpress:client-env" {
   const isClient: boolean;
   export default isClient;

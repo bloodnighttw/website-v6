@@ -1,15 +1,8 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "@/libs/utils/path/constant";
-import config from "virtual:rpress:config";
-import RouteContext from "@/libs/route/context";
 
 import normalize, { normalized2rsc } from "@/libs/utils/path/normalize";
 
@@ -40,16 +33,6 @@ export default function BrowserRoot({
 }) {
   const [payload, setPayload] = useState(initialPayload);
 
-  const setUrl = useCallback((url: string) => {
-    load(url).then((payload: RscPayload) => {
-      window.history.pushState({}, "", url);
-      // to mark it as non-urgent
-      startTransition(() => {
-        setPayload(payload);
-      });
-    });
-  }, []);
-
   useEffect(() => {
     // add a event listener to handle popstate
     // so that we can handle back/forward button
@@ -79,19 +62,17 @@ export default function BrowserRoot({
     }, []);
   }
 
-  return <RouteContext value={{ setUrl: setUrl }}>{payload.root}</RouteContext>;
+  return payload.root;
 }
 
 async function hydrate(): Promise<void> {
   const initialPayload =
     await ReactClient.createFromReadableStream<RscPayload>(rscStream);
 
-  const browserRoot = config.strictMode ? (
+  const browserRoot = (
     <React.StrictMode>
       <BrowserRoot initialPayload={initialPayload} />
     </React.StrictMode>
-  ) : (
-    <BrowserRoot initialPayload={initialPayload} />
   );
 
   const dealWithInternelError = () => {
