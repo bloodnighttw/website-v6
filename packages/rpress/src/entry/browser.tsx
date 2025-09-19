@@ -1,3 +1,4 @@
+// copy directly from @vitejs/plugin-rsc example with minimal modification
 import {
   createFromReadableStream,
   createFromFetch,

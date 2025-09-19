@@ -1,22 +1,12 @@
 import { type Plugin } from "vite";
 import rsc from "@vitejs/plugin-rsc";
 import { rscSsgPlugin as ssg } from "./ssg";
-import rscConfig from "./config";
 import { type RPressConfig } from "./type";
 
 const PKG_NAME = "rpress";
 
-const defaultConfig: RPressConfig = {
-  strictMode: true,
-  routesDir: "src/routes/**",
-  prefetchStrategy: "hover",
-};
-
-export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
-  const config = { ...defaultConfig, ...partConfig };
-
+export default function rpress(_partConfig: Partial<RPressConfig>): Plugin[] {
   return [
-    ...rscConfig(config),
     ...rsc({
       entries: {
         client: "./node_modules/rpress/dist/entry/browser.js",
