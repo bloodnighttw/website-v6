@@ -48,9 +48,7 @@ async function main() {
       <BrowserRoot />
     </React.StrictMode>
   );
-  hydrateRoot(document, browserRoot, {
-    formState: initialPayload.formState,
-  });
+  hydrateRoot(document, browserRoot);
 
   // implement server HMR by trigering re-fetch/render of RSC upon server code change
   if (import.meta.hot) {

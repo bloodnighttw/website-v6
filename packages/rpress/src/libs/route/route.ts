@@ -22,10 +22,10 @@ function createRoute<T extends string>(
 ): Route<T>;
 
 function createRoute<T extends string>(
-  path: T,
+  _path: T,
   config?: RouteConfig<T> | undefined,
 ): Route<T> {
-  const matcher = new Matcher(path);
+  const matcher = new Matcher();
 
   config ??= {
     generator: async () => {
