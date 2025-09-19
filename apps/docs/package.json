@@ -1,0 +1,31 @@
+{
+  "name": "@rpress/docs",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "npx serve ./dist/client",
+    "lint": "eslint . --ext .ts,.tsx,.mdx"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/mdx": "^2.0.13",
+    "fumadocs-core": "^15.7.12",
+    "fumadocs-mdx": "^11.10.0",
+    "fumadocs-ui": "^15.7.12",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "rpress": "workspace:*",
+    "tailwindcss": "^4.1.13"
+  },
+  "devDependencies": {
+    "@rpress/eslint": "workspace:*",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "latest",
+    "vite": "npm:rolldown-vite@latest"
+  }
+}
