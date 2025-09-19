@@ -1,7 +1,6 @@
 import { type Plugin } from "vite";
 import rsc from "@vitejs/plugin-rsc";
 import { rscSsgPlugin as ssg } from "./ssg";
-import rscLoader from "./rsc-loader";
 import rscConfig from "./config";
 import { type RPressConfig } from "./type";
 
@@ -18,7 +17,6 @@ export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
 
   return [
     ...rscConfig(config),
-    rscLoader(),
     ...rsc({
       entries: {
         client: "./node_modules/rpress/dist/entry/browser.js",

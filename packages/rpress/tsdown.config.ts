@@ -4,10 +4,6 @@ export default defineConfig({
   entry: {
     route: "src/exports/route.ts",
     vite: "src/exports/vite.ts",
-
-    // for virtual module in vite-rsc plugin
-    "rsc-loader": "src/libs/route/rsc-loader.tsx",
-
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
     // for vite-rsc plugin

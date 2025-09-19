@@ -9,8 +9,27 @@ import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "@/libs/utils/path/constant";
 import config from "virtual:rpress:config";
-import load from "virtual:rpress:rsc-loader";
 import RouteContext from "@/libs/route/context";
+
+import normalize, { normalized2rsc } from "@/libs/utils/path/normalize";
+
+const b = new Map<string, Promise<RscPayload>>();
+
+function load(url: string) {
+  url = normalized2rsc(normalize(url));
+
+  if (!b.has(url)) {
+    const payload = ReactClient.createFromFetch<RscPayload>(fetch(url));
+    b.set(url, payload);
+  }
+  return b.get(url)!;
+}
+
+if (import.meta.hot) {
+  import.meta.hot.on("rsc:update", () => {
+    b.clear();
+  });
+}
 
 // we export it to prevent hmr invalidate.
 // (fast-refresh require a default export)
