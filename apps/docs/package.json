@@ -11,15 +11,9 @@
     "lint": "eslint . --ext .ts,.tsx,.mdx"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.13",
-    "@types/mdx": "^2.0.13",
-    "fumadocs-core": "^15.7.12",
-    "fumadocs-mdx": "^11.10.0",
-    "fumadocs-ui": "^15.7.12",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "rpress": "workspace:*",
-    "tailwindcss": "^4.1.13"
+    "rpress": "workspace:*"
   },
   "devDependencies": {
     "@rpress/eslint": "workspace:*",

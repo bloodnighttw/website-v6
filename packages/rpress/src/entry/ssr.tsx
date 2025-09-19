@@ -3,9 +3,7 @@ import React from "react";
 import * as ReactDomServer from "react-dom/server.edge";
 import { injectRSCPayload } from "rsc-html-stream/server";
 import { prerender } from "react-dom/static.edge";
-import ShouldCaughtError from "@/libs/utils/shouldCaughtError";
 import type { RscPayload } from "@/libs/utils/path/constant";
-import ShouldThrowError from "@/libs/utils/shouldThrowError";
 
 export async function renderHtml(
   rscStream: ReadableStream<Uint8Array>,
@@ -30,21 +28,11 @@ export async function renderHtml(
     if (options?.ssg) {
       const prerenderResult = await prerender(<SsrRoot />, {
         bootstrapScriptContent,
-        onError: (e) => {
-          if (e instanceof ShouldCaughtError) return;
-          else if (e instanceof ShouldThrowError) throw e;
-          else console.error(e);
-        },
       });
       htmlStream = prerenderResult.prelude;
     } else {
       htmlStream = await ReactDomServer.renderToReadableStream(<SsrRoot />, {
         bootstrapScriptContent,
-        onError: (e) => {
-          if (e instanceof ShouldCaughtError) return;
-          else if (e instanceof ShouldThrowError) throw e;
-          else console.error(e);
-        },
       });
     }
     let responseStream: ReadableStream<Uint8Array> = htmlStream;

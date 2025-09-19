@@ -1,9 +1,4 @@
-import path from "path";
-import { pathToFileURL } from "url";
-import type { Plugin, ResolvedConfig } from "vite";
-import fs from "node:fs";
-import { Readable } from "node:stream";
-import { normalized2html, normalized2rsc } from "@/libs/utils/path/normalize";
+import type { Plugin } from "vite";
 
 export function rscSsgPlugin(): Plugin[] {
   return [
@@ -17,65 +12,14 @@ export function rscSsgPlugin(): Plugin[] {
         }
       },
       buildApp: {
-        async handler(builder) {
-          await renderStatic(builder.config);
+        async handler() {
+          await renderStatic();
         },
       },
     },
   ];
 }
 
-async function renderStatic(config: ResolvedConfig) {
-  // import server entry
-  const entryPath = path.join(config.environments.rsc.build.outDir, "index.js");
-  const entry: typeof import("@/entry/rsc") = await import(
-    pathToFileURL(entryPath).href
-  );
-
-  const all = entry.allRouteModules;
-  const pathnames = await all.reduce(
-    async (accPromise, module) => {
-      const acc = await accPromise;
-      const usePath = module.route.matcher.noKeysUsePath();
-      if (typeof usePath === "string") {
-        return [...acc, usePath];
-      }
-
-      const path = module.route.config.generator as unknown as () => Promise<
-        Record<string, string>[]
-      >;
-      const matcher = module.route.matcher;
-
-      const strs = (await path()).map((params) => {
-        return matcher.toString(params);
-      });
-
-      return [...acc, ...strs];
-    },
-    Promise.resolve([] as string[]),
-  );
-
-  // render rsc and html
-  const baseDir = config.environments.client.build.outDir;
-  for (const pathname of pathnames) {
-    config.logger.info(
-      `\x1b[36m[vite-rsc:ssg]\x1b[0m -> \x1b[32m${pathname}\x1b[0m`,
-    );
-    const { html, rsc } = await entry.handleSsg(
-      new Request(new URL(pathname, "http://ssg.local")),
-    );
-    await writeFileStream(
-      path.join(baseDir, normalized2html(entry.normalize(pathname))),
-      html,
-    );
-    await writeFileStream(
-      path.join(baseDir, normalized2rsc(entry.normalize(pathname))),
-      rsc,
-    );
-  }
-}
-
-async function writeFileStream(filePath: string, stream: ReadableStream) {
-  await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
-  await fs.promises.writeFile(filePath, Readable.fromWeb(stream as never));
+async function renderStatic() {
+  console.log("we just ignore it");
 }

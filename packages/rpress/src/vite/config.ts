@@ -4,7 +4,7 @@ import { type RPressConfig } from "@/vite/type";
 const VIRTUAL_RPRESS_ROUTES = "virtual:rpress:routes";
 const RESOLVED_VIRTUAL_RPRESS_ROUTES = "\0" + VIRTUAL_RPRESS_ROUTES;
 
-export default function RPressConfig(config: RPressConfig): Plugin[] {
+export default function RPressConfig(_config: RPressConfig): Plugin[] {
   return [
     {
       name: "rpress:inject-route",
@@ -16,7 +16,7 @@ export default function RPressConfig(config: RPressConfig): Plugin[] {
       load(id) {
         if (id === RESOLVED_VIRTUAL_RPRESS_ROUTES) {
           return {
-            code: `export default Object.values( import.meta.glob('/${config.routesDir}', { eager: true })).filter(module => !!module?.route);`,
+            code: `export default [];`,
             moduleType: "js",
           };
         }
