@@ -3,4 +3,62 @@ title: "NoSSR Component"
 description: "Render components only on the client side with the NoSSR wrapper."
 ---
 
-work in progress...
+## Import
+
+```tsx
+import { NoSSR } from "rpress/nossr";
+```
+
+## Basic Usage
+
+Sometimes, certain components or libraries depend on browser-specific features that are not available during server-side rendering.
+The `NoSSR` component helps to avoid issues by ensuring that its children are only rendered on the client side.
+
+```tsx
+import { NoSSR } from "rpress/nossr";
+
+function MyComponent() {
+  return (
+    <NoSSR fallback={<div>Loading...</div>}>
+      <div>This content only renders on the client</div>
+    </NoSSR>
+  );
+}
+```
+
+## API Reference
+
+### `NoSSR`
+
+A component that conditionally renders its children based on the environment.
+
+#### Props
+
+- `children` (React.ReactNode): The content to render only on the client side
+- `fallback?` (React.ReactNode): Optional fallback content to show during server-side rendering or while loading
+
+#### Behavior
+
+- **Server-side**: Throws a `NoSSRError` that should be caught by the framework, typically displaying the fallback
+- **Client-side**: Renders the children directly
+
+## Common Use Cases
+
+### Browser-Only APIs
+
+```tsx
+import { NoSSR } from "rpress/nossr";
+
+function DateComponent() {
+  const [date, setDate] = React.useState(Date.now());
+
+  return (
+    <NoSSR fallback={<div>Getting your location...</div>}>
+      <div>
+        current time: {date}
+        <button onClick={() => setDate(Date.now())}>update</button>
+      </div>
+    </NoSSR>
+  );
+}
+```
