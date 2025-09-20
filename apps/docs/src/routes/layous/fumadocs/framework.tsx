@@ -6,17 +6,17 @@ import Link from "rpress/link";
 
 export default function Provider({
   children,
-  slug,
+  pathname,
   params,
 }: {
   children: ReactNode;
-  slug: string[];
   params?: Record<string, string>;
+  pathname?: string;
 }) {
   return (
     <FrameworkProvider
       useParams={() => params || {}}
-      usePathname={() => "/" + slug.join("/")}
+      usePathname={() => pathname || "/"}
       useRouter={() => ({}) as Router}
       Link={({ href, children: c, prefetch, ...rest }) => (
         <Link to={href!} prefetch={prefetch ? undefined : "none"} {...rest}>

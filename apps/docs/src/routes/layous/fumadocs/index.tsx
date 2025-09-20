@@ -14,11 +14,11 @@ import "@/global.css";
 
 interface Props {
   page: Page;
-  slug: string[];
+  pathname: string;
   params?: Record<string, string>;
 }
 
-export default async function FumaDocs({ page, slug, params }: Props) {
+export default async function FumaDocs({ page, pathname, params }: Props) {
   const { source } = await import("@/lib/source");
 
   if (!page) {
@@ -31,7 +31,7 @@ export default async function FumaDocs({ page, slug, params }: Props) {
     <html suppressHydrationWarning={true}>
       <body>
         <title>{page.data.title}</title>
-        <Provider slug={slug} params={params}>
+        <Provider params={params} pathname={pathname}>
           <RootProvider
             theme={{ enabled: true, defaultTheme: "system" }}
             search={{ enabled: false }}
