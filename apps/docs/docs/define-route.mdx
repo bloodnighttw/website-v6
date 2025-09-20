@@ -130,6 +130,8 @@ import { createRoute, type RouterProps } from "rpress/route";
 
 export const route = createRoute("/blog/:slug", {
   generator: async () => {
+    // you can fetch data from an API or database,
+    // or generate routes from your filesystem here.
     return [
       { slug: "first-post" },
       { slug: "second-post" },
@@ -152,6 +154,8 @@ and `RouterProps` will infer the type of `params` as `{ slug: string[] }` in thi
 import { createRoute, type RouterProps } from "rpress/route";
 export const route = createRoute("/docs/:...slug", {
   generator: async () => {
+    // you can fetch data from an API or database,
+    // or generate routes from your filesystem here.
     return [
       { slug: ["getting-started"] },
       { slug: ["guides", "installation"] },
