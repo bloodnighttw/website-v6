@@ -19,7 +19,10 @@ export default function RPressConfig(config: RPressConfig): Plugin[] {
       },
       load(id) {
         if (id === RESOLVED_VIRTUAL_RPRESS_CONFIG) {
-          return `export default ${JSON.stringify(config)};`;
+          return {
+            code: `export default ${JSON.stringify(config)};`,
+            moduleType: "js",
+          };
         }
       },
     },
@@ -33,7 +36,10 @@ export default function RPressConfig(config: RPressConfig): Plugin[] {
       },
       load(id) {
         if (id === RESOLVED_VIRTUAL_RPRESS_ROUTES) {
-          return `export default Object.values( import.meta.glob('/${config.routesDir}', { eager: true })).filter(module => !!module?.route);`;
+          return {
+            code: `export default Object.values( import.meta.glob('/${config.routesDir}', { eager: true })).filter(module => !!module?.route);`,
+            moduleType: "js",
+          };
         }
       },
     },
@@ -45,7 +51,10 @@ export default function RPressConfig(config: RPressConfig): Plugin[] {
       },
       load(id) {
         if (id === RESOLVED_VIRTUAL_RPRESS_ENV) {
-          return `export default ${this.environment.name === "client"}`;
+          return {
+            code: `export default ${this.environment.name === "client"}`,
+            moduleType: "js",
+          };
         }
       },
     },

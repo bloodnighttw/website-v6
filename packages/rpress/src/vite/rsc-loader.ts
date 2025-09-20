@@ -19,7 +19,10 @@ export default function rscLoader(): Plugin {
     },
     async load(id) {
       if (id === "\0virtual:rpress:rsc-loader") {
-        return `export default () => { throw new Error("rsc-loader cannot be used in non client environment")}`;
+        return {
+          code: `export default () => { throw new Error("rsc-loader cannot be used in non client environment")}`,
+          moduleType: "js",
+        };
       }
     },
   };

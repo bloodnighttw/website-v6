@@ -63,7 +63,7 @@ async function generateRSCStream({ request }: { request: Request }) {
   const normalizeUrl = normalize(url.pathname);
 
   let module: RouteModule | undefined = undefined;
-  let params: Record<string, string> = {};
+  let params: Record<string, string | string[]> = {};
   for (const m of allRouteModules) {
     const matchResult = m.route.matcher.match(normalizeUrl);
     if (matchResult === false) continue;

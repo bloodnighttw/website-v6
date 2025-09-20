@@ -1,0 +1,159 @@
+---
+title: "Link Component"
+description: "Navigate between pages with optimized prefetching using the Link component."
+---
+
+# Link Component
+
+The `Link` component provides client-side navigation with intelligent prefetching strategies to optimize performance.
+
+## Basic Usage
+
+```tsx
+import Link from "rpress/link";
+
+export default function Navigation() {
+  return (
+    <nav>
+      <Link to="/about">About</Link>
+      <Link to="/contact">Contact</Link>
+    </nav>
+  );
+}
+```
+
+## Props
+
+The `Link` component accepts all standard anchor (`<a>`) element props except `href`, plus these additional props:
+
+| Prop       | Type                                         | Required | Description                                    |
+| ---------- | -------------------------------------------- | -------- | ---------------------------------------------- |
+| `to`       | `string`                                     | Yes      | The destination path for navigation            |
+| `prefetch` | `"hover" \| "viewport" \| "none" \| "eager"` | No       | Prefetch strategy (defaults to config setting) |
+
+## Prefetch Strategies
+
+### Hover (Default)
+
+Prefetches the route when the user hovers over the link:
+
+```tsx
+<Link to="/profile" prefetch="hover">
+  Profile
+</Link>
+```
+
+### Eager
+
+Prefetches the route immediately when the component mounts:
+
+```tsx
+<Link to="/dashboard" prefetch="eager">
+  Dashboard
+</Link>
+```
+
+### Viewport
+
+Prefetches when the link enters the viewport (200px margin):
+
+```tsx
+<Link to="/gallery" prefetch="viewport">
+  Gallery
+</Link>
+```
+
+### None
+
+Disables prefetching entirely:
+
+```tsx
+<Link to="/external" prefetch="none">
+  External Link
+</Link>
+```
+
+## Examples
+
+### Basic Navigation
+
+Simple navigation between routes:
+
+```tsx
+import Link from "rpress/link";
+
+export default function HomePage() {
+  return (
+    <div>
+      <h1>Welcome</h1>
+      <Link to="/fr">Go to French version</Link>
+      <Link to="/en">Go to English version</Link>
+    </div>
+  );
+}
+```
+
+### Viewport Prefetching
+
+Use viewport prefetching for links that appear lower on the page:
+
+```tsx
+export default function HomePage() {
+  return (
+    <div>
+      <div style={{ height: 1200 }}>{/* Long content */}</div>
+      <Link to="/en" prefetch="viewport">
+        Load English version when visible
+      </Link>
+    </div>
+  );
+}
+```
+
+### Custom Styling
+
+Pass through standard anchor props like `className` and `id`:
+
+```tsx
+<Link to="/home" className="nav-link active" id="home-link">
+  Home
+</Link>
+```
+
+### Custom Event Handlers
+
+Combine with custom event handlers:
+
+```tsx
+<Link
+  to="/settings"
+  onClick={(e) => {
+    console.log("Navigating to settings");
+  }}
+  onMouseEnter={(e) => {
+    console.log("Hovering over settings link");
+  }}
+>
+  Settings
+</Link>
+```
+
+### Dynamic Routes
+
+Link to parameterized routes:
+
+```tsx
+<Link to="/user/123">User Profile</Link>
+<Link to="/blog/my-post-slug">Read Article</Link>
+```
+
+## Configuration
+
+The default prefetch strategy can be configured globally in your rpress config:
+
+```ts
+// rpress.config.ts
+export default {
+  prefetchStrategy: "hover", // or "viewport", "eager", "none"
+};
+```
