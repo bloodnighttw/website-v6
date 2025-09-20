@@ -18,6 +18,7 @@ export default function Provider({
       useParams={() => params || {}}
       usePathname={() => pathname || "/"}
       useRouter={() => ({}) as Router}
+      // @ts-ignore
       Link={({ href, children: c, prefetch, ...rest }) => (
         <Link to={href!} prefetch={prefetch ? undefined : "none"} {...rest}>
           {c}

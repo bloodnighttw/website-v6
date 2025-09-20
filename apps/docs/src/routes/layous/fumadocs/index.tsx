@@ -9,6 +9,7 @@ import { RootProvider } from "fumadocs-ui/provider/base";
 import Provider from "./framework";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import type { Page } from "@/lib/source";
+import { File, Folder, Files } from "fumadocs-ui/components/files";
 
 import "@/global.css";
 
@@ -52,6 +53,9 @@ export default async function FumaDocs({ page, pathname, params }: Props) {
                   <MDX
                     components={{
                       ...defaultMdxComponents,
+                      File,
+                      Folder,
+                      Files,
                     }}
                   />
                 </DocsBody>
