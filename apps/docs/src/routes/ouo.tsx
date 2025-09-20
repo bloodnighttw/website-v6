@@ -25,6 +25,6 @@ export default async function OuoLayout({ params }: Props) {
 
   const { source } = await import("../lib/source");
   const page = source.getPage(slug);
-
+  console.log("wtf");
   return <FumaDocs page={page} slug={slug} />;
 }

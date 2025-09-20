@@ -47,6 +47,7 @@ export default async function FumaDocs({ page, slug, params }: Props) {
             >
               <DocsPage toc={page.data.toc}>
                 <DocsTitle>{page.data.title}</DocsTitle>
+                <DocsDescription>{page.data.description}</DocsDescription>
                 <DocsBody>
                   <MDX
                     components={{
