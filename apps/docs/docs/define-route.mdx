@@ -1,9 +1,9 @@
 ---
 title: "Define Route"
-description: "Create type-safe routes with dynamic parameters using createRoute."
+description: "Create type-safe routes with static route or with dynamic parameters."
 ---
 
-The `createRoute` function allows you to define routes with type-safe parameters and static generation configuration. Routes are automatically discovered from your configured routes directory.
+The RPress allows you to define routes with type-safe parameters and static generation configuration. Routes are automatically discovered from your configured routes directory.
 
 ## Route Discovery
 
@@ -71,7 +71,7 @@ export default function AboutPage() {
 }
 ```
 
-### Why we use `createRoute()` to declare routes?
+#### Why we use `createRoute()` to declare routes?
 
 Since routes are declared via `createRoute()` and not determined by file paths, you can organize your files however you prefer,
 for example, you can group by feature, keep a flat structure, or use multiple directories.
@@ -107,58 +107,29 @@ RPress will scan all matching files in any of these directories for route declar
 
 What's more, we don't need generated-type to ensure type safety, which might be **over-engineered**, since `createRoute()` with infer utility `RouterProps` already provides full type inference and safety. We will see how to use it in the examples below.
 
-## Dynamic Routes
+### Dynamic Routes
 
 Dynamic routes can include parameters in the path using `:name` or `:...name` syntax. You must provide a `generator` function that returns an array of parameter objects for static generation.
 
-For single parameter routes we use `:name` syntax, and for catch-all routes we use `:...name` syntax.
+For single parameter routes we use `:name` syntax to capture a single segment, like `/blog/:slug`,
+then we provide a generator that returns an array of slugs to declare the valid routes, which will be used for static generation:
 
-````tsx
-import { createRoute } from "rpress/route";
+And in the default export component, we will expose the router React Server
 
-// Single parameter route
-export const route = createRoute("/blog/:slug", {
-  generator: async () => {
-    return [
-      { slug: "first-post" },
-      { slug: "second-post" },
-      { slug: "third-post" },
-    ];
-  },
-});
+Route Component can only be **Server Component**, this is designed to be intentional to avoid unnecessary client-side JavaScript for routing.
 
+And we can use `RouterProps` to infer the type of `params`, which will be `{ slug: string }` in this case.
+RPress will pass the object infer from `"/blog/:slug"` to the `params` prop.
+and `RouterProps` is very useful to ensure type safety and get full type inference for route parameters.
 
-
-## Usage
-
-### Basic Routes
-
-Simple routes without parameters:
+The generator function is asynchronous, allowing you to fetch data from an API or database to determine the valid routes.
+And you should pass an array of objects, where each object contains the parameters for a specific route.
 
 ```tsx
-// File: src/routes/about-page.tsx
-import { createRoute } from "rpress/route";
-
-// Simple route without parameters
-export const route = createRoute("/about");
-
-export default function AboutPage() {
-  return <h1>About Us</h1>;
-}
-````
-
-### Dynamic Routes
-
-You will need to provide a `generator` function that returns an array of parameter objects for static generation.
-
-```tsx
-// File: src/routes/blog-post.tsx
 import { createRoute, type RouterProps } from "rpress/route";
 
-// Route with single parameter
 export const route = createRoute("/blog/:slug", {
   generator: async () => {
-    // Return array of parameter objects for static generation
     return [
       { slug: "first-post" },
       { slug: "second-post" },
@@ -167,214 +138,25 @@ export const route = createRoute("/blog/:slug", {
   },
 });
 
-// TypeScript automatically infers params.slug as string
-export default function BlogPost({ params }: RouterProps<typeof route>) {
+export default function BlogPostPage({ params }: RouterProps<typeof route>) {
   return <h1>Blog Post: {params.slug}</h1>;
 }
 ```
 
-#### Type Safety
+#### Catch-All Routes
 
-RPress automatically infers parameter types from the route path using `RouterProps`. This provides complete type safety without manual type annotations.
-
-**Single Parameter Routes:**
+For routes that need to capture multiple segments, use the `:...name` syntax. The generator should return an array of objects with arrays for the catch-all parameter.
+and `RouterProps` will infer the type of `params` as `{ slug: string[] }` in this case.
 
 ```tsx
 import { createRoute, type RouterProps } from "rpress/route";
-
-export const route = createRoute("/products/:id", {
-  generator: async () => {
-    return [{ id: "laptop" }, { id: "phone" }, { id: "tablet" }];
-  },
-});
-
-export default function ProductPage({ params }: RouterProps<typeof route>) {
-  // params is automatically typed as { id: string }
-  // TypeScript knows params.id exists and is a string
-  const productId: string = params.id; // ✅ Type-safe
-  // const invalid = params.name;        // ❌ TypeScript error
-
-  return <h1>Product {params.id}</h1>;
-}
-```
-
-**Multiple Parameter Routes:**
-
-```tsx
-export const route = createRoute("/blog/:category/:year/:slug", {
+export const route = createRoute("/docs/:...slug", {
   generator: async () => {
     return [
-      { category: "tech", year: "2024", slug: "react-server-components" },
-      { category: "design", year: "2024", slug: "ui-patterns" },
-      { category: "tech", year: "2023", slug: "vite-plugins" },
+      { slug: ["getting-started"] },
+      { slug: ["guides", "installation"] },
+      { slug: ["guides", "configuration"] },
     ];
   },
 });
-
-export default function BlogPost({ params }: RouterProps<typeof route>) {
-  // params is automatically typed as { category: string; year: string; slug: string }
-  const { category, year, slug } = params; // ✅ All typed as string
-
-  // TypeScript autocomplete works perfectly
-  return (
-    <div>
-      <h1>{category.toUpperCase()}</h1> {/* ✅ String methods available */}
-      <h2>Year: {parseInt(year)}</h2> {/* ✅ Can safely convert */}
-      <h3>Slug: {slug.replace("-", " ")}</h3> {/* ✅ String manipulation */}
-    </div>
-  );
-}
-```
-
-**Type Inference Benefits:**
-
-- No manual type definitions needed
-- Full IntelliSense support
-- Compile-time error checking
-- Refactoring safety - changing route path updates types automatically
-- All parameters with `:name` syntax are inferred as `string`
-
-#### Nested Dynamic Routes
-
-You can define routes with multiple dynamic segments:
-
-```tsx
-import { createRoute, type RouterProps } from "rpress/route";
-
-// Route with multiple parameters
-export const route = createRoute("/blog/:category/:slug", {
-  generator: async () => {
-    return [
-      { category: "tech", slug: "react-server-components" },
-      { category: "tech", slug: "vite-plugins" },
-      { category: "design", slug: "ui-patterns" },
-    ];
-  },
-});
-
-// TypeScript infers params.category and params.slug as strings
-export default function CategoryPost({ params }: RouterProps<typeof route>) {
-  return (
-    <div>
-      <h1>Category: {params.category}</h1>
-      <h2>Post: {params.slug}</h2>
-    </div>
-  );
-}
-```
-
-### Catch-all Routes
-
-Use spread syntax for catch-all routes that can match multiple path segments:
-
-```tsx
-import { createRoute, type RouterProps } from "rpress/route";
-
-// Catch-all route
-export const route = createRoute("/docs/:...path", {
-  generator: async () => {
-    return [
-      { path: ["getting-started"] },
-      { path: ["api", "reference"] },
-      { path: ["guides", "deployment", "vercel"] },
-    ];
-  },
-});
-
-// TypeScript infers params.path as string[]
-export default function DocsPage({ params }: RouterProps<typeof route>) {
-  return <h1>Docs: {params.path.join(" / ")}</h1>;
-}
-```
-
-#### Catch-all Type Safety
-
-Catch-all routes are automatically typed as `string[]`, providing array-specific type safety:
-
-```tsx
-import { createRoute, type RouterProps } from "rpress/route";
-
-export const route = createRoute("/files/:...path");
-
-export default function FilesPage({ params }: RouterProps<typeof route>) {
-  // params is automatically typed as { path: string[] }
-  const pathSegments: string[] = params.path; // ✅ Type-safe
-
-  // Array methods are fully typed and available
-  const breadcrumbs = params.path.map(
-    (
-      segment,
-      index, // ✅ Array.map with types
-    ) => <span key={index}>{segment}</span>,
-  );
-
-  // Safe array operations
-  const fileName = params.path.at(-1); // ✅ Get last segment
-  const directory = params.path.slice(0, -1); // ✅ Get all but last
-  const depth = params.path.length; // ✅ Get path depth
-
-  // Handle empty paths
-  if (params.path.length === 0) {
-    // ✅ Type-safe length check
-    return <div>Root directory</div>;
-  }
-
-  return (
-    <div>
-      <nav>{breadcrumbs}</nav>
-      <h1>File: {fileName}</h1>
-      <p>Directory depth: {depth}</p>
-      <p>Full path: /{params.path.join("/")}</p>
-    </div>
-  );
-}
-```
-
-**Advanced Catch-all Patterns:**
-
-```tsx
-// Mixed parameters with catch-all
-export const route = createRoute("/api/:version/:...endpoints");
-// params: { version: string; endpoints: string[] }
-
-// Catch-all at the beginning (less common)
-export const route = createRoute("/:...path/admin");
-// params: { path: string[] }
-
-// Multiple catch-alls (not recommended, but possible)
-export const route = createRoute("/:...prefix/separator/:...suffix");
-// params: { prefix: string[]; suffix: string[] }
-```
-
-**Type Safety Benefits for Catch-all Routes:**
-
-- Automatic `string[]` typing for spread parameters
-- Full array method support with IntelliSense
-- Safe destructuring and manipulation
-- Compile-time validation of array operations
-- No runtime type checking needed
-
-### Async Data Fetching
-
-The generator function can fetch data from APIs or file systems:
-
-```tsx
-import { createRoute, type RouterProps } from "rpress/route";
-
-export const route = createRoute("/products/:id", {
-  generator: async () => {
-    // Fetch from API
-    const response = await fetch("https://api.example.com/products");
-    const products = await response.json();
-
-    return products.map((product: any) => ({
-      id: product.id.toString(),
-    }));
-  },
-});
-
-// TypeScript infers params.id as string
-export default function ProductPage({ params }: RouterProps<typeof route>) {
-  return <h1>Product {params.id}</h1>;
-}
 ```
