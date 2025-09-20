@@ -1,18 +1,5 @@
 import createRoute, { type RouterProps } from "rpress/route";
-// require rolldown vite to build this project.
-// if we don't have rolldown vite, the dev and prod won't be the same.
-// and cause no file generated.
-// import { source } from "../lib/source";
-import defaultMdxComponents from "fumadocs-ui/mdx";
-import {
-  DocsBody,
-  DocsDescription,
-  DocsPage,
-  DocsTitle,
-} from "fumadocs-ui/page";
-import { RootProvider } from "fumadocs-ui/provider/base";
-import Provider from "./layous/fumadocs/framework";
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
+import FumaDocs from "./layous/fumadocs";
 
 export const route = createRoute("/docs/:...other", {
   generator: async () => {
@@ -39,46 +26,5 @@ export default async function OuoLayout({ params }: Props) {
   const { source } = await import("../lib/source");
   const page = source.getPage(slug);
 
-  if (!page) {
-    // ...
-    throw new Error("Page not found");
-  }
-
-  const MDX = page.data.body;
-  return (
-    // <div>wtf</div>
-    <html suppressHydrationWarning={true}>
-      <body>
-        <title>{page.data.title}</title>
-        <Provider slug={slug}>
-          <RootProvider
-            theme={{ enabled: true, defaultTheme: "system" }}
-            search={{ enabled: false }}
-          >
-            <DocsLayout
-              sidebar={{
-                collapsible: false,
-              }}
-              nav={{
-                title: <div>2ts</div>,
-              }}
-              tree={source.getPageTree()}
-            >
-              <DocsPage toc={page.data.toc}>
-                <DocsTitle>{page.data.title}</DocsTitle>
-                <DocsDescription>{page.data.description}</DocsDescription>
-                <DocsBody>
-                  <MDX
-                    components={{
-                      ...defaultMdxComponents,
-                    }}
-                  />
-                </DocsBody>
-              </DocsPage>
-            </DocsLayout>
-          </RootProvider>
-        </Provider>
-      </body>
-    </html>
-  );
+  return <FumaDocs page={page} slug={slug} />;
 }

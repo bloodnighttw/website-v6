@@ -7,3 +7,5 @@ export const source = loader({
   source: mdx,
   baseUrl: "/docs",
 });
+
+export type Page = ReturnType<typeof source.getPage>;
