@@ -12,3 +12,12 @@ For example, this documentation site is built using RPress itself, and documenta
 which can be use among many framework without too many configuration.
 
 This documentation is also under development btw.
+
+## Using with Rolldown-Vite
+
+You also need to pass inside yoru pnpm-workspace.yaml file the following override to make sure you are using the latest version of Rolldown-Vite.
+
+```yaml title="pnpm-workspace.yaml"
+overrides:
+  vite: npm:rolldown-vite@latest
+```
