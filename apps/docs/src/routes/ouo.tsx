@@ -11,10 +11,10 @@ import {
   DocsTitle,
 } from "fumadocs-ui/page";
 import { RootProvider } from "fumadocs-ui/provider/base";
-import Provider from "./layous/layouts";
+import Provider from "./layous/fumadocs/framework";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 
-export const route = createRoute("/ouo/:...other", {
+export const route = createRoute("/docs/:...other", {
   generator: async () => {
     // return [{
     //   other: []
@@ -49,15 +49,20 @@ export default async function OuoLayout({ params }: Props) {
     // <div>wtf</div>
     <html suppressHydrationWarning={true}>
       <body>
+        <title>{page.data.title}</title>
         <Provider slug={slug}>
-          <RootProvider theme={{ enabled: true, defaultTheme: "system" }}>
+          <RootProvider
+            theme={{ enabled: true, defaultTheme: "system" }}
+            search={{ enabled: false }}
+          >
             <DocsLayout
-              tree={{
-                $id: "hello",
-                children: [],
-                fallback: undefined,
-                name: "Hello",
+              sidebar={{
+                collapsible: false,
               }}
+              nav={{
+                title: <div>2ts</div>,
+              }}
+              tree={source.getPageTree()}
             >
               <DocsPage toc={page.data.toc}>
                 <DocsTitle>{page.data.title}</DocsTitle>
