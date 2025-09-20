@@ -12,7 +12,6 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
     rpress({
-      routesDir: "src/routes/**",
       strictMode: true,
       prefetchStrategy: "hover",
     }),

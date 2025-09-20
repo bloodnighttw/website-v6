@@ -1,0 +1,272 @@
+---
+title: "Image Component"
+description: "Optimized image component with automatic resizing and quality control."
+---
+
+The `Image` component provides automatic image optimization with resizing and quality control for better performance.
+
+## Basic Usage
+
+```tsx
+import Image from "rpress/image";
+
+export default function Gallery() {
+  return (
+    <div>
+      <Image
+        src="/photos/landscape.jpg"
+        alt="Beautiful landscape"
+        width={800}
+        height={600}
+      />
+    </div>
+  );
+}
+```
+
+## Props
+
+### `src`
+
+- **Type:** `string`
+- **Required:** Yes
+
+The source path of the image. Can be a local path or external URL.
+
+```tsx
+<Image src="/images/hero.jpg" alt="Hero image" />
+<Image src="https://example.com/photo.jpg" alt="External image" />
+```
+
+### `width` and `height`
+
+- **Type:** `number`
+- **Optional**
+
+Specify dimensions for automatic resizing:
+
+```tsx
+<Image src="/large-photo.jpg" width={400} height={300} alt="Resized image" />
+```
+
+### `quality`
+
+- **Type:** `number` (1-100)
+- **Default:** Auto-optimized
+
+Control the image quality for file size optimization:
+
+```tsx
+{
+  /* High quality for important images */
+}
+<Image src="/hero.jpg" quality={95} alt="High quality hero" />;
+
+{
+  /* Lower quality for thumbnails */
+}
+<Image
+  src="/thumbnail.jpg"
+  quality={60}
+  width={150}
+  height={150}
+  alt="Thumbnail"
+/>;
+```
+
+### `alt`
+
+- **Type:** `string`
+- **Recommended**
+
+Alternative text for accessibility:
+
+```tsx
+<Image
+  src="/product.jpg"
+  alt="Red sneakers with white laces"
+  width={300}
+  height={200}
+/>
+```
+
+## Responsive Images
+
+Create responsive images with different sizes:
+
+```tsx
+export default function ResponsiveImage() {
+  return (
+    <div className="responsive-container">
+      <Image
+        src="/hero.jpg"
+        width={1200}
+        height={800}
+        alt="Hero image"
+        className="w-full h-auto"
+      />
+    </div>
+  );
+}
+```
+
+## Image Gallery
+
+```tsx
+import Image from "rpress/image";
+
+const photos = [
+  { id: 1, src: "/gallery/photo1.jpg", alt: "Photo 1" },
+  { id: 2, src: "/gallery/photo2.jpg", alt: "Photo 2" },
+  { id: 3, src: "/gallery/photo3.jpg", alt: "Photo 3" },
+];
+
+export default function PhotoGallery() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {photos.map((photo) => (
+        <Image
+          key={photo.id}
+          src={photo.src}
+          alt={photo.alt}
+          width={300}
+          height={200}
+          quality={80}
+          className="rounded-lg"
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+## Product Images
+
+```tsx
+import Image from "rpress/image";
+
+interface ProductProps {
+  product: {
+    name: string;
+    image: string;
+    thumbnail: string;
+  };
+}
+
+export default function ProductCard({ product }: ProductProps) {
+  return (
+    <div className="product-card">
+      <Image
+        src={product.image}
+        alt={product.name}
+        width={400}
+        height={400}
+        quality={85}
+        className="main-image"
+      />
+
+      <div className="thumbnails">
+        <Image
+          src={product.thumbnail}
+          alt={`${product.name} thumbnail`}
+          width={80}
+          height={80}
+          quality={70}
+          className="thumbnail"
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+## Avatar Images
+
+```tsx
+import Image from "rpress/image";
+
+interface AvatarProps {
+  user: {
+    name: string;
+    avatar: string;
+  };
+  size?: "sm" | "md" | "lg";
+}
+
+export default function Avatar({ user, size = "md" }: AvatarProps) {
+  const sizes = {
+    sm: { width: 32, height: 32 },
+    md: { width: 64, height: 64 },
+    lg: { width: 128, height: 128 },
+  };
+
+  return (
+    <Image
+      src={user.avatar}
+      alt={`${user.name}'s avatar`}
+      width={sizes[size].width}
+      height={sizes[size].height}
+      quality={90}
+      className="rounded-full"
+    />
+  );
+}
+```
+
+## Background Images
+
+For background images, use regular CSS with optimized image URLs:
+
+```tsx
+import Image from "rpress/image";
+
+export default function HeroSection() {
+  return (
+    <div>
+      {/* For img tags, use Image component */}
+      <Image
+        src="/hero-banner.jpg"
+        alt="Hero banner"
+        width={1920}
+        height={1080}
+        quality={85}
+      />
+
+      {/* For CSS backgrounds, use regular img tags or CSS */}
+      <div
+        className="hero-bg"
+        style={{
+          backgroundImage: "url(/hero-bg.jpg)",
+          backgroundSize: "cover",
+        }}
+      >
+        <h1>Hero Content</h1>
+      </div>
+    </div>
+  );
+}
+```
+
+## Performance Tips
+
+1. **Always specify dimensions** when possible to prevent layout shifts
+2. **Use appropriate quality** settings (60-80 for thumbnails, 85-95 for important images)
+3. **Optimize source images** before using them
+4. **Use responsive images** for different screen sizes
+
+```tsx
+// Good: Specified dimensions and quality
+<Image
+  src="/photo.jpg"
+  width={800}
+  height={600}
+  quality={85}
+  alt="Optimized photo"
+/>
+
+// Avoid: No dimensions specified
+<Image
+  src="/photo.jpg"
+  alt="Photo without dimensions"
+/>
+```

@@ -1,0 +1,206 @@
+---
+title: "Link Component"
+description: "Navigate between pages with optimized prefetching using the Link component."
+---
+
+The `Link` component provides client-side navigation with intelligent prefetching strategies to improve performance.
+
+## Basic Usage
+
+```tsx
+import Link from "rpress/link";
+
+export default function HomePage() {
+  return (
+    <div>
+      <h1>Welcome</h1>
+      <Link to="/about">About Us</Link>
+    </div>
+  );
+}
+```
+
+## Props
+
+### `to`
+
+- **Type:** `string`
+- **Required:** Yes
+
+The destination path for the link.
+
+```tsx
+<Link to="/contact">Contact</Link>
+<Link to="/blog/my-post">Read Post</Link>
+```
+
+### `prefetch`
+
+- **Type:** `"hover" | "viewport" | "none" | "eager"`
+- **Default:** Uses global config value
+
+Controls when to prefetch the destination route:
+
+```tsx
+{
+  /* Prefetch when user hovers */
+}
+<Link to="/about" prefetch="hover">
+  About
+</Link>;
+
+{
+  /* Prefetch when link enters viewport */
+}
+<Link to="/products" prefetch="viewport">
+  Products
+</Link>;
+
+{
+  /* Prefetch immediately */
+}
+<Link to="/important" prefetch="eager">
+  Important
+</Link>;
+
+{
+  /* Disable prefetching */
+}
+<Link to="/large-page" prefetch="none">
+  Large Page
+</Link>;
+```
+
+### Other Props
+
+The Link component accepts all standard anchor tag props except `href`:
+
+```tsx
+<Link
+  to="/contact"
+  className="button"
+  target="_blank"
+  onClick={(e) => console.log("Clicked!")}
+>
+  Contact Us
+</Link>
+```
+
+## Prefetch Strategies
+
+### Hover Prefetch
+
+Prefetches when the user hovers over the link:
+
+```tsx
+<Link to="/about" prefetch="hover">
+  About Us
+</Link>
+```
+
+### Viewport Prefetch
+
+Prefetches when the link enters the viewport (with 200px margin):
+
+```tsx
+<Link to="/products" prefetch="viewport">
+  View Products
+</Link>
+```
+
+### Eager Prefetch
+
+Prefetches immediately when the component mounts:
+
+```tsx
+<Link to="/dashboard" prefetch="eager">
+  Dashboard
+</Link>
+```
+
+### No Prefetch
+
+Disables prefetching entirely:
+
+```tsx
+<Link to="/heavy-page" prefetch="none">
+  Heavy Page
+</Link>
+```
+
+## Navigation List Example
+
+```tsx
+import Link from "rpress/link";
+
+export default function Navigation() {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <Link to="/" prefetch="eager">
+            Home
+          </Link>
+        </li>
+        <li>
+          <Link to="/about" prefetch="hover">
+            About
+          </Link>
+        </li>
+        <li>
+          <Link to="/products" prefetch="viewport">
+            Products
+          </Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact</Link>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+```
+
+## Styled Links
+
+```tsx
+import Link from "rpress/link";
+
+export default function StyledLinks() {
+  return (
+    <div>
+      <Link
+        to="/primary-action"
+        className="bg-blue-500 text-white px-4 py-2 rounded"
+        prefetch="hover"
+      >
+        Primary Action
+      </Link>
+
+      <Link
+        to="/secondary"
+        style={{
+          color: "gray",
+          textDecoration: "underline",
+        }}
+      >
+        Secondary Link
+      </Link>
+    </div>
+  );
+}
+```
+
+## External Links
+
+For external URLs, use regular anchor tags instead:
+
+```tsx
+// Use Link for internal navigation
+<Link to="/internal-page">Internal Page</Link>
+
+// Use regular anchor for external links
+<a href="https://external-site.com" target="_blank">
+  External Site
+</a>
+```

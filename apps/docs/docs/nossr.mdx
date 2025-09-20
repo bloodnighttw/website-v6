@@ -1,0 +1,222 @@
+---
+title: "NoSSR Component"
+description: "Render components only on the client side with the NoSSR wrapper."
+---
+
+The `NoSSR` component allows you to render content only on the client side, skipping server-side rendering for specific components.
+
+## Basic Usage
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+export default function Page() {
+  return (
+    <div>
+      <h1>This renders on server and client</h1>
+
+      <NoSSR>
+        <div>This only renders on the client</div>
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## With Fallback
+
+Provide a fallback component that renders during server-side rendering:
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+export default function Dashboard() {
+  return (
+    <div>
+      <h1>Dashboard</h1>
+
+      <NoSSR fallback={<div>Loading chart...</div>}>
+        <InteractiveChart data={data} />
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## Client-Only Components
+
+Use NoSSR for components that rely on browser APIs:
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+function GeolocationComponent() {
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+  }, []);
+
+  return (
+    <div>
+      {location ? (
+        <p>
+          Your location: {location.lat}, {location.lng}
+        </p>
+      ) : (
+        <p>Getting your location...</p>
+      )}
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <div>
+      <h1>Location App</h1>
+
+      <NoSSR fallback={<p>Loading location service...</p>}>
+        <GeolocationComponent />
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## Third-Party Libraries
+
+Wrap third-party components that don't support SSR:
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+// For libraries that break during SSR
+function ThirdPartyMap({ coordinates }) {
+  return <SomeMapLibrary coordinates={coordinates} />;
+}
+
+export default function ContactPage() {
+  return (
+    <div>
+      <h1>Contact Us</h1>
+      <p>Visit us at our office:</p>
+
+      <NoSSR fallback={<div className="h-64 bg-gray-200">Loading map...</div>}>
+        <ThirdPartyMap coordinates={{ lat: 40.7128, lng: -74.006 }} />
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## Interactive Widgets
+
+Use for components that require user interaction:
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+function InteractiveWidget() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+
+export default function InteractivePage() {
+  return (
+    <div>
+      <h1>Interactive Demo</h1>
+
+      <NoSSR fallback={<div>Loading interactive widget...</div>}>
+        <InteractiveWidget />
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## Local Storage Components
+
+For components that read from localStorage:
+
+```tsx
+import NoSSR from "rpress/nossr";
+
+function UserPreferences() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      return savedTheme;
+    }
+    return "light";
+  });
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+    </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <div>
+      <h1>Settings</h1>
+
+      <NoSSR fallback={<div>Loading preferences...</div>}>
+        <UserPreferences />
+      </NoSSR>
+    </div>
+  );
+}
+```
+
+## Performance Considerations
+
+- Use NoSSR sparingly as it can affect SEO and initial page load
+- Always provide meaningful fallbacks for better user experience
+- Consider if the component really needs to be client-only
+
+```tsx
+// Good: Provides useful fallback
+<NoSSR fallback={<SkeletonLoader />}>
+  <ComplexChart />
+</NoSSR>
+
+// Poor: Empty fallback provides bad UX
+<NoSSR>
+  <ComplexChart />
+</NoSSR>
+```
+
+## When to Use NoSSR
+
+Use NoSSR when:
+
+- Component uses browser-only APIs (localStorage, geolocation, etc.)
+- Third-party library doesn't support SSR
+- Component has complex client-side state that's hard to serialize
+- Interactive features that don't need to be indexed by search engines
+
+Avoid NoSSR when:
+
+- Content is important for SEO
+- Component can be made SSR-compatible
+- Simple static content that doesn't need client-side features
