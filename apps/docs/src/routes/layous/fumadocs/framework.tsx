@@ -18,10 +18,9 @@ export default function Provider({
       useParams={() => params || {}}
       usePathname={() => "/" + slug.join("/")}
       useRouter={() => ({}) as Router}
-      // @ts-expect-error
-      Link={({ href, ...rest }) => (
-        <Link to={href!} className={className} {...rest}>
-          {children}
+      Link={({ href, children: c, prefetch, ...rest }) => (
+        <Link to={href!} prefetch={prefetch ? undefined : "none"} {...rest}>
+          {c}
         </Link>
       )}
     >
