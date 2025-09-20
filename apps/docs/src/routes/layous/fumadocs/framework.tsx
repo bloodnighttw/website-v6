@@ -2,22 +2,28 @@
 
 import { FrameworkProvider, type Router } from "fumadocs-core/framework";
 import type { ReactNode } from "react";
-import "@/global.css";
 import Link from "rpress/link";
 
 export default function Provider({
   children,
   slug,
+  params,
 }: {
   children: ReactNode;
   slug: string[];
+  params?: Record<string, string>;
 }) {
   return (
     <FrameworkProvider
-      useParams={() => ({})}
+      useParams={() => params || {}}
       usePathname={() => "/" + slug.join("/")}
       useRouter={() => ({}) as Router}
-      Link={(props) => <Link to={props.href!}>{props.children}</Link>}
+      // @ts-expect-error
+      Link={({ href, ...rest }) => (
+        <Link to={href!} className={className} {...rest}>
+          {children}
+        </Link>
+      )}
     >
       {children}
     </FrameworkProvider>

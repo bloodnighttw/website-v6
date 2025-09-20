@@ -10,12 +10,15 @@ import Provider from "./framework";
 import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import type { Page } from "@/lib/source";
 
+import "@/global.css";
+
 interface Props {
   page: Page;
   slug: string[];
+  params?: Record<string, string>;
 }
 
-export default async function FumaDocs({ page, slug }: Props) {
+export default async function FumaDocs({ page, slug, params }: Props) {
   const { source } = await import("@/lib/source");
 
   if (!page) {
@@ -28,7 +31,7 @@ export default async function FumaDocs({ page, slug }: Props) {
     <html suppressHydrationWarning={true}>
       <body>
         <title>{page.data.title}</title>
-        <Provider slug={slug}>
+        <Provider slug={slug} params={params}>
           <RootProvider
             theme={{ enabled: true, defaultTheme: "system" }}
             search={{ enabled: false }}
@@ -44,7 +47,6 @@ export default async function FumaDocs({ page, slug }: Props) {
             >
               <DocsPage toc={page.data.toc}>
                 <DocsTitle>{page.data.title}</DocsTitle>
-                <DocsDescription>{page.data.description}</DocsDescription>
                 <DocsBody>
                   <MDX
                     components={{
