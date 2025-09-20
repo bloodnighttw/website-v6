@@ -3,9 +3,6 @@ import FumaDocs from "./layous/fumadocs";
 
 export const route = createRoute("/docs/:...other", {
   generator: async () => {
-    // return [{
-    //   other: []
-    // }];
     const { source } = await import("../lib/source");
     const slugs = source
       .getPages()
