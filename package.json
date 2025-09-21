@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "turbo run build --filter='./packages/*' && turbo watch dev",
+    "dev:docs": "turbo run dev --filter='@rpress/docs'",
     "preview": "turbo preview",
     "build": "turbo build",
     "lint": "prettier --check . && turbo lint",

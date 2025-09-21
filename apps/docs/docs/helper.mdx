@@ -1,0 +1,93 @@
+---
+title: "Component Helper"
+description: "Compose and flatten React component wrappers with the FlatComponentHelper utility."
+---
+
+The `FlatComponentHelper` utility helps you compose multiple wrapper components in a clean and reusable way.
+
+## Basic Usage
+
+```tsx
+import { FlatComponentHelper } from "rpress/helper";
+
+export default function Page() {
+  const helper = new FlatComponentHelper();
+
+  // Add wrapper components
+  helper.add(ErrorBoundary, { fallback: <ErrorFallback /> });
+  helper.add(ThemeProvider, { theme: "dark" });
+  helper.add(UserProvider, { userId: "123" });
+
+  // Create composed wrapper
+  const Wrapper = helper.flatten();
+
+  return (
+    <Wrapper>
+      <div>Content wrapped by all providers</div>
+    </Wrapper>
+  );
+}
+```
+
+## Static Composition
+
+Use the static `compose` method for cleaner syntax:
+
+```tsx
+import { FlatComponentHelper } from "rpress/helper";
+
+export default function App() {
+  const helper = FlatComponentHelper.compose([
+    { component: ErrorBoundary, props: { fallback: <div>Error!</div> } },
+    { component: AuthProvider, props: { apiKey: "key123" } },
+    { component: ThemeProvider, props: { theme: "light" } },
+  ]);
+
+  const AppWrapper = helper.flatten();
+
+  return (
+    <AppWrapper>
+      <Router />
+    </AppWrapper>
+  );
+}
+```
+
+## Provider Composition
+
+Compose multiple context providers:
+
+```tsx
+import { FlatComponentHelper } from "rpress/helper";
+
+// Define your providers
+function AuthProvider({ children, config }) {
+  return <AuthContext.Provider value={config}>{children}</AuthContext.Provider>;
+}
+
+function ThemeProvider({ children, theme }) {
+  return (
+    <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+  );
+}
+
+export default function Layout({ children }) {
+  const helper = new FlatComponentHelper();
+
+  helper.add(AuthProvider, { config: authConfig });
+  helper.add(ThemeProvider, { theme: "dark" });
+  helper.add(ErrorBoundary, { fallback: <ErrorPage /> });
+
+  const Providers = helper.flatten();
+
+  return (
+    <Providers>
+      <div className="app-layout">
+        <Header />
+        <main>{children}</main>
+        <Footer />
+      </div>
+    </Providers>
+  );
+}
+```

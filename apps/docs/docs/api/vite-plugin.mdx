@@ -1,0 +1,96 @@
+---
+title: "rpress/vite"
+description: "Configure RPress in your Vite application with the main plugin."
+---
+
+The RPress Vite plugin is the main entry point for configuring RPress in your application. It provides all the necessary plugins to enable React Server Components and static site generation.
+
+## Installation
+
+```bash
+npm install rpress
+```
+
+## Basic Usage
+
+Add the RPress plugin to your `vite.config.ts`:
+
+```ts
+import { defineConfig } from "vite";
+import rpress from "rpress/vite";
+
+export default defineConfig({
+  plugins: [
+    rpress({
+      routesDir: "src/routes/**",
+      prefetchStrategy: "hover",
+    }),
+  ],
+});
+```
+
+## Configuration Options
+
+### `routesDir`
+
+- **Type:** `string`
+- **Default:** `"src/routes/**"`
+
+Specifies the directory pattern where your route files are located.
+
+```ts
+rpress({
+  routesDir: "src/pages/**",
+});
+```
+
+### `prefetchStrategy`
+
+- **Type:** `"hover" | "viewport" | "none" | "eager"`
+- **Default:** `"hover"`
+
+Controls when to prefetch route components:
+
+- `hover`: Prefetch when user hovers over a link
+- `viewport`: Prefetch when link enters the viewport
+- `eager`: Prefetch immediately when the page loads
+- `none`: Disable prefetching
+
+```ts
+rpress({
+  prefetchStrategy: "viewport",
+});
+```
+
+### `strictMode`
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Enables React strict mode for development.
+
+```ts
+rpress({
+  strictMode: false,
+});
+```
+
+## Complete Example
+
+```ts
+import { defineConfig } from "vite";
+import rpress from "rpress/vite";
+
+export default defineConfig({
+  plugins: [
+    rpress({
+      routesDir: "src/routes/**",
+      prefetchStrategy: "hover",
+      strictMode: true,
+    }),
+  ],
+  build: {
+    outDir: "dist",
+  },
+});
+```

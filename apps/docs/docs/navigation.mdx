@@ -1,0 +1,70 @@
+---
+title: "Navigation Hook"
+description: "Programmatically navigate between routes using the useNavigate hook."
+---
+
+The `useNavigate` hook provides programmatic navigation capabilities in rpress applications. It returns a function that allows you to navigate to different routes within your application.
+
+## Import
+
+```tsx
+import { useNavigate } from "rpress/navigate";
+```
+
+## Basic Usage
+
+```tsx
+import { useNavigate } from "rpress/navigate";
+
+function MyComponent() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/dashboard");
+  };
+
+  return <button onClick={handleClick}>Go to Dashboard</button>;
+}
+```
+
+## API Reference
+
+### `useNavigate(): (url: string) => void`
+
+Returns a navigation function that accepts a URL string.
+
+#### Parameters
+
+- `url` (string): The destination URL to navigate to
+
+#### Returns
+
+A function that triggers navigation when called.
+
+## Example: Form Submission with Navigation
+
+```tsx
+import { useNavigate } from "rpress/navigate";
+
+function LoginForm() {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      await loginUser(formData);
+      navigate("/dashboard"); // Navigate on success
+    } catch (error) {
+      navigate("/login?error=invalid"); // Navigate with error param
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* form fields */}
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```

@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "getting-start.mdx",
+    "vite-plugin.mdx",
+    "define-route.mdx",
+    "link.mdx",
+    "navigation.mdx",
+    "image.mdx",
+    "nossr.mdx",
+    "helper.mdx",
+    "---API Reference---",
+    "...api"
+  ]
+}

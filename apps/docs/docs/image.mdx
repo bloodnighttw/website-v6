@@ -1,0 +1,84 @@
+---
+title: "Image Component"
+description: "Optimized image component with automatic resizing and quality control."
+---
+
+The `Image` component provides automatic image optimization with WebP conversion, resizing, and quality control.
+
+## Import
+
+```tsx
+import { Image } from "rpress/image";
+```
+
+## Basic Usage
+
+**IMPORTANT: The image optimization features won't work inside the `NoSSR` component, since it relies on server-side processing.**
+
+```tsx
+import { Image } from "rpress/image";
+
+function MyComponent() {
+  return (
+    <Image src="/hero-image.jpg" alt="Hero image" width={800} height={600} />
+  );
+}
+```
+
+## API Reference
+
+### `Image`
+
+An optimized image component that extends the standard HTML `img` element with additional optimization features.
+
+#### Props
+
+The `Image` component accepts all standard HTML `img` attributes plus additional optimization props:
+
+- `src` (string, required): The image source URL
+- `width?` (number): Target width in pixels
+- `height?` (number): Target height in pixels
+- `quality?` (number): Image quality from 1-100 (default: 100)
+- `alt?` (string): Alternative text for accessibility
+- All other standard `img` HTML attributes (`className`, `style`, `loading`, etc.)
+
+## Optimization Features
+
+### Automatic WebP Conversion
+
+All images are automatically converted to WebP format for better compression and performance:
+
+```tsx
+<Image src="/photo.jpg" alt="Photo" />
+// Output: Optimized WebP version of the image
+```
+
+### Intelligent Resizing
+
+Images are resized based on the provided dimensions:
+
+```tsx
+// Resize to specific width
+<Image src="/large-image.jpg" width={400} alt="Resized" />
+
+// Resize to specific height
+<Image src="/large-image.jpg" height={300} alt="Resized" />
+
+// Resize to both dimensions
+<Image src="/large-image.jpg" width={800} height={600} alt="Resized" />
+```
+
+### Quality Control
+
+Control compression quality for file size optimization:
+
+```tsx
+// High quality (larger file size)
+<Image src="/photo.jpg" quality={95} alt="High quality" />
+
+// Medium quality (balanced)
+<Image src="/photo.jpg" quality={80} alt="Medium quality" />
+
+// Lower quality (smaller file size)
+<Image src="/photo.jpg" quality={60} alt="Optimized size" />
+```
