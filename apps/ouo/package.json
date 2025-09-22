@@ -16,10 +16,12 @@
     "rpress": "workspace:*"
   },
   "devDependencies": {
+    "@rpress/eslint": "workspace:*",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@unocss/preset-wind4": "^66.5.1",
     "@vitejs/plugin-react": "latest",
-    "vite": "^7.1.2",
-    "@rpress/eslint": "workspace:*"
+    "unocss": "^66.5.1",
+    "vite": "^7.1.2"
   }
 }
