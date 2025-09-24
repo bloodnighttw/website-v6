@@ -1,12 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
-import { createContext, useContext } from "react";
+import { useLayoutEffect } from "react";
 import "virtual:uno.css";
-
-const ThemeContext = createContext<{ theme: "light" | "dark" }>({
-  theme: "light",
-});
-
-export const useTheme = () => useContext(ThemeContext);
 
 const preview: Preview = {
   parameters: {
@@ -27,39 +21,29 @@ const preview: Preview = {
 
   decorators: [
     (Story, context) => {
-      const theme =
-        context.globals.theme || ("both" as "light" | "dark" | "both");
+      const theme = context.globals.theme || ("light" as "light" | "dark");
 
-      // Update Storybook background
-      context.parameters.backgrounds = {
-        ...context.parameters.backgrounds,
-        default: theme,
-      };
+      useLayoutEffect(() => {
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark", "bg-zinc-600");
+          // find parent element with class "docs-story" and add class "dark" to it
+          const docsStory = document.querySelectorAll(".docs-story");
+          if (docsStory) {
+            docsStory.forEach((e) => e.classList.add("dark", "bg-zinc-600"));
+          }
 
-      if (theme === "dark")
-        return (
-          <div className="dark bg-zinc-500 p-2 min-w-2xl justify-center items-center flex">
-            <Story />
-          </div>
-        );
+          return () => {
+            document.documentElement.classList.remove("dark", "bg-zinc-600");
+            if (docsStory) {
+              docsStory.forEach((e) =>
+                e.classList.remove("dark", "bg-zinc-600"),
+              );
+            }
+          };
+        }
+      }, [theme]);
 
-      if (theme === "light")
-        return (
-          <div>
-            <Story />
-          </div>
-        );
-
-      return (
-        <div className="flex flex-col gap-4">
-          <div className="dark bg-zinc-500 p-2 min-w-2xl justify-center items-center flex">
-            <Story />
-          </div>
-          <div>
-            <Story />
-          </div>
-        </div>
-      );
+      return <Story />;
     },
   ],
 
@@ -71,7 +55,6 @@ const preview: Preview = {
         title: "Theme",
         icon: "circlehollow",
         items: [
-          { value: "both", title: "Both" },
           { value: "light", title: "Light" },
           { value: "dark", title: "Dark" },
         ],
