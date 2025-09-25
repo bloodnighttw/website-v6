@@ -27,14 +27,12 @@
     "@storybook/react-vite": "^9.1.8",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@unocss/preset-wind4": "^66.5.1",
     "@vitejs/plugin-react": "latest",
-    "eslint-plugin-storybook": "^9.1.8",
-    "storybook": "^9.1.8",
-    "unocss": "^66.5.1",
-    "vite": "^7.1.2",
     "@vitest/browser": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint-plugin-storybook": "^9.1.8",
     "playwright": "^1.55.1",
-    "@vitest/coverage-v8": "^3.2.4"
+    "storybook": "^9.1.8",
+    "vite": "^7.1.2"
   }
 }
