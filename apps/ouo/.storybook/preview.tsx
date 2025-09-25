@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
 import { useLayoutEffect } from "react";
+import "./global.css";
 
 const preview: Preview = {
   parameters: {

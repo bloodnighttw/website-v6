@@ -1,4 +1,4 @@
-import "../../global.css";
+import "./root.css";
 
 interface RootProps {
   children: React.ReactNode;
@@ -7,12 +7,12 @@ interface RootProps {
 
 const changeTheme = () => {
   const theme = localStorage.getItem("theme");
+
   if (theme === "dark") {
     document.documentElement.classList.add("dark");
   }
-
-  // if theme is not set, use system preference
-  if (!theme) {
+  // if theme is not set, use system preference, note it won't trigger when theme="light"
+  else if (!theme) {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       document.documentElement.classList.add("dark");
     }

@@ -1,10 +1,10 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
-import UnoCSS from "unocss/vite";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import tailwindcss from "@tailwindcss/vite";
 
 const dirname =
   typeof __dirname !== "undefined"
@@ -12,7 +12,7 @@ const dirname =
     : path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [UnoCSS(), tsconfigPaths(), react()],
+  plugins: [tailwindcss(), tsconfigPaths(), react()],
   test: {
     projects: [
       {
