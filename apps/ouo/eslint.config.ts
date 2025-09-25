@@ -3,4 +3,11 @@ import storybook from "eslint-plugin-storybook";
 
 import config from "@rpress/eslint";
 
-export default config;
+export default [
+  ...config,
+  {
+    name: "storybook",
+    files: ["**/*.stories.@(js|jsx|ts|tsx)"],
+    plugins: { storybook },
+  },
+];

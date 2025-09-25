@@ -15,5 +15,6 @@
     "types": ["vite/client"],
     "jsx": "react-jsx"
   },
-  "include": ["./.storybook/**/*", "./**/*.tsx", "./**/*.ts"]
+  "include": ["./.storybook/**/*", "./**/*.tsx", "./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
