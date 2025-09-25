@@ -8,6 +8,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "npx serve ./dist/client",
+    "test": "vitest",
     "lint": "eslint . --ext .ts,.tsx,.mdx",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
