@@ -1,3 +1,4 @@
+import "@/global.css";
 import "./root.css";
 
 interface RootProps {

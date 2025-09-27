@@ -1,7 +1,9 @@
-@import "tailwindcss";
-
-@custom-variant dark (&:where(.dark, .dark *));
+@reference "../../global.css";
 
 .dark body {
-  @apply bg-zinc-950 text-gray-100;
+  @apply bg-primary-950 text-primary-50;
+}
+
+body {
+  @apply bg-primary-50 text-primary-950;
 }

@@ -14,7 +14,7 @@ export default async function WTF(props: RouterProps<typeof route>) {
 
   return (
     <Flatten>
-      <div className="dark:bg-amber-200">hi from home</div>
+      <div>hi from home</div>
       <div>props</div>
       <div>data: {JSON.stringify(props.params)}</div>
       <Counter />
