@@ -31,9 +31,9 @@ export function Button(props: ButtonProps) {
 
   const focusVariantStyles: Record<varient, string> = {
     primary:
-      "dark:focus:ring-primary-100 focus:ring-primary-900 ring-offset-primary-50 dark:ring-offset-primary-950",
+      "dark:focus:ring-primary-100 focus:ring-primary-900 ring-offset-primary-50 dark:ring-offset-primary-950 focus:bg-primary-950 dark:focus:bg-primary-50",
     secondary:
-      "dark:focus:ring-secondary-100 focus:ring-secondary-900 ring-offset-secondary-50 dark:ring-offset-secondary-950",
+      "dark:focus:ring-secondary-100 focus:ring-secondary-900 ring-offset-secondary-50 dark:ring-offset-secondary-950 focus:bg-secondary-950 dark:focus:bg-secondary-50",
     outline:
       "focus:ring-0 focus:ring-offset-0 border-primary-600 dark:border-primary-300 focus:bg-primary-400/10",
   };

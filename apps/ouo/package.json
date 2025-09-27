@@ -21,7 +21,6 @@
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^4.1.1",
     "@rpress/eslint": "workspace:*",
     "@storybook/addon-a11y": "^9.1.8",
     "@storybook/addon-docs": "^9.1.8",
