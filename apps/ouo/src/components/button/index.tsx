@@ -16,7 +16,7 @@ export function Button(props: ButtonProps) {
   const focusStyles = "focus:ring-2 focus:ring-offset-2";
 
   const animationStyles =
-    "transition-all duration-200 ease-in-out active:scale-90";
+    "transition-all duration-200 ease-in-out enabled:active:scale-90";
 
   const fontStyles = "font-medium text-sm";
 
