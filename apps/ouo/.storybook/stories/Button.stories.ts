@@ -29,6 +29,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Default: Story = {
+  args: {
+    onClick: fn(),
+  },
+  play: async ({ args, canvasElement }) => {
+    const button = canvasElement.querySelector("button");
+    if (button) {
+      // Test that button is enabled and clickable
+      expect(button.disabled).toBe(false);
+      // click the button
+      button.click();
+    }
+    if (args.onClick) {
+      expect(args.onClick).toHaveBeenCalled();
+    }
+  },
+};
+
 export const Primary: Story = {
   args: {
     varient: "primary",
