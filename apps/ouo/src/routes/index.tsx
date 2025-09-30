@@ -1,34 +1,26 @@
-import { createRoute, type RouterProps } from "rpress/route";
+import { createRoute } from "rpress/route";
 import RootLayout from "./layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
-import Link from "rpress/link";
-import Image from "rpress/image";
-import Counter from "../counter";
+import "server-only";
 
 export const route = createRoute("/");
 
-export default async function WTF(props: RouterProps<typeof route>) {
+export default async function Index() {
   const helper = new FlatComponentHelper();
   helper.add(RootLayout, {});
   const Flatten = helper.flatten();
 
   return (
     <Flatten>
-      <div>hi from home</div>
-      <div>props</div>
-      <div>data: {JSON.stringify(props.params)}</div>
-      <Counter />
-      <Link to="/fr">to fr</Link>
-      <div style={{ height: 1200 }} />
-      <Link to="/en" prefetch="viewport">
-        to en
-      </Link>
-      <Image
-        src="https://r2.bntw.dev/NqhBNru.jpeg"
-        alt="logo"
-        width={100}
-        height={100}
-      />
+      <h1 className="text-4xl font-bold mb-4">Welcome to My Website!</h1>
+      <p className="text-lg mb-8">
+        this is a minimal setup of my website, with my custom React Server
+        Component Server Side Generation Framework, which Powered by
+        @vitejs/plugin-rsc .
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
     </Flatten>
   );
 }

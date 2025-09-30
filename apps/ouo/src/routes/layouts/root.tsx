@@ -1,5 +1,7 @@
 import "@/global.css";
 import "./root.css";
+import Navbar from "./navbar";
+import "server-only";
 
 interface RootProps {
   children: React.ReactNode;
@@ -8,12 +10,16 @@ interface RootProps {
 
 const changeTheme = () => {
   const theme = localStorage.getItem("theme");
+  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+  console.debug("Stored theme:", theme);
+  console.debug("Prefers dark scheme:", prefersDarkScheme.matches);
 
   if (theme === "dark") {
     document.documentElement.classList.add("dark");
   }
   // if theme is not set, use system preference, note it won't trigger when theme="light"
-  else if (!theme) {
+  if (!theme) {
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
       document.documentElement.classList.add("dark");
     }
@@ -28,7 +34,10 @@ export default function RootLayout(props: Partial<RootProps>) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script>{`(${changeTheme.toString()})()`}</script>
       </head>
-      <body className="bg-primary">{props.children}</body>
+      <body>
+        <Navbar />
+        <div className="container mt-8">{props.children}</div>
+      </body>
     </html>
   );
 }
