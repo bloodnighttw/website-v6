@@ -34,9 +34,12 @@ export default function RootLayout(props: Partial<RootProps>) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script>{`(${changeTheme.toString()})()`}</script>
       </head>
-      <body>
-        <Navbar />
-        <div className="container mt-8">{props.children}</div>
+      <body className="relative">
+        <div className="absolute w-full h-screen overflow-y-auto">
+          <Navbar />
+          <div className="container mt-8">{props.children}</div>
+        </div>
+        <div className="gridient-bg absolute -z-1" />
       </body>
     </html>
   );

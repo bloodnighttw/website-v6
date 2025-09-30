@@ -21,6 +21,82 @@ export default async function Index() {
       <p className="text-lg">
         The site is still under construction, please come back later.
       </p>
+
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
+      <p className="text-lg">
+        The site is still under construction, please come back later.
+      </p>
     </Flatten>
   );
 }
