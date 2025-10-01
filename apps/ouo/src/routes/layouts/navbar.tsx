@@ -5,8 +5,8 @@ import "server-only";
 
 export default function Navbar() {
   return (
-    <nav className="container sticky xl:static top-0" style={{}}>
-      <div className="flex items-center h-16 gap-2">
+    <nav className="container sticky top-0 w-screen xl:w-full xl:top-2 xl:mt-2 bg-primary-500/10 xl:rounded-xl backdrop-blur-2xl">
+      <div className="flex items-center h-16 gap-2 ">
         <Image
           src={setting.avatar}
           width={32}

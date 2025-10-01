@@ -35,7 +35,7 @@ export default function RootLayout(props: Partial<RootProps>) {
         <script>{`(${changeTheme.toString()})()`}</script>
       </head>
       <body className="relative">
-        <div className="absolute w-full h-screen overflow-y-auto bg-primary-900/10 backdrop-blur-2xl">
+        <div className="absolute w-full h-screen overflow-y-auto bg-primary-50/40 dark:bg-primary-900/40">
           <Navbar />
           <div className="container mt-8">{props.children}</div>
         </div>

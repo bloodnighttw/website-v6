@@ -4,7 +4,7 @@
   background:
     radial-gradient(
       circle at 20% 30%,
-      theme(colors.accent.100) 10%,
+      theme(colors.accent.200) 10%,
       transparent 40%
     ),
     radial-gradient(
@@ -49,5 +49,5 @@ body {
 }
 
 .container {
-  @apply px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto;
+  @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
 }
