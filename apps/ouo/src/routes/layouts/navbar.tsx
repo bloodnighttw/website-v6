@@ -5,7 +5,7 @@ import "server-only";
 
 export default function Navbar() {
   return (
-    <nav className="container sticky top-0">
+    <nav className="container sticky xl:static top-0" style={{}}>
       <div className="flex items-center h-16 gap-2">
         <Image
           src={setting.avatar}

@@ -4,11 +4,11 @@
   background:
     radial-gradient(
       circle at 20% 30%,
-      theme(colors.accent.200) 0%,
-      transparent 50%
+      theme(colors.accent.100) 10%,
+      transparent 40%
     ),
     radial-gradient(
-      circle at 80% 70%,
+      circle at 80% 80%,
       theme(colors.secondary.200) 0%,
       transparent 50%
     ),
@@ -23,18 +23,18 @@
 .dark .gridient-bg {
   background:
     radial-gradient(
-      circle at 10% 20%,
+      circle at 20% 30%,
       theme(colors.accent.950) 10%,
-      transparent 60%
+      transparent 40%
     ),
     radial-gradient(
       circle at 80% 80%,
-      theme(colors.secondary.800) 10%,
-      transparent 80%
+      theme(colors.secondary.800) 0%,
+      transparent 30%
     ),
     radial-gradient(
       circle at 50% 50%,
-      theme(colors.primary.900) 20%,
+      theme(colors.primary.950) 100%,
       theme(colors.primary.950) 100%
     );
   @apply h-screen w-screen;

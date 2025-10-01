@@ -1,7 +1,7 @@
 import "@/global.css";
 import "./root.css";
-import Navbar from "./navbar";
 import "server-only";
+import Navbar from "./navbar";
 
 interface RootProps {
   children: React.ReactNode;
@@ -35,7 +35,7 @@ export default function RootLayout(props: Partial<RootProps>) {
         <script>{`(${changeTheme.toString()})()`}</script>
       </head>
       <body className="relative">
-        <div className="absolute w-full h-screen overflow-y-auto">
+        <div className="absolute w-full h-screen overflow-y-auto bg-primary-900/10 backdrop-blur-2xl">
           <Navbar />
           <div className="container mt-8">{props.children}</div>
         </div>
