@@ -2,6 +2,7 @@ import Link from "rpress/link";
 import Image from "rpress/image";
 import setting from "@/config/config.json";
 import "server-only";
+import ThemeButton from "./theme-button";
 
 export default function Navbar() {
   return (
@@ -16,6 +17,8 @@ export default function Navbar() {
         <Link to="/" className="text-lg font-bold">
           Bloodnighttw's Workshop
         </Link>
+        <div className="mx-auto" />
+        <ThemeButton />
       </div>
     </nav>
   );

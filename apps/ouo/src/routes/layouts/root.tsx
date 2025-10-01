@@ -2,29 +2,12 @@ import "@/global.css";
 import "./root.css";
 import "server-only";
 import Navbar from "./navbar";
+import { loadTheme } from "@/utils/theme";
 
 interface RootProps {
   children: React.ReactNode;
   lang: string;
 }
-
-const changeTheme = () => {
-  const theme = localStorage.getItem("theme");
-  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-  console.debug("Stored theme:", theme);
-  console.debug("Prefers dark scheme:", prefersDarkScheme.matches);
-
-  if (theme === "dark") {
-    document.documentElement.classList.add("dark");
-  }
-  // if theme is not set, use system preference, note it won't trigger when theme="light"
-  if (!theme) {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      document.documentElement.classList.add("dark");
-    }
-  }
-};
 
 export default function RootLayout(props: Partial<RootProps>) {
   return (
@@ -32,7 +15,7 @@ export default function RootLayout(props: Partial<RootProps>) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script>{`(${changeTheme.toString()})()`}</script>
+        <script>{`(${loadTheme.toString()})()`}</script>
       </head>
       <body className="relative">
         <div className="absolute w-full h-screen overflow-y-auto bg-primary-50/40 dark:bg-primary-900/40">
