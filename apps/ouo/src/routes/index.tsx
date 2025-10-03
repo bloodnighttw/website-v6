@@ -7,6 +7,7 @@ import CONFIG from "@/config/config.json";
 import { FaGithub, FaTelegram, FaTwitter } from "react-icons/fa";
 import { FaDiscord } from "react-icons/fa6";
 import { IoMail } from "react-icons/io5";
+import Card from "@/components/card";
 
 export const route = createRoute("/");
 
@@ -41,6 +42,16 @@ async function About() {
   );
 }
 
+function Project() {
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      <Card>hello</Card>
+      <Card>hello</Card>
+      <Card>hello</Card>
+    </div>
+  );
+}
+
 export default async function Index() {
   const helper = new FlatComponentHelper();
   helper.add(RootLayout, {});
@@ -49,6 +60,7 @@ export default async function Index() {
   return (
     <Flatten>
       <About />
+      <Project />
     </Flatten>
   );
 }
