@@ -39,3 +39,15 @@
   --color-accent-900: theme(colors.red.900);
   --color-accent-950: theme(colors.red.950);
 }
+
+@utility card {
+  box-shadow:
+    rgba(255, 255, 255, 0.2) 0px 0px 0px 1px,
+    rgba(255, 255, 255, 0.6) 0px -1px 0px 0px;
+
+  &:where(.dark, .dark *) {
+    box-shadow:
+      rgba(255, 255, 255, 0.08) 0px 0px 0px 1px,
+      rgba(255, 255, 255, 0.2) 0px -1px 0px 0px;
+  }
+}
