@@ -1,16 +1,7 @@
-import { createRoute } from "rpress/route";
-import RootLayout from "./layouts/root";
-import { FlatComponentHelper } from "rpress/helper";
-import "server-only";
+import { FaDiscord, FaGithub, FaTelegram, FaTwitter } from "react-icons/fa";
+import { IoMail } from "react-icons/io5";
 import Image from "rpress/image";
 import CONFIG from "@/config/config.json";
-import { FaGithub, FaTelegram, FaTwitter } from "react-icons/fa";
-import { FaDiscord } from "react-icons/fa6";
-import { IoMail } from "react-icons/io5";
-import Card from "@/components/card";
-import CardLabel from "@/components/card/label";
-
-export const route = createRoute("/");
 
 async function About() {
   const birthData = new Date(CONFIG.birth);
@@ -43,30 +34,4 @@ async function About() {
   );
 }
 
-function Project() {
-  return (
-    <>
-      <div className="flex justify-center">
-        <CardLabel>My Projects</CardLabel>
-      </div>
-      <div className="grid grid-cols-3 gap-6 mt-8">
-        <Card>hello</Card>
-        <Card>hello</Card>
-        <Card>hello</Card>
-      </div>
-    </>
-  );
-}
-
-export default async function Index() {
-  const helper = new FlatComponentHelper();
-  helper.add(RootLayout, {});
-  const Flatten = helper.flatten();
-
-  return (
-    <Flatten>
-      <About />
-      <Project />
-    </Flatten>
-  );
-}
+export default About;
