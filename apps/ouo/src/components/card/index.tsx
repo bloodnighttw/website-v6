@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import "./card.css";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -5,8 +6,11 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Card(props: CardProps) {
+  const old = "rounded-xl card bg-secondary-500/5 backdrop-blur-2xl";
+  const { className, ...rest } = props;
+
   return (
-    <div className="p-4 rounded-2xl card bg-secondary-300/20 dark:bg-secondary-900/20 backdrop-blur-2xl">
+    <div className={cn(old, className)} {...rest}>
       {props.children}
     </div>
   );

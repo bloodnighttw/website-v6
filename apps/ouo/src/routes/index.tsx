@@ -8,6 +8,7 @@ import { FaGithub, FaTelegram, FaTwitter } from "react-icons/fa";
 import { FaDiscord } from "react-icons/fa6";
 import { IoMail } from "react-icons/io5";
 import Card from "@/components/card";
+import CardLabel from "@/components/card/label";
 
 export const route = createRoute("/");
 
@@ -44,11 +45,16 @@ async function About() {
 
 function Project() {
   return (
-    <div className="grid grid-cols-3 gap-6">
-      <Card>hello</Card>
-      <Card>hello</Card>
-      <Card>hello</Card>
-    </div>
+    <>
+      <div className="flex justify-center">
+        <CardLabel>My Projects</CardLabel>
+      </div>
+      <div className="grid grid-cols-3 gap-6 mt-8">
+        <Card>hello</Card>
+        <Card>hello</Card>
+        <Card>hello</Card>
+      </div>
+    </>
   );
 }
 
