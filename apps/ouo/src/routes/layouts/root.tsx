@@ -2,7 +2,7 @@ import "@/global.css";
 import "./root.css";
 import "server-only";
 import Navbar from "./navbar";
-import { loadTheme } from "@/utils/theme";
+import loadTheme from "@/utils/theme/loadtheme";
 
 interface RootProps {
   children: React.ReactNode;
