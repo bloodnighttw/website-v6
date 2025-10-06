@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  test-framework:
     name: Run tests
     runs-on: ${{ matrix.runner }}
     if: github.actor == github.repository_owner || github.event_name == 'push'
@@ -66,14 +66,34 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=silent
 
+      - name: Run tests
+        run: turbo run test --filter='rpress'
+        env:
+          CI: true
+          DO_NOT_TRACK: 1
+
       - name: Run Build
         run: pnpm build
         env:
           CI: true
           DO_NOT_TRACK: 1
+  test-website:
+    name: Test Website
+    runs-on: mcr.microsoft.com/playwright:v1.55.0-noble
+    if: github.actor == github.repository_owner || github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Run tests
-        run: pnpm test
-        env:
-          CI: true
-          DO_NOT_TRACK: 1
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 10.11.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --reporter=silent
