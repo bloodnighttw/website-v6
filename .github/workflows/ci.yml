@@ -67,7 +67,7 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=silent
 
       - name: Install Playwright Browsers
-        run: pnpm --filter ouo exec playwright install --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: Run Build
         run: pnpm build
