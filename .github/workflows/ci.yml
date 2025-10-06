@@ -80,24 +80,63 @@ jobs:
   test-website:
     name: Test Website
     runs-on: ubuntu-latest
+    needs: test-framework
     if: github.actor == github.repository_owner || github.event_name == 'push'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 10.11.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22.x
-          cache: "pnpm"
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Use playwright
+      - name: Run Test in Docker with Playwright
         uses: docker://mcr.microsoft.com/playwright:v1.55.0-noble
         with:
           args: bash -c "npm install -g pnpm@10.11.0 && pnpm install --frozen-lockfile && pnpm test"
+        env:
+          CI: true
+          DO_NOT_TRACK: 1
+  deploy:
+    name: Deploy to CF Pages
+    runs-on: ubuntu-latest
+    needs: [test-framework, test-website]
+    if: github.actor == github.repository_owner || github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.11.0
+
+      - name: "Install Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+          registry-url: https://npm.pkg.github.com/
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --reporter=silent
+
+      - name: Build project
+        run: pnpm build
+        env:
+          CI: true
+          DO_NOT_TRACK: 1
+
+      - name: Deploy preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        if: github.ref != 'refs/heads/main'
+        with:
+          command: pages deploy --branch=preview --config='./apps/ouo/wrangler.toml'
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Deploy production to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          command: pages deploy --config='./apps/ouo/wrangler.toml'
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
