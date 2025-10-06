@@ -94,11 +94,10 @@ jobs:
         with:
           node-version: 22.x
           cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Use playwright
         uses: docker://mcr.microsoft.com/playwright:v1.55.0-noble
         with:
-          args: bash -c "npm install -g pnpm@10.11.0 && pnpm install --frozen-lockfile --reporter=silent && pnpm test"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+          args: npm run test
