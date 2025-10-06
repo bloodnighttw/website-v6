@@ -9,8 +9,6 @@ export const route = createRoute("/docs/:...other", {
       .map((page) => page.slugs)
       .map((d) => ({ other: d }));
 
-    console.log("Generated slugs:", slugs);
-
     return slugs;
   },
 });
