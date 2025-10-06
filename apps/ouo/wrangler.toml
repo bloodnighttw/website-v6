@@ -1,2 +1,2 @@
-name = "website-v5"
-pages_build_output_dir = "./dist/client"
+name = "website-v6"
+pages_build_output_dir="./dist/client"
