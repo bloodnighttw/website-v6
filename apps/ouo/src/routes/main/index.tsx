@@ -4,6 +4,7 @@ import { FlatComponentHelper } from "rpress/helper";
 import "server-only";
 import About from "./about";
 import Project from "./project";
+import Info from "./info";
 
 export const route = createRoute("/");
 
@@ -16,6 +17,7 @@ export default async function Index() {
     <Flatten>
       <About />
       <Project />
+      <Info />
     </Flatten>
   );
 }
