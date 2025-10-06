@@ -1,0 +1,44 @@
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: read
+      deployments: write
+    name: Deploy to Cloudflare Pages
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: "Install Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+          registry-url: https://npm.pkg.github.com/
+      - name: Build
+        run: pnpm install && pnpm build
+      - name: Deploy preview to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        if: github.ref != 'refs/heads/main'
+        with:
+          command: pages deploy --branch=preview --config="./apps/ouo/wrangler.toml"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: Deploy production to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          command: pages deploy --config="./apps/ouo/wrangler.toml"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
