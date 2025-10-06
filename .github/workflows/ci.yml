@@ -67,7 +67,7 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=silent
 
       - name: Run tests
-        run: turbo run test --filter='rpress'
+        run: pnpm exec turbo run test --filter='rpress'
         env:
           CI: true
           DO_NOT_TRACK: 1
