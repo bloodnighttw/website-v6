@@ -3,6 +3,10 @@ on:
     workflows: ["CI"]
     types:
       - completed
+
+  # Allow manual runs by repo owners via workflow_dispatch
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
