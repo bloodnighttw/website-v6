@@ -1,6 +1,6 @@
 name: CI
 
-on: [push, pull_request, workflow_dispatch]
+on: [push, workflow_dispatch]
 
 jobs:
   test-framework:
@@ -117,7 +117,7 @@ jobs:
           DO_NOT_TRACK: 1
 
       - name: Deploy preview to Cloudflare Pages
-        run: pnpm exec wrangler pages deploy --cwd apps/ouo/
+        run: pnpm exec wrangler deploy --cwd apps/ouo/
         continue-on-error: true
 
         env:
