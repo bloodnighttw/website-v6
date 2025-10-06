@@ -100,4 +100,4 @@ jobs:
       - name: Use playwright
         uses: docker://mcr.microsoft.com/playwright:v1.55.0-noble
         with:
-          args: npm run test
+          args: bash -c "npm install -g pnpm@10.11.0 && pnpm install --frozen-lockfile && pnpm test"
