@@ -101,4 +101,4 @@ jobs:
           args: bash -c "npm install -g pnpm@10.11.0 && pnpm install --frozen-lockfile --reporter=silent && pnpm test"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --reporter=silent
+        run: pnpm install --frozen-lockfile
