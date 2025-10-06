@@ -75,7 +75,7 @@ jobs:
         run: pnpm install --frozen-lockfile --reporter=silent
 
       - name: Install Playwright
-        run: pnpm exec playwright install
+        run: npx playwright install --with-deps
 
       - name: Run Build
         run: pnpm build
