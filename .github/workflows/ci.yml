@@ -98,7 +98,7 @@ jobs:
       - name: Use playwright
         uses: docker://mcr.microsoft.com/playwright:v1.55.0-noble
         with:
-          args: echo "Playwright is ready"
+          args: pnpm test
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=silent
