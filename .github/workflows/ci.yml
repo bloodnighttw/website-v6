@@ -126,7 +126,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         if: github.ref != 'refs/heads/main'
         with:
-          command: pages deploy --branch=preview --config='./apps/ouo/wrangler.toml'
+          command: pages deploy --branch=preview --cwd apps/ouo/
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
@@ -136,7 +136,7 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         if: github.ref == 'refs/heads/main'
         with:
-          command: pages deploy --config='./apps/ouo/wrangler.toml'
+          command: pages deploy --cwd apps/ouo/
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
