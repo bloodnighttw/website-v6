@@ -1,2 +1,5 @@
 name = "website-v6"
-pages_build_output_dir="./dist/client"
+compatibility_date = "2025-10-06"
+
+[assets]
+directory = "./dist/client"
