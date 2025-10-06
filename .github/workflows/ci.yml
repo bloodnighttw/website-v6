@@ -66,9 +66,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --reporter=silent
 
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install
-
       - name: Run Build
         run: pnpm build
         env:
