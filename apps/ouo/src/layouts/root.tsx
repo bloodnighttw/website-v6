@@ -15,9 +15,9 @@ export default function RootLayout(props: Partial<RootProps>) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script>{`(${loadTheme.toString()})()`}</script>
       </head>
       <body className="relative">
+        <script>{`(${loadTheme.toString()})()`}</script>
         <div className="absolute w-full h-screen overflow-y-auto bg-primary-50/40 dark:bg-primary-900/40">
           <Navbar />
           <div className="container mt-8">{props.children}</div>

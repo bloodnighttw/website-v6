@@ -16,8 +16,13 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "@mdx-js/typescript-plugin"
+      }
+    ]
   },
-  "include": ["./.storybook/**/*", "./**/*.tsx", "./**/*.ts"],
+  "include": ["./.storybook/**/*", "./**/*.tsx", "./**/*.ts", "./**/*.mdx"],
   "exclude": ["node_modules", "dist"]
 }
