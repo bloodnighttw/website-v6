@@ -26,6 +26,7 @@ export default async function Index(props: RouterProps<typeof route>) {
     [props.params.pj],
     props.params.lang,
   );
+  console.log(dyComponent);
   const DyComponent = dyComponent.default;
 
   return (

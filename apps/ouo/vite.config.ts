@@ -5,11 +5,12 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
+import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 
 export default defineConfig({
   plugins: [
     mdx({
-      remarkPlugins: [remarkFrontmatter],
+      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
     }),
     tailwindcss(),
     tsconfigPaths(),

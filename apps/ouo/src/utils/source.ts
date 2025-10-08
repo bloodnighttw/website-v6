@@ -15,10 +15,13 @@ class SourceTree {
     new Map();
   #entries: Map<string, string[]> = new Map();
 
-  constructor(
-    prefix: string,
-    source: Record<string, () => Promise<{ default: React.ComponentType }>>,
-  ) {
+  constructor({
+    prefix,
+    source,
+  }: {
+    prefix: string;
+    source: Record<string, () => Promise<{ default: React.ComponentType }>>;
+  }) {
     Object.entries(source).forEach(([key, value]) => {
       const path = key.replace(prefix, "").replace(/\.mdx$/, "");
       const newSegment = path.split("/").filter((i) => i);
@@ -45,7 +48,8 @@ class SourceTree {
   > {
     const key = [...path, prefer].toString();
     if (this.#source.has(key)) {
-      return [await this.#source.get(key)!(), true] as const;
+      const i = await this.#source.get(key)!();
+      return [i, true] as const;
     } else {
       // try to find the prefered language
       const preferKey = [...path.slice(1), defaultLang].toString();
@@ -61,4 +65,7 @@ class SourceTree {
   }
 }
 
-export default new SourceTree("/docs/project", projectSource);
+export default new SourceTree({
+  prefix: "/docs/project",
+  source: projectSource,
+});
