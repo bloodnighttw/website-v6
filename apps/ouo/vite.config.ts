@@ -3,9 +3,9 @@ import { defineConfig } from "vite";
 import rpress from "rpress/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
-import mdx from "@mdx-js/rollup";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
+import mdx from "@rpress/mdx";
 
 export default defineConfig({
   plugins: [
