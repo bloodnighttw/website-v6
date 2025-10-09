@@ -1,5 +1,8 @@
 // This is originally from @mdx-js/rollup, but modified to work with mutiple mdx instances
 // and with some customizations, like frontmatter with zod validation and so on.
+//
+// The original source of @mdx-js/rollup is open source under the MIT license, and you can
+// find it here: https://github.com/mdx-js/mdx
 
 import type { FormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import type { CompileOptions } from "@mdx-js/mdx";
