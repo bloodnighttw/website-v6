@@ -63,7 +63,7 @@ test("handleGeneration returns dev URL in development mode", async () => {
   const result = handleGeneration(options);
 
   expect(result).toBe(
-    "_rpress?url=%2Ftest.jpg&quality=85&width=800 &height=600",
+    "/_rpress?url=%2Ftest.jpg&quality=85&width=800 &height=600",
   );
 });
 
