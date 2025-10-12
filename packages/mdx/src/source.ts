@@ -6,6 +6,9 @@ import {
 import { SourceMapGenerator } from "source-map";
 import { createFilter, type FilterPattern } from "vite";
 import remarkFrontmatter from "remark-frontmatter";
+import { visit } from "unist-util-visit";
+import type { Root } from "mdast";
+import { parse } from "yaml";
 
 type MdxOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -21,8 +24,19 @@ interface SourceOptions extends AllOptions {
   transform?: (url: string) => string;
 }
 
+function remarkVisitYaml() {
+  return (tree: Root) => {
+    visit(tree, "yaml", (node) => {
+      // console.log("YAML node:", node.value);
+      const data = parse(node.value);
+      console.log("Parsed YAML data:", data);
+    });
+  };
+}
+
 export default function source(options: SourceOptions) {
-  const { name, exclude, include, transform, ...rest } = options || {};
+  const { name, exclude, include, transform, remarkPlugins, ...rest } =
+    options || {};
   const filter = createFilter(include, exclude);
 
   return (dev: boolean) => {
@@ -30,7 +44,11 @@ export default function source(options: SourceOptions) {
       createFormatAwareProcessors({
         SourceMapGenerator,
         development: dev,
-        remarkPlugins: [remarkFrontmatter, ...(rest.remarkPlugins || [])],
+        remarkPlugins: [
+          remarkFrontmatter,
+          remarkVisitYaml,
+          ...(remarkPlugins || []),
+        ],
         ...rest,
       });
 
