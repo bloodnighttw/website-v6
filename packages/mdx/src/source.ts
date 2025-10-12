@@ -9,6 +9,7 @@ import remarkFrontmatter from "remark-frontmatter";
 import { visit } from "unist-util-visit";
 import type { Root } from "mdast";
 import { parse } from "yaml";
+import { z } from "zod";
 
 type MdxOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -22,20 +23,23 @@ type AllOptions = MdxOptions & FileOptions;
 interface SourceOptions extends AllOptions {
   name: string;
   transform?: (url: string) => string;
+  schema?: z.ZodType;
 }
 
-function remarkVisitYaml() {
-  return (tree: Root) => {
+function remarkYamlValidation(schema?: z.ZodType) {
+  const validationSchema = schema;
+
+  return () => (tree: Root) => {
     visit(tree, "yaml", (node) => {
-      // console.log("YAML node:", node.value);
       const data = parse(node.value);
+      validationSchema?.parse(data);
       console.log("Parsed YAML data:", data);
     });
   };
 }
 
 export default function source(options: SourceOptions) {
-  const { name, exclude, include, transform, remarkPlugins, ...rest } =
+  const { name, exclude, include, transform, schema, remarkPlugins, ...rest } =
     options || {};
   const filter = createFilter(include, exclude);
 
@@ -46,7 +50,7 @@ export default function source(options: SourceOptions) {
         development: dev,
         remarkPlugins: [
           remarkFrontmatter,
-          remarkVisitYaml,
+          remarkYamlValidation(schema),
           ...(remarkPlugins || []),
         ],
         ...rest,

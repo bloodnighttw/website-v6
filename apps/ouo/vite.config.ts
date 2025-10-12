@@ -5,11 +5,18 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import mdx, { source } from "@rpress/mdx";
+import { z } from "zod";
 
 const pj = source({
   name: "pj",
   include: "docs/project/**/*.mdx",
   remarkPlugins: [remarkMdxFrontmatter],
+  schema: z.object({
+    name: z.string(),
+    description: z.string(),
+    link: z.string().url().optional(),
+    demo: z.string().url().optional(),
+  }),
 });
 
 export default defineConfig({
