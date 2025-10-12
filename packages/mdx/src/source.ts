@@ -10,14 +10,14 @@ type MdxOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
 interface FileOptions {
   exclude?: FilterPattern | null | undefined;
-  include?: FilterPattern | null | undefined;
+  include: FilterPattern;
 }
 
 type AllOptions = MdxOptions & FileOptions;
 
 interface SourceOptions extends AllOptions {
   name: string;
-  transform: (url: string) => string;
+  transform?: (url: string) => string;
 }
 
 export default function source(options: SourceOptions) {
@@ -44,6 +44,7 @@ export default function source(options: SourceOptions) {
   };
 }
 
-type Source = ReturnType<typeof source>;
+type SourceFn = ReturnType<typeof source>;
+type Source = ReturnType<SourceFn>;
 
-export type { Source, SourceOptions };
+export type { SourceFn, Source, SourceOptions };

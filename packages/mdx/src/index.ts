@@ -4,15 +4,12 @@
 // The original source of @mdx-js/rollup is open source under the MIT license, and you can
 // find it here: https://github.com/mdx-js/mdx
 
-import type { FormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import type { CompileOptions } from "@mdx-js/mdx";
 import type { FilterPattern } from "@rollup/pluginutils";
 import type { SourceDescription } from "rollup";
-import { createFormatAwareProcessors } from "@mdx-js/mdx/internal-create-format-aware-processors";
-import { createFilter } from "@rollup/pluginutils";
-import { SourceMapGenerator } from "source-map";
 import { VFile } from "vfile";
 import type { Plugin } from "vite";
+import type { Source, SourceFn } from "./source";
 
 type ApplicableOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -23,34 +20,24 @@ interface ExtraOptions {
 
 export type Options = ApplicableOptions & ExtraOptions;
 
-export default function mdx(options?: Readonly<Options> | null): Plugin {
-  const { exclude, include, ...rest } = options || {};
-  let formatAwareProcessors: FormatAwareProcessors;
-  const filter = createFilter(include, exclude);
+export default function mdx(sourceFns?: SourceFn[]): Plugin {
+  let source: Source[];
 
   return {
-    name: "@mdx-js/rollup",
+    name: "@rpress/mdx",
     config(_config, env) {
-      formatAwareProcessors = createFormatAwareProcessors({
-        SourceMapGenerator,
-        development: env.mode === "development",
-        ...rest,
-      });
+      source = sourceFns?.map((fn) => fn(env.mode === "development")) || [];
     },
     async transform(value, id) {
-      if (!formatAwareProcessors) {
-        formatAwareProcessors = createFormatAwareProcessors({
-          SourceMapGenerator,
-          ...rest,
-        });
-      }
+      const matched = source.find(({ filter }) => filter(id));
+      if (!matched) return null;
+      const { formatAwareProcessors } = matched;
 
       const [path] = id.split("?");
       const file = new VFile({ path, value });
 
       if (
         file.extname &&
-        filter(file.path) &&
         formatAwareProcessors.extnames.includes(file.extname)
       ) {
         console.log("mdx transform", { id });
@@ -62,3 +49,7 @@ export default function mdx(options?: Readonly<Options> | null): Plugin {
     },
   };
 }
+
+export type { Source, SourceFn };
+
+export { default as source } from "./source";

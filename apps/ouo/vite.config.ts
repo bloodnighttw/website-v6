@@ -5,13 +5,17 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
-import mdx from "@rpress/mdx";
+import mdx, { source } from "@rpress/mdx";
+
+const pj = source({
+  name: "pj",
+  include: "docs/project/**/*.mdx",
+  remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
+});
 
 export default defineConfig({
   plugins: [
-    mdx({
-      remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter],
-    }),
+    mdx([pj]),
     tailwindcss(),
     tsconfigPaths(),
     react(),
