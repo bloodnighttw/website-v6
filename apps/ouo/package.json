@@ -23,7 +23,8 @@
     "remark-frontmatter": "^5.0.0",
     "remark-mdx-frontmatter": "^5.2.0",
     "rpress": "workspace:*",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@rpress/eslint": "workspace:*",

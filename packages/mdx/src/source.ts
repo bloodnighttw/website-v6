@@ -5,6 +5,7 @@ import {
 } from "@mdx-js/mdx/internal-create-format-aware-processors";
 import { SourceMapGenerator } from "source-map";
 import { createFilter, type FilterPattern } from "vite";
+import remarkFrontmatter from "remark-frontmatter";
 
 type MdxOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -29,6 +30,7 @@ export default function source(options: SourceOptions) {
       createFormatAwareProcessors({
         SourceMapGenerator,
         development: dev,
+        remarkPlugins: [remarkFrontmatter, ...(rest.remarkPlugins || [])],
         ...rest,
       });
 
