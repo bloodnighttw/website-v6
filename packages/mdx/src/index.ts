@@ -89,9 +89,13 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
         const keys: string[] = [];
 
         for (const file of files) {
-          const key = getRelativePath(matched.include, file);
+          const normalizedFile = normalizePath(file);
+          const key = getRelativePath(matched.include, normalizedFile).replace(
+            /\.mdx$/,
+            "",
+          );
           const importName = `__module_${imports.length}`;
-          imports.push(`import * as ${importName} from '/${file}';`);
+          imports.push(`import * as ${importName} from '/${normalizedFile}';`);
           keys.push(`  "${key}": ${importName}`);
         }
 
