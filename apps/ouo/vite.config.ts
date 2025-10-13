@@ -14,8 +14,8 @@ const pj = source({
   schema: z.object({
     name: z.string(),
     description: z.string(),
-    link: z.string().url().optional(),
-    demo: z.string().url().optional(),
+    link: z.url().optional(),
+    demo: z.url().optional(),
   }),
 });
 
