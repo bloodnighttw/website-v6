@@ -6,6 +6,9 @@ import About from "./about";
 import Project from "./project";
 import Info from "./info";
 import projectSource from "@/utils/source";
+import all from "virtual:source:pj";
+
+console.log(all);
 
 export const route = createRoute("/");
 

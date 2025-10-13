@@ -9,6 +9,10 @@ declare module "*.mdx" {
   const MDXComponent: ComponentType<MDXProps>;
   export default MDXComponent;
 
-  // If you export named exports from MDX
   export const frontmatter: Record<string, any>;
+}
+
+declare module "virtual:source:*" {
+  const modules: Record<string, string>;
+  export default modules;
 }
