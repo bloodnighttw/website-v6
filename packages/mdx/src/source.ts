@@ -8,8 +8,10 @@ import { createFilter, type FilterPattern } from "vite";
 import remarkFrontmatter from "remark-frontmatter";
 import { visit } from "unist-util-visit";
 import type { Root } from "mdast";
+import type { Program } from "estree";
 import { parse } from "yaml";
 import { z } from "zod";
+import type { VFile } from "vfile";
 
 type MdxOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -20,27 +22,61 @@ interface FileOptions {
 
 type AllOptions = MdxOptions & FileOptions;
 
-interface SourceOptions extends AllOptions {
+interface SourceOptions<Z extends z.ZodType> extends AllOptions {
   name: string;
   transform?: (url: string) => string;
-  schema?: z.ZodType;
+  schema?: Z;
 }
 
 function remarkYamlValidation(schema?: z.ZodType) {
   const validationSchema = schema;
 
-  return () => (tree: Root) => {
+  return () => (tree: Root, vfile: VFile) => {
     visit(tree, "yaml", (node) => {
       const data = parse(node.value);
-      validationSchema?.parse(data);
-      console.log("Parsed YAML data:", data);
+      const dataParse = validationSchema?.parse(data);
+      vfile.data.zod = dataParse || data;
     });
   };
 }
 
-export default function source(options: SourceOptions) {
-  const { name, exclude, include, transform, schema, remarkPlugins, ...rest } =
-    options || {};
+function recmaInjectFrontmatter() {
+  return () => (tree: Program, vfile: VFile) => {
+    if (vfile.data.zod) {
+      tree.body.push({
+        type: "ExportNamedDeclaration",
+        declaration: {
+          type: "VariableDeclaration",
+          declarations: [
+            {
+              type: "VariableDeclarator",
+              id: { type: "Identifier", name: "zod" },
+              init: {
+                type: "Literal",
+                value: JSON.stringify(vfile.data.zod),
+                raw: JSON.stringify(vfile.data.zod),
+              } as any,
+            },
+          ],
+          kind: "const",
+        },
+        specifiers: [],
+      } as any);
+    }
+  };
+}
+
+export default function source<Z extends z.ZodType>(options: SourceOptions<Z>) {
+  const {
+    name,
+    exclude,
+    include,
+    transform,
+    schema,
+    remarkPlugins,
+    recmaPlugins,
+    ...rest
+  } = options || {};
   const filter = createFilter(include, exclude);
 
   return (dev: boolean) => {
@@ -53,6 +89,7 @@ export default function source(options: SourceOptions) {
           remarkYamlValidation(schema),
           ...(remarkPlugins || []),
         ],
+        recmaPlugins: [recmaInjectFrontmatter(), ...(recmaPlugins || [])],
         ...rest,
       });
 

@@ -1,5 +1,5 @@
 declare module "*.mdx" {
-  import type { ComponentType } from "react";
+  import type { ComponentType, ComponentType } from "react";
 
   interface MDXProps {
     components?: Record<string, ComponentType<any>>;
@@ -13,6 +13,18 @@ declare module "*.mdx" {
 }
 
 declare module "virtual:source:*" {
-  const modules: Record<string, string>;
+  import type { ComponentType, ComponentType } from "react";
+
+  interface MDXProps {
+    components?: Record<string, ComponentType<any>>;
+    [key: string]: any;
+  }
+
+  interface Module {
+    default: ComponentType<MDXProps>;
+    frontmatter: Record<string, any>;
+  }
+
+  const modules: Record<string, ComponentType<MDXProps>>;
   export default modules;
 }
