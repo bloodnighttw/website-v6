@@ -95,7 +95,9 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
             "",
           );
           const importName = `__module_${imports.length}`;
-          imports.push(`import * as ${importName} from '/${normalizedFile}';`);
+          imports.push(
+            `const ${importName} = await import('/${normalizedFile}');`,
+          );
           keys.push(`  "${key}": ${importName}`);
         }
 
