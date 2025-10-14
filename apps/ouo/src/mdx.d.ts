@@ -12,7 +12,7 @@ declare module "*.mdx" {
   export const frontmatter: Record<string, any>;
 }
 
-declare module "virtual:source:*" {
+declare module "virtual:source:pj" {
   import type { ComponentType, ComponentType } from "react";
 
   interface MDXProps {
@@ -22,9 +22,9 @@ declare module "virtual:source:*" {
 
   interface Module {
     default: ComponentType<MDXProps>;
-    frontmatter: Record<string, any>;
+    zod: import("../vite.config").PJ;
   }
 
-  const modules: Record<string, ComponentType<MDXProps>>;
+  const modules: Record<string, Module>;
   export default modules;
 }

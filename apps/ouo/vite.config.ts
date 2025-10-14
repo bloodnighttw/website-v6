@@ -3,20 +3,20 @@ import { defineConfig } from "vite";
 import rpress from "rpress/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
-import remarkMdxFrontmatter from "remark-mdx-frontmatter";
 import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
+
+const pjSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  link: z.url().optional(),
+  demo: z.url().optional(),
+});
 
 const pj = source({
   name: "pj",
   include: "docs/project/**/*.mdx",
-  remarkPlugins: [remarkMdxFrontmatter],
-  schema: z.object({
-    name: z.string(),
-    description: z.string(),
-    link: z.url().optional(),
-    demo: z.url().optional(),
-  }),
+  schema: pjSchema,
 });
 
 export default defineConfig({
@@ -32,3 +32,7 @@ export default defineConfig({
     mdx([pj]),
   ],
 });
+
+type PJ = z.infer<typeof pjSchema>;
+
+export type { PJ };
