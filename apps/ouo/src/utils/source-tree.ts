@@ -8,7 +8,7 @@ interface MDXProps {
   [key: string]: any;
 }
 
-interface Module<T> {
+export interface Module<T> {
   default: ComponentType<MDXProps>;
   zod: T;
 }
