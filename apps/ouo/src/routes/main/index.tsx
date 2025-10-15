@@ -21,7 +21,7 @@ export default async function Index(props: RouterProps<typeof route>) {
   return (
     <Flatten>
       <About />
-      <Project />
+      <Project lang={props.params.lang as Lang} />
       <Info />
     </Flatten>
   );

@@ -1,16 +1,38 @@
 import Card from "@/components/card";
 import CardLabel from "@/components/card/label";
+import Link from "rpress/link";
+import type { Lang } from "@/contexts/i18n";
+import { source } from "@/utils/source";
 
-function Project() {
+async function Project({ lang }: { lang: Lang }) {
+  const projects = Object.values(source.getByLang(lang)).map((mod) => mod.zod);
+
   return (
     <>
       <div className="flex justify-center">
         <CardLabel>My Projects</CardLabel>
       </div>
-      <div className="grid grid-cols-3 gap-6 mt-8">
-        <Card>hello</Card>
-        <Card>hello</Card>
-        <Card>hello</Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {projects.map((project) => (
+          <Link key={project.name} to={`/${lang}/projects/${project.slug}`}>
+            <Card className="p-6 h-full hover:bg-secondary-500/10 transition-colors cursor-pointer">
+              <h3 className="text-xl font-bold mb-2">{project.name}</h3>
+              <p className="text-sm text-secondary-700 dark:text-secondary-300 mb-4">
+                {project.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {project.stack?.map((tech: string) => (
+                  <span
+                    key={tech}
+                    className="px-2 py-1 text-xs rounded bg-primary-500/20"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </Card>
+          </Link>
+        ))}
       </div>
     </>
   );
