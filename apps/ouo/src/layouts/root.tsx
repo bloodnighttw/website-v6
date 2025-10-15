@@ -22,7 +22,7 @@ export default function RootLayout(props: RootProps) {
         <script>{`(${loadTheme.toString()})()`}</script>
         <I18nServerProvider lang={props.lang}>
           <div className="absolute w-full h-screen overflow-y-auto bg-primary-50/40 dark:bg-primary-900/40">
-            <Navbar />
+            <Navbar lang={props.lang} />
             <div className="container mt-8">{props.children}</div>
           </div>
           <div className="gridient-bg absolute -z-1" />
