@@ -82,7 +82,7 @@ function getOrSetCache(options: ImageLoaderOptions) {
 export default function handleGeneration(options: ImageLoaderOptions) {
   if (import.meta.env.DEV) {
     return (
-      "_rpress?url=" +
+      "/_rpress?url=" +
       encodeURIComponent(options.url) +
       (options.quality ? `&quality=${options.quality}` : "") +
       (options.width ? `&width=${options.width} ` : "") +
