@@ -4,6 +4,7 @@ import { FlatComponentHelper } from "rpress/helper";
 import "server-only";
 import CONFIG from "@/config/config.json";
 import projectSource from "virtual:source:pj";
+import type { Lang } from "@/contexts/i18n";
 
 const defaultLang = CONFIG["prefer-lang"] ?? "en";
 
@@ -60,7 +61,7 @@ export const route = createRoute("/:lang/projects/:pj", {
 
 export default async function Index(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
-  helper.add(RootLayout, {});
+  helper.add(RootLayout, { lang: props.params.lang as Lang });
   const Flatten = helper.flatten();
   const [dyComponent] = await source.search(
     [props.params.pj],
