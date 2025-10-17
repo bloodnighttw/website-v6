@@ -3,14 +3,16 @@ import CardLabel from "@/components/card/label";
 import Link from "rpress/link";
 import type { Lang } from "@/utils/i18n/config";
 import { source } from "@/utils/source";
+import { createTranslate } from "@/utils/i18n/server";
 
 async function Project({ lang }: { lang: Lang }) {
+  const t = await createTranslate(lang);
   const projects = Object.values(source.getByLang(lang)).map((mod) => mod.zod);
 
   return (
     <>
       <div className="flex justify-center">
-        <CardLabel>My Projects</CardLabel>
+        <CardLabel>{t("projects.title")}</CardLabel>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {projects.map((project) => (
