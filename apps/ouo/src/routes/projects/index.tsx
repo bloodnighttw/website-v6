@@ -2,7 +2,7 @@ import { createRoute, type RouterProps } from "rpress/route";
 import RootLayout from "@/layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
 import "server-only";
-import type { Lang } from "@/contexts/i18n";
+import type { Lang } from "@/utils/i18n/config";
 import { source } from "@/utils/source";
 
 export const route = createRoute("/:lang/projects/:pj", {

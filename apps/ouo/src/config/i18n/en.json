@@ -1,1 +1,11 @@
-{}
+{
+  "about": {
+    "greeting": "👋 hi!",
+    "name": "I'm Bloodnighttw",
+    "role": "Developer • Gamer",
+    "description": "A frontend developer from Earth."
+  },
+  "projects": {
+    "title": "My Projects"
+  }
+}

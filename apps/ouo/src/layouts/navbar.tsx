@@ -4,7 +4,7 @@ import setting from "@/config/config.json";
 import "server-only";
 import ThemeButton from "./theme-button";
 import LangButton from "./lang-button";
-import type { Lang } from "@/contexts/i18n";
+import type { Lang } from "@/utils/i18n/config";
 
 export default function Navbar({ lang }: { lang: Lang }) {
   return (
