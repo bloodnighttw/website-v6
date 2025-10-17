@@ -1,33 +1,30 @@
 "use client";
 
-import { createContext, type ReactNode } from "react";
+import { I18nextProvider } from "react-i18next";
+import type { ReactNode } from "react";
+import i18next from "@/utils/i18n/client";
 
-const lang = ["en", "zh"] as const;
+export type { Lang } from "@/utils/i18n/config";
 
-export type Lang = (typeof lang)[number];
-export type Translate = typeof import("@/config/i18n/zh.json");
-
-interface I18nContextType {
-  lang: Lang;
-  translate: Translate;
-}
-
-const I18nContext = createContext<I18nContextType | null>(null);
-
-export { I18nContext };
-
-export default function I18nProvider({
+export default function I18nClientProvider({
   children,
   lang,
-  translate,
+  resources,
 }: {
   children: ReactNode;
-  lang: Lang;
-  translate: Translate;
+  lang: string;
+  resources: Record<string, unknown>;
 }) {
-  return (
-    <I18nContext.Provider value={{ lang, translate }}>
-      {children}
-    </I18nContext.Provider>
-  );
+  if (!i18next.isInitialized || i18next.language !== lang) {
+    i18next.init({
+      lng: lang,
+      resources: {
+        [lang]: {
+          translation: resources,
+        },
+      },
+    });
+  }
+
+  return <I18nextProvider i18n={i18next}>{children}</I18nextProvider>;
 }

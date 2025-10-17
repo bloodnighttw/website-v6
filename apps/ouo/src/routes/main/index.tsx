@@ -5,7 +5,7 @@ import "server-only";
 import About from "./about";
 import Project from "./project";
 import Info from "./info";
-import type { Lang } from "@/contexts/i18n";
+import type { Lang } from "@/utils/i18n/config";
 
 export const route = createRoute("/:lang", {
   generator: async () => {

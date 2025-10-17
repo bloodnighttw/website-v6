@@ -1,13 +1,12 @@
 "use client";
 
 import useNavigate from "rpress/navigate";
-import { I18nContext } from "@/contexts/i18n";
-import { useContext } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function LangButton() {
   const navigate = useNavigate();
-  const context = useContext(I18nContext);
-  const currentLang = context?.lang || "en";
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en";
 
   const toggleLang = () => {
     const pathParts = window.location.pathname.split("/");

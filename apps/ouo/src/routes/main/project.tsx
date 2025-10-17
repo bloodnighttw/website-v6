@@ -1,7 +1,7 @@
 import Card from "@/components/card";
 import CardLabel from "@/components/card/label";
 import Link from "rpress/link";
-import type { Lang } from "@/contexts/i18n";
+import type { Lang } from "@/utils/i18n/config";
 import { source } from "@/utils/source";
 
 async function Project({ lang }: { lang: Lang }) {
