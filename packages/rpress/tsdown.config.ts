@@ -13,11 +13,6 @@ export default defineConfig({
     // for virtual module in vite-rsc plugin
     "rsc-loader": "src/libs/route/rsc-loader.tsx",
 
-    // for virtual module of image
-    "image/server": "src/libs/image/server.ts",
-    // for virtual module of image
-    "image/client": "src/libs/image/client.ts",
-
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
     // for vite-rsc plugin
@@ -39,8 +34,7 @@ export default defineConfig({
     "virtual:rpress:config",
     "virtual:rpress:routes",
     "virtual:rpress:rsc-loader",
-    "virtual:rpress:image",
-    "virtual:rpress:image-base",
     "virtual:rpress:client-env",
+    "virtual:rpress:image:mode",
   ],
 });
