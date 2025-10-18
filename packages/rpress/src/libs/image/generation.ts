@@ -3,21 +3,7 @@
 import MODE from "virtual:rpress:image:mode";
 import type { ImageLoaderOptions } from "./handler";
 import IS_CLIENT from "virtual:rpress:client-env";
-import crypto from "crypto";
-
-export function generateSHA256(obj: ImageLoaderOptions) {
-  // Recursively sort all object keys for deterministic serialization
-  const sortedObj: ImageLoaderOptions = {
-    url: obj.url,
-    width: obj.width,
-    height: obj.height,
-    quality: obj.quality,
-  };
-
-  const jsonString = JSON.stringify(sortedObj);
-
-  return crypto.createHash("sha256").update(jsonString, "utf8").digest("hex");
-}
+import { generateSHA256 } from "./sha256";
 
 export default function generateImageURL(options: ImageLoaderOptions) {
   if (MODE === "dynamic") {
@@ -36,6 +22,6 @@ export default function generateImageURL(options: ImageLoaderOptions) {
     }
 
     const sha256 = generateSHA256(options);
-    return `/rpress_images/${sha256}.webp`;
+    return `/_rpress/${sha256}.webp`;
   }
 }
