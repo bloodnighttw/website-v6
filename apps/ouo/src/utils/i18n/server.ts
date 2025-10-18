@@ -1,5 +1,7 @@
 import "server-only";
+import { createInstance } from "i18next";
 import type { Lang } from "./config";
+import { fallbackLang } from "./config";
 
 const translations: Record<
   string,
@@ -17,18 +19,19 @@ export async function getTranslations(lang: Lang) {
 export async function createTranslate(lang: Lang) {
   const resources = await getTranslations(lang);
 
-  return function t(key: string): string {
-    const keys = key.split(".");
-    let value: unknown = resources;
+  const i18n = createInstance();
+  await i18n.init({
+    lng: lang,
+    fallbackLng: fallbackLang,
+    resources: {
+      [lang]: {
+        translation: resources,
+      },
+    },
+    interpolation: {
+      escapeValue: false,
+    },
+  });
 
-    for (const k of keys) {
-      if (value && typeof value === "object" && k in value) {
-        value = (value as Record<string, unknown>)[k];
-      } else {
-        return key;
-      }
-    }
-
-    return typeof value === "string" ? value : key;
-  };
+  return i18n.t.bind(i18n);
 }
