@@ -1,8 +1,9 @@
 "use client";
 
-import { Suspense } from "react";
+import { createContext, Suspense, use } from "react";
 import ShouldCaughtError from "./utils/shouldCaughtError";
 import isClient from "virtual:rpress:client-env";
+import ShouldThrowError from "./utils/shouldThrowError";
 
 class NoSSRError extends ShouldCaughtError {
   constructor() {
@@ -10,9 +11,19 @@ class NoSSRError extends ShouldCaughtError {
   }
 }
 
+class NeedSSRError extends ShouldThrowError {
+  constructor(message?: string) {
+    super(
+      message ?? "You need to be under SSR environment to use this component",
+    );
+  }
+}
+
 function ThrowNoSSR(): null {
   throw new NoSSRError();
 }
+
+const underSSR = createContext(true);
 
 export default function NoSSR({
   children,
@@ -22,8 +33,17 @@ export default function NoSSR({
   fallback?: React.ReactNode;
 }) {
   return (
-    <Suspense fallback={fallback}>
-      {isClient ? children : <ThrowNoSSR />}
-    </Suspense>
+    <underSSR.Provider value={false}>
+      <Suspense fallback={fallback}>
+        {isClient ? children : <ThrowNoSSR />}
+      </Suspense>
+    </underSSR.Provider>
   );
+}
+
+export function NeedSSR({ message }: { message?: string }) {
+  const isUnderSSR = use(underSSR);
+  if (!isUnderSSR) {
+    throw new NeedSSRError(message);
+  }
 }
