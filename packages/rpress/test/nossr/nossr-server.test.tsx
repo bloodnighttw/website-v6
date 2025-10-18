@@ -1,6 +1,5 @@
 import { expect, test, vi, beforeEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
-import { Suspense } from "react";
 
 // Mock client-env as false to simulate server-side rendering
 vi.mock("virtual:rpress:client-env", () => ({
