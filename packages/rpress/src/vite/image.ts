@@ -40,7 +40,6 @@ export function image(): Plugin[] {
       buildApp: {
         order: "post",
         async handler() {
-          console.log("[rpress:image] Processing images...");
           if (
             !globalThis.__RPRESS_IMAGES__ ||
             globalThis.__RPRESS_IMAGES__.length == 0
@@ -48,18 +47,26 @@ export function image(): Plugin[] {
             return;
           }
 
+          // convert options to sha256=>options map
+          // to avoid duplicate processing
+          const uniqueImages = new Map<string, ImageLoaderOptions>();
           for (const imgOptions of globalThis.__RPRESS_IMAGES__) {
-            console.log("[Rpress-Image]", imgOptions.url);
             const sha256 = generateSHA256(imgOptions);
-            const imageRequest = await fetch(imgOptions.url);
+            if (!uniqueImages.has(sha256)) {
+              uniqueImages.set(sha256, imgOptions);
+            }
+          }
+
+          for (const [sha256, imgOption] of uniqueImages.entries()) {
+            const imageRequest = await fetch(imgOption.url);
             if (!imageRequest.ok) {
-              throw new Error(`Failed to fetch image: ${imgOptions.url}`);
+              throw new Error(`Failed to fetch image: ${imgOption.url}`);
             }
             const buffer = await imageRequest.arrayBuffer();
 
             const processedBuffer = await handleImageConversion(
               buffer,
-              imgOptions,
+              imgOption,
             );
 
             const outputFilePath = path.join(outDir, `${sha256}.webp`);
