@@ -1,27 +1,20 @@
 declare module "virtual:rpress:config" {
-  const config: import("./core/defineConfig").RPressConfig;
+  const config: import("@/vite/type").RPressConfig;
   export default config;
 }
 
 declare module "virtual:rpress:routes" {
-  const routes: import("./core/route/route").RouteModule[];
+  const routes: import("@/libs/route/route").RouteModule[];
   export default routes;
 }
 
-declare module "virtual:rpress:config" {
-  const config: import("./core/defineConfig").RPressConfig;
-  export default config;
-}
-
 declare module "virtual:rpress:rsc-loader" {
-  import load from "./core/rsc-loader";
+  const load: import("@/libs/route/rsc-loader").load;
   export default load;
 }
 
 declare module "virtual:rpress:image" {
-  const loader: (
-    options: import("./core/image/handler").ImageLoaderOptions,
-  ) => string;
+  const loader: import("@/libs/image/server").loader;
   export default loader;
 }
 
