@@ -1,4 +1,4 @@
-import loader from "./client";
+import generateImageURL from "./generation";
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -16,7 +16,8 @@ const Image: React.FC<ImageProps> = ({
   quality,
   ...props
 }) => {
-  const resolvedSrc = loader({ url: src, width, height, quality });
+  const resolvedSrc = generateImageURL({ url: src, width, height, quality });
+
   return (
     <img src={resolvedSrc} width={width} height={height} alt={alt} {...props} />
   );

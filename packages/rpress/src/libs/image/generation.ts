@@ -5,7 +5,7 @@ import type { ImageLoaderOptions } from "./handler";
 import IS_CLIENT from "virtual:rpress:client-env";
 import crypto from "crypto";
 
-function generateSHA256(obj: ImageLoaderOptions) {
+export function generateSHA256(obj: ImageLoaderOptions) {
   // Recursively sort all object keys for deterministic serialization
   const sortedObj: ImageLoaderOptions = {
     url: obj.url,
