@@ -1,5 +1,6 @@
 import { expect, test, vi, beforeEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
+import { Suspense } from "react";
 
 // Mock client-env as false to simulate server-side rendering
 vi.mock("virtual:rpress:client-env", () => ({
@@ -45,4 +46,15 @@ test("NoSSR error has correct type and message", () => {
     );
     expect(error.constructor.name).toBe("NoSSRError");
   }
+});
+
+test("NoSSR component structure is correct", () => {
+  // Test the component structure without rendering (to avoid the error)
+  const component = NoSSR({
+    children: <div>Test children</div>,
+    fallback: <div>Test fallback</div>,
+  });
+
+  // Should return a Suspense component - check the actual component type
+  expect(component.type).toBe(Suspense);
 });

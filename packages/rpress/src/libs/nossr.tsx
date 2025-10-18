@@ -2,7 +2,7 @@
 
 import { createContext, Suspense, use } from "react";
 import ShouldCaughtError from "./utils/shouldCaughtError";
-import isClient from "virtual:rpress:client-env";
+import IS_CLIENT from "virtual:rpress:client-env";
 import ShouldThrowError from "./utils/shouldThrowError";
 
 class NoSSRError extends ShouldCaughtError {
@@ -33,11 +33,13 @@ export default function NoSSR({
   fallback?: React.ReactNode;
 }) {
   return (
-    <underSSR.Provider value={false}>
-      <Suspense fallback={fallback}>
-        {isClient ? children : <ThrowNoSSR />}
-      </Suspense>
-    </underSSR.Provider>
+    <Suspense fallback={fallback}>
+      {IS_CLIENT ? (
+        <underSSR.Provider value={false}>{children}</underSSR.Provider>
+      ) : (
+        <ThrowNoSSR />
+      )}
+    </Suspense>
   );
 }
 
