@@ -6,12 +6,16 @@ import IS_CLIENT from "virtual:rpress:client-env";
 import { generateSHA256 } from "./sha256";
 
 export default function generateImageURL(options: ImageLoaderOptions) {
+  // if the url is already absolute, return it directly
+  // we only handle remote urls
+  if (!options.url.startsWith("http")) return options.url;
+
   if (MODE === "dynamic") {
     return (
       "/_rpress?url=" +
       encodeURIComponent(options.url) +
       (options.quality ? `&quality=${options.quality}` : "") +
-      (options.width ? `&width=${options.width} ` : "") +
+      (options.width ? `&width=${options.width}` : "") +
       (options.height ? `&height=${options.height}` : "")
     );
   }
