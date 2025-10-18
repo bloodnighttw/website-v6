@@ -27,3 +27,8 @@ declare module "virtual:rpress:client-env" {
   const isClient: boolean;
   export default isClient;
 }
+
+declare module "virtual:rpress:image:mode" {
+  const mode: "generation" | "dynamic";
+  export default mode;
+}

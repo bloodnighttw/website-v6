@@ -1,4 +1,4 @@
-import loader from "virtual:rpress:image";
+import loader from "./client";
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
