@@ -9,7 +9,8 @@ import config from "virtual:rpress:config";
 export default function generateImageURL(options: ImageLoaderOptions) {
   // if the url is already absolute, return it directly
   // we only handle remote urls
-  if (!options.url.startsWith("http")) return options.url;
+  if (!(options.url.startsWith("http") || options.url.startsWith("/")))
+    return options.url;
 
   if (MODE === "dynamic") {
     return (

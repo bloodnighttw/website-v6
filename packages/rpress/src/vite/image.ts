@@ -14,6 +14,7 @@ declare global {
 async function handleImageRequest(
   request: Request,
   imgBaseURL: string,
+  publicDir: string,
 ): Promise<Response | null> {
   const url = new URL(request.url);
 
@@ -27,12 +28,21 @@ async function handleImageRequest(
   }
 
   try {
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      return new Response("Failed to fetch image", { status: 404 });
+    let buffer: ArrayBuffer;
+
+    if (imageUrl.startsWith("/")) {
+      const asset = path.join(publicDir, imageUrl);
+      buffer = await fs.promises
+        .readFile(asset)
+        .then((data) => data.buffer as ArrayBuffer);
+    } else {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        return new Response("Failed to fetch image", { status: 404 });
+      }
+      buffer = await response.arrayBuffer();
     }
 
-    const buffer = await response.arrayBuffer();
     const options = {
       url: imageUrl,
       width: url.searchParams.get("width")
@@ -64,12 +74,14 @@ export function image(imgBaseURL: string): Plugin[] {
   globalThis.__RPRESS_IMAGES__ = [];
   let NEED_GENERATE = true;
   let outDir = "";
+  let publicDir = "";
 
   return [
     {
       name: "rpress:image",
       configResolved(config) {
         outDir = path.join(config.environments.client.build.outDir, imgBaseURL);
+        publicDir = config.publicDir;
       },
       configureServer(server) {
         globalThis.__RPRESS_IMAGES__ = undefined;
@@ -84,7 +96,11 @@ export function image(imgBaseURL: string): Plugin[] {
             const request = new Request(
               new URL(req.url, `http://${req.headers.host}`).href,
             );
-            const imageResponse = await handleImageRequest(request, imgBaseURL);
+            const imageResponse = await handleImageRequest(
+              request,
+              imgBaseURL,
+              publicDir,
+            );
 
             if (imageResponse) {
               res.statusCode = imageResponse.status;
@@ -131,11 +147,20 @@ export function image(imgBaseURL: string): Plugin[] {
           }
 
           for (const [sha256, imgOption] of uniqueImages.entries()) {
-            const imageRequest = await fetch(imgOption.url);
-            if (!imageRequest.ok) {
-              throw new Error(`Failed to fetch image: ${imgOption.url}`);
+            let buffer: ArrayBuffer;
+
+            if (imgOption.url.startsWith("/")) {
+              const asset = path.join(publicDir, imgOption.url);
+              buffer = await fs.promises
+                .readFile(asset)
+                .then((data) => data.buffer as ArrayBuffer);
+            } else {
+              const imageRequest = await fetch(imgOption.url);
+              if (!imageRequest.ok) {
+                throw new Error(`Failed to fetch image: ${imgOption.url}`);
+              }
+              buffer = await imageRequest.arrayBuffer();
             }
-            const buffer = await imageRequest.arrayBuffer();
 
             const processedBuffer = await handleImageConversion(
               buffer,
