@@ -1,4 +1,5 @@
 import generateImageURL from "./generation";
+import IS_CLIENT from "virtual:rpress:client-env";
 const NeedSSR = (await import("../NeedSSR")).default;
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -21,6 +22,9 @@ const Image: React.FC<ImageProps> = ({
 
   return (
     <>
+      {!IS_CLIENT && (
+        <NeedSSR message="You should't use Image component under NoSSR!" />
+      )}
       <img
         src={resolvedSrc}
         width={width}
@@ -28,7 +32,6 @@ const Image: React.FC<ImageProps> = ({
         alt={alt}
         {...props}
       />
-      <NeedSSR message="The Image Optimizion Component should only run under ssr enviroment! You shouldn't use it under NoSSR!" />
     </>
   );
 };

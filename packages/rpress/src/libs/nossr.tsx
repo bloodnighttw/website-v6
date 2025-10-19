@@ -25,11 +25,8 @@ export default function NoSSR({
 }) {
   return (
     <Suspense fallback={fallback}>
-      {IS_CLIENT ? (
-        <underSSR.Provider value={false}>{children}</underSSR.Provider>
-      ) : (
-        <ThrowNoSSR />
-      )}
+      <underSSR.Provider value={false}>{children}</underSSR.Provider>
+      {IS_CLIENT && <ThrowNoSSR />}
     </Suspense>
   );
 }

@@ -32,8 +32,10 @@ export async function renderHtml(
         bootstrapScriptContent,
         onError: (e) => {
           if (e instanceof ShouldCaughtError) return;
-          else if (e instanceof ShouldThrowError) throw e;
-          else console.error(e);
+          else if (e instanceof ShouldThrowError) {
+            throw new Error(e.message);
+          }
+          console.error(e);
         },
       });
       htmlStream = prerenderResult.prelude;
@@ -42,8 +44,10 @@ export async function renderHtml(
         bootstrapScriptContent,
         onError: (e) => {
           if (e instanceof ShouldCaughtError) return;
-          else if (e instanceof ShouldThrowError) throw e;
-          else console.error(e);
+          else if (e instanceof ShouldThrowError) {
+            throw new Error(e.message);
+          }
+          console.error(e);
         },
       });
     }
