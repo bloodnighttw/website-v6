@@ -12,13 +12,14 @@ const defaultConfig: RPressConfig = {
   strictMode: true,
   routesDir: "src/routes/**",
   prefetchStrategy: "hover",
+  imgBaseURL: "_rpress",
 };
 
 export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
   const config = { ...defaultConfig, ...partConfig };
 
   return [
-    ...image(),
+    ...image(config.imgBaseURL),
     ...rscConfig(config),
     rscLoader(),
     ...rsc({
@@ -34,12 +35,6 @@ export default function rpress(partConfig: Partial<RPressConfig>): Plugin[] {
     {
       name: "rpress:resolve-deps",
       configEnvironment(_name, environmentConfig, _env) {
-        // see @vitejs/vite-plugin-react issue #789
-        // make @vitejs/plugin-rsc usable as a transitive dependency
-        // by rewriting `optimizeDeps.include`. e.g.
-        // include: ["@vitejs/plugin-rsc/vendor/xxx", "@vitejs/plugin-rsc > yyy"]
-        // ⇓
-        // include: ["waku > @vitejs/plugin-rsc/vendor/xxx", "waku > @vitejs/plugin-rsc > yyy"]
         if (environmentConfig.optimizeDeps?.include) {
           environmentConfig.optimizeDeps.include =
             environmentConfig.optimizeDeps.include.map((name) => {

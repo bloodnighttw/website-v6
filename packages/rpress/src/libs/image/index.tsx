@@ -1,4 +1,6 @@
-import loader from "virtual:rpress:image";
+import generateImageURL from "./generation";
+import IS_CLIENT from "virtual:rpress:client-env";
+const NeedSSR = (await import("../NeedSSR")).default;
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -16,9 +18,21 @@ const Image: React.FC<ImageProps> = ({
   quality,
   ...props
 }) => {
-  const resolvedSrc = loader({ url: src, width, height, quality });
+  const resolvedSrc = generateImageURL({ url: src, width, height, quality });
+
   return (
-    <img src={resolvedSrc} width={width} height={height} alt={alt} {...props} />
+    <>
+      {!IS_CLIENT && (
+        <NeedSSR message="You shouldn't use Image component under NoSSR!" />
+      )}
+      <img
+        src={resolvedSrc}
+        width={width}
+        height={height}
+        alt={alt}
+        {...props}
+      />
+    </>
   );
 };
 
