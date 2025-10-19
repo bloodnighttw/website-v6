@@ -1,5 +1,5 @@
-import { NeedSSR } from "../nossr";
 import generateImageURL from "./generation";
+const NeedSSR = (await import("../NeedSSR")).default;
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;

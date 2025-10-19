@@ -13,6 +13,10 @@ export default defineConfig({
     // for virtual module in vite-rsc plugin
     "rsc-loader": "src/libs/route/rsc-loader.tsx",
 
+    // manual chunks
+    nossrm: "src/libs/nossr.tsx",
+    needssr: "src/libs/NeedSSR.tsx",
+
     // for vite-rsc plugin
     "entry/browser": "src/entry/browser.tsx",
     // for vite-rsc plugin
