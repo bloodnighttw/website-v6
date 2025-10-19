@@ -48,4 +48,5 @@ export function NeedSSR({ message }: { message?: string }) {
   if (!isUnderSSR) {
     throw new NeedSSRError(message);
   }
+  return null;
 }

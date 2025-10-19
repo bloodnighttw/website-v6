@@ -1,3 +1,4 @@
+import { NeedSSR } from "../nossr";
 import generateImageURL from "./generation";
 
 interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -19,7 +20,16 @@ const Image: React.FC<ImageProps> = ({
   const resolvedSrc = generateImageURL({ url: src, width, height, quality });
 
   return (
-    <img src={resolvedSrc} width={width} height={height} alt={alt} {...props} />
+    <>
+      <img
+        src={resolvedSrc}
+        width={width}
+        height={height}
+        alt={alt}
+        {...props}
+      />
+      <NeedSSR message="The Image Optimizion Component should only run under ssr enviroment! You shouldn't use it under NoSSR!" />
+    </>
   );
 };
 
