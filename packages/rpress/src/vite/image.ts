@@ -11,10 +11,13 @@ declare global {
   var __RPRESS_IMAGES__: ImageLoaderOptions[] | undefined;
 }
 
-async function handleImageRequest(request: Request): Promise<Response | null> {
+async function handleImageRequest(
+  request: Request,
+  imgBaseURL: string,
+): Promise<Response | null> {
   const url = new URL(request.url);
 
-  if (!url.pathname.startsWith("/_rpress")) {
+  if (!url.pathname.startsWith(`/${imgBaseURL}`)) {
     return null;
   }
 
@@ -57,7 +60,7 @@ async function handleImageRequest(request: Request): Promise<Response | null> {
   }
 }
 
-export function image(): Plugin[] {
+export function image(imgBaseURL: string): Plugin[] {
   globalThis.__RPRESS_IMAGES__ = [];
   let NEED_GENERATE = true;
   let outDir = "";
@@ -66,14 +69,14 @@ export function image(): Plugin[] {
     {
       name: "rpress:image",
       configResolved(config) {
-        outDir = path.join(config.environments.client.build.outDir, "_rpress");
+        outDir = path.join(config.environments.client.build.outDir, imgBaseURL);
       },
       configureServer(server) {
         globalThis.__RPRESS_IMAGES__ = undefined;
         NEED_GENERATE = false;
 
         server.middlewares.use(async (req, res, next) => {
-          if (!req.url?.startsWith("/_rpress")) {
+          if (!req.url?.startsWith(`/${imgBaseURL}`)) {
             return next();
           }
 
@@ -81,7 +84,7 @@ export function image(): Plugin[] {
             const request = new Request(
               new URL(req.url, `http://${req.headers.host}`).href,
             );
-            const imageResponse = await handleImageRequest(request);
+            const imageResponse = await handleImageRequest(request, imgBaseURL);
 
             if (imageResponse) {
               res.statusCode = imageResponse.status;
@@ -119,8 +122,6 @@ export function image(): Plugin[] {
             return;
           }
 
-          // convert options to sha256=>options map
-          // to avoid duplicate processing
           const uniqueImages = new Map<string, ImageLoaderOptions>();
           for (const imgOptions of globalThis.__RPRESS_IMAGES__) {
             const sha256 = generateSHA256(imgOptions);

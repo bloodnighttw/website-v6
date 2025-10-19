@@ -4,6 +4,7 @@ import MODE from "virtual:rpress:image:mode";
 import type { ImageLoaderOptions } from "./handler";
 import IS_CLIENT from "virtual:rpress:client-env";
 import { generateSHA256 } from "./sha256";
+import config from "virtual:rpress:config";
 
 export default function generateImageURL(options: ImageLoaderOptions) {
   // if the url is already absolute, return it directly
@@ -12,7 +13,7 @@ export default function generateImageURL(options: ImageLoaderOptions) {
 
   if (MODE === "dynamic") {
     return (
-      "/_rpress?url=" +
+      `/${config.imgBaseURL}?url=` +
       encodeURIComponent(options.url) +
       (options.quality ? `&quality=${options.quality}` : "") +
       (options.width ? `&width=${options.width}` : "") +
@@ -26,6 +27,6 @@ export default function generateImageURL(options: ImageLoaderOptions) {
     }
 
     const sha256 = generateSHA256(options);
-    return `/_rpress/${sha256}.webp`;
+    return `/${config.imgBaseURL}/${sha256}.webp`;
   }
 }
