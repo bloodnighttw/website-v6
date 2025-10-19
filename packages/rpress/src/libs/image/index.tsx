@@ -23,7 +23,7 @@ const Image: React.FC<ImageProps> = ({
   return (
     <>
       {!IS_CLIENT && (
-        <NeedSSR message="You should't use Image component under NoSSR!" />
+        <NeedSSR message="You shouldn't use Image component under NoSSR!" />
       )}
       <img
         src={resolvedSrc}
