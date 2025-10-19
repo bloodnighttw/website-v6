@@ -19,12 +19,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "virtual:rpress:image": new URL(
-        "./test/mocks/virtual-image.ts",
-        import.meta.url,
-      ).pathname,
-      "virtual:rpress:image-base": new URL(
-        "./test/mocks/virtual-image-base.ts",
+      "virtual:rpress:image:mode": new URL(
+        "./test/mocks/virtual-image-mode.ts",
         import.meta.url,
       ).pathname,
       "virtual:rpress:config": new URL(
