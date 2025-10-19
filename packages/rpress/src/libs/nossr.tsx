@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, Suspense, use } from "react";
+import { createContext, Suspense, useContext } from "react";
 import ShouldCaughtError from "./utils/shouldCaughtError";
 import IS_CLIENT from "virtual:rpress:client-env";
 import ShouldThrowError from "./utils/shouldThrowError";
@@ -44,7 +44,7 @@ export default function NoSSR({
 }
 
 export function NeedSSR({ message }: { message?: string }) {
-  const isUnderSSR = use(underSSR);
+  const isUnderSSR = useContext(underSSR);
   if (!isUnderSSR) {
     throw new NeedSSRError(message);
   }
