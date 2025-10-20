@@ -9,7 +9,7 @@ import type { Lang } from "@/utils/i18n/config";
 export default function Navbar({ lang }: { lang: Lang }) {
   return (
     <nav className="container sticky top-0 w-screen xl:w-full xl:top-2 xl:mt-2 xl:card bg-primary-500/10 xl:rounded-xl backdrop-blur-2xl">
-      <div className="sm:flex items-center min-h-16 gap-2">
+      <div className="flex items-center min-h-16 gap-2">
         <Link to={`/${lang}`} className="text-lg font-bold">
           <Image src={setting.avatar} className="rounded-full size-8" />
         </Link>
