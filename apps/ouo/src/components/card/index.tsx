@@ -5,7 +5,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export default function Card(props: CardProps) {
-  const old = "rounded-xl bg-secondary-500/5 backdrop-blur-2xl card";
+  const old = "rounded-xl bg-secondary-500/5 card";
   const { className, ...rest } = props;
 
   return (
