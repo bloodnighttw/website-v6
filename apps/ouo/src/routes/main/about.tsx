@@ -4,6 +4,7 @@ import Image from "rpress/image";
 import CONFIG from "@/config/config.json";
 import type { Lang } from "@/utils/i18n/config";
 import { createTranslate } from "@/utils/i18n/server";
+import { cn } from "@/utils/cn";
 
 async function About({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
@@ -19,7 +20,13 @@ async function About({ lang }: { lang: Lang }) {
         <h1 className="text-6xl font-bold mt-1">{t("about.name")}</h1>
         <p className="font-mono mt-1">{`${age} y/o • ${t("about.role")}`}</p>
         <p className="mt-1 text-lg">{t("about.description")}</p>
-        <div className="mt-auto flex gap-8 *:size-6 *:cursor-pointer *:opacity-70 *:hover:opacity-100 *:transition-opacity *:duration-200">
+        <div
+          className={cn(
+            "mt-auto flex gap-8 *:size-6 *:cursor-pointer",
+            "dark:*:fill-primary-300 dark:*:hover:fill-primary-50 *:duration-200",
+            "*:fill-primary-700 *:hover:fill-primary-950",
+          )}
+        >
           <FaGithub />
           <FaTwitter />
           <FaTelegram />
