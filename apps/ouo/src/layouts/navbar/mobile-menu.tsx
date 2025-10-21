@@ -39,10 +39,27 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
     <>
       <button
         onClick={toggleMenu}
-        className="md:hidden w-6 cursor-pointer mr-2"
+        className="md:hidden w-6 cursor-pointer mr-2 relative h-6 flex items-center justify-center"
         aria-label="Toggle menu"
       >
-        {isOpen ? <HiX size={24} /> : <HiMenu size={24} />}
+        <HiMenu
+          size={24}
+          className={cn(
+            "absolute inset-0 transition-all duration-300",
+            isOpen
+              ? "opacity-0 rotate-90 scale-0"
+              : "opacity-100 rotate-0 scale-100",
+          )}
+        />
+        <HiX
+          size={24}
+          className={cn(
+            "absolute inset-0 transition-all duration-300",
+            isOpen
+              ? "opacity-100 rotate-0 scale-100"
+              : "opacity-0 -rotate-90 scale-0",
+          )}
+        />
       </button>
 
       {isOpen &&
