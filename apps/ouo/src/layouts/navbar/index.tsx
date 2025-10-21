@@ -20,10 +20,13 @@ export default function Navbar({ lang }: { lang: Lang }) {
           <Link to={`/${lang}`} className="text-lg font-bold">
             <Image src={setting.avatar} className="rounded-full size-8" />
           </Link>
-          <div className="mx-auto flex gap-4 text-lg underline not-md:hidden">
-            <Link to={`/${lang}`} className="flex-1 text-lg mx-auto">
-              friends link
-            </Link>
+          <div
+            className={cn(
+              "mx-auto flex gap-4 text-sm underline not-md:hidden",
+              " text-primary-700 dark:text-primary-300",
+            )}
+          >
+            <Link to={`/${lang}`}>friends link</Link>
             <Link to={`/${lang}`}>blog</Link>
           </div>
           <div className="mx-auto md:mx-0 flex not-md:hidden">

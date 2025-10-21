@@ -52,7 +52,7 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
               className={cn(
                 "absolute top-full left-0 my-4 right-0 mx-6",
                 "card bg-primary-500/10 backdrop-blur-2xl rounded-2xl",
-                "flex flex-col gap-2 px-2 py-4",
+                "flex flex-col gap-2 p-2",
                 "md:hidden",
               )}
               onClick={() => {
@@ -61,20 +61,20 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
             >
               <Link
                 to={`/${lang}`}
-                className="text-lg px-4 hover:bg-primary-500/20 rounded-lg"
+                className="text-lg px-4 py-2 hover:bg-primary-500/20 rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 friends link
               </Link>
               <Link
                 to={`/${lang}`}
-                className="text-lg px-4 hover:bg-primary-500/20 rounded-lg"
+                className="text-lg px-4 py-2 hover:bg-primary-500/20 rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 blog
               </Link>
               <hr className="border-primary-500/20 mt-2" />
-              <div className="flex items-center gap-4 mt-2 px-2">
+              <div className="flex items-center gap-4 mt-2 px-2 pb-4">
                 <span className="text-sm opacity-70">Settings:</span>
                 <LangButton />
                 <ThemeButton />
