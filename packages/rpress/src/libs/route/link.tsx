@@ -11,6 +11,15 @@ export interface LinkProps
   prefetch?: "hover" | "viewport" | "none" | "eager";
 }
 
+function isExternalUrl(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url, window.location.href);
+    return parsedUrl.origin !== window.location.origin;
+  } catch {
+    return false;
+  }
+}
+
 export default function Link(props: LinkProps) {
   const navi = useNavigate();
 
@@ -23,11 +32,21 @@ export default function Link(props: LinkProps) {
     ...rest
   } = props;
 
+  const isExternal = isExternalUrl(to);
+
   useEffect(() => {
-    if (prefetch === "eager") {
+    if (!isExternal && prefetch === "eager") {
       load(to);
     }
-  }, [prefetch, to]);
+  }, [isExternal, prefetch, to]);
+
+  if (isExternal) {
+    return (
+      <a {...rest} href={to} onClick={onClick} onMouseEnter={onMouseEnter}>
+        {children}
+      </a>
+    );
+  }
 
   return (
     <a
