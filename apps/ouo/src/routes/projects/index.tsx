@@ -7,6 +7,7 @@ import { source } from "@/utils/source";
 import Card from "@/components/card";
 import { cn } from "@/utils/cn";
 import { HiExternalLink, HiEye } from "react-icons/hi";
+import { createTranslate } from "@/utils/i18n/server";
 
 export const route = createRoute("/:lang/projects/:pj", {
   generator: async () => {
@@ -26,6 +27,7 @@ export default async function Index(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
   helper.add(RootLayout, { lang: props.params.lang as Lang });
   const Flatten = helper.flatten();
+  const t = await createTranslate(props.params.lang as Lang);
   const [dyComponent] = await source.search(
     [props.params.pj],
     props.params.lang,
@@ -75,7 +77,9 @@ export default async function Index(props: RouterProps<typeof route>) {
                   )}
                 >
                   <HiExternalLink size={18} />
-                  <span className="font-medium">Repository</span>
+                  <span className="font-medium">
+                    {t("projects.repository")}
+                  </span>
                 </a>
               )}
               {metadata.demo && (
@@ -91,7 +95,7 @@ export default async function Index(props: RouterProps<typeof route>) {
                   )}
                 >
                   <HiEye size={18} />
-                  <span className="font-medium">Live Demo</span>
+                  <span className="font-medium">{t("projects.liveDemo")}</span>
                 </a>
               )}
             </div>
