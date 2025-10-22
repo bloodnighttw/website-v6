@@ -241,3 +241,117 @@ test("Link overrides default prefetch strategy", () => {
   // Even though default is "hover", explicit "none" should override
   expect(mockLoad).not.toHaveBeenCalledWith("/api");
 });
+
+test("Link handles external URL as plain anchor tag", () => {
+  render(
+    <TestWrapper>
+      <Link to="https://example.com">External</Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("External");
+  expect(link).toHaveAttribute("href", "https://example.com");
+});
+
+test("Link does not prevent default for external URLs", () => {
+  const mockPreventDefault = vi.fn();
+
+  render(
+    <TestWrapper>
+      <Link to="https://google.com">Google</Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("Google");
+  const clickEvent = new MouseEvent("click", { bubbles: true });
+  clickEvent.preventDefault = mockPreventDefault;
+
+  fireEvent(link, clickEvent);
+
+  // Should NOT prevent default for external links
+  expect(mockPreventDefault).not.toHaveBeenCalled();
+  // Should NOT call navigate for external links
+  expect(mockSetUrl).not.toHaveBeenCalled();
+});
+
+test("Link does not prefetch external URLs", () => {
+  render(
+    <TestWrapper>
+      <Link to="https://external.com" prefetch="eager">
+        External Eager
+      </Link>
+    </TestWrapper>,
+  );
+
+  // Should not attempt to load external URLs
+  expect(mockLoad).not.toHaveBeenCalledWith("https://external.com");
+});
+
+test("Link with external URL calls custom onClick handler", () => {
+  const customOnClick = vi.fn();
+
+  render(
+    <TestWrapper>
+      <Link to="https://example.org" onClick={customOnClick}>
+        Example
+      </Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("Example");
+  fireEvent.click(link);
+
+  expect(customOnClick).toHaveBeenCalled();
+  expect(mockSetUrl).not.toHaveBeenCalled();
+});
+
+test("Link with external URL calls custom onMouseEnter handler", () => {
+  const customOnMouseEnter = vi.fn();
+
+  render(
+    <TestWrapper>
+      <Link to="https://example.net" onMouseEnter={customOnMouseEnter}>
+        Mouse Test
+      </Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("Mouse Test");
+  fireEvent.mouseEnter(link);
+
+  expect(customOnMouseEnter).toHaveBeenCalled();
+  expect(mockLoad).not.toHaveBeenCalled();
+});
+
+test("Link passes through props for external URLs", () => {
+  render(
+    <TestWrapper>
+      <Link
+        to="https://example.com"
+        className="external-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        External Link
+      </Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("External Link");
+  expect(link).toHaveAttribute("class", "external-link");
+  expect(link).toHaveAttribute("target", "_blank");
+  expect(link).toHaveAttribute("rel", "noopener noreferrer");
+});
+
+test("Link treats protocol-relative URLs as external", () => {
+  render(
+    <TestWrapper>
+      <Link to="//cdn.example.com/resource">CDN Resource</Link>
+    </TestWrapper>,
+  );
+
+  const link = screen.getByText("CDN Resource");
+  fireEvent.click(link);
+
+  expect(mockSetUrl).not.toHaveBeenCalled();
+});
