@@ -6,6 +6,8 @@
     "description": "A frontend developer from Earth."
   },
   "projects": {
-    "title": "My Projects"
+    "title": "My Projects",
+    "repository": "Repository",
+    "liveDemo": "Live Demo"
   }
 }

@@ -6,6 +6,8 @@
     "description": "一位來自地球的前端開發者。"
   },
   "projects": {
-    "title": "我的專案"
+    "title": "我的專案",
+    "repository": "儲存庫",
+    "liveDemo": "線上展示"
   }
 }
