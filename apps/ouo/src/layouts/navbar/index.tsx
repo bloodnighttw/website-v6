@@ -11,7 +11,7 @@ import { cn } from "@/utils/cn";
 export default function Navbar({ lang }: { lang: Lang }) {
   return (
     <>
-      <nav className={cn("container *:px-4 md:*:pr-6 sticky top-2")}>
+      <nav className={cn("container *:px-4 md:*:pr-6 sticky top-2 z-100")}>
         <div
           className={cn(
             "flex items-center min-h-16 gap-4 card mt-2 bg-primary-500/10 rounded-full backdrop-blur-2xl",
@@ -39,7 +39,7 @@ export default function Navbar({ lang }: { lang: Lang }) {
           <MobileMenu lang={lang} />
         </div>
       </nav>
-      <div id="menu" className="sticky top-18 w-full" />
+      <div id="menu" className="sticky top-18 w-full z-100" />
     </>
   );
 }
