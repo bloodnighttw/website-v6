@@ -21,17 +21,18 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
   // if click outside of the menu, close the menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      // if it is not click on the div ref, close the menu
       if (ref.current && !ref.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("click", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -67,25 +68,24 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
           <>
             <div
               className={cn(
-                "absolute top-full left-0 my-4 right-0 mx-6",
+                "absolute top-full left-0 my-4 right-0 mx-4",
                 "card bg-primary-500/10 backdrop-blur-2xl rounded-2xl",
-                "flex flex-col gap-2 p-2",
+                "flex flex-col p-2",
                 "md:hidden",
               )}
-              onClick={() => {
-                setIsOpen(false);
-              }}
+              ref={ref}
+              onClick={(e) => e.stopPropagation()}
             >
               <Link
                 to={`/${lang}`}
-                className="text-lg px-4 py-2 hover:bg-primary-500/20 rounded-lg"
+                className="text-lg px-4 py-1 hover:bg-primary-500/20 rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 friends link
               </Link>
               <Link
                 to={`/${lang}`}
-                className="text-lg px-4 py-2 hover:bg-primary-500/20 rounded-lg"
+                className="text-lg px-4 py-1 hover:bg-primary-500/20 rounded-lg"
                 onClick={() => setIsOpen(false)}
               >
                 blog

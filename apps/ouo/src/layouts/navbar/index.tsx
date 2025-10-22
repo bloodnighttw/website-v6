@@ -11,13 +11,13 @@ import { cn } from "@/utils/cn";
 export default function Navbar({ lang }: { lang: Lang }) {
   return (
     <>
-      <nav className={cn("container *:px-4 md:*:px-6 sticky top-2")}>
+      <nav className={cn("container *:px-4 md:*:pr-6 sticky top-2")}>
         <div
           className={cn(
             "flex items-center min-h-16 gap-4 card mt-2 bg-primary-500/10 rounded-full backdrop-blur-2xl",
           )}
         >
-          <Link to={`/${lang}`} className="text-lg font-bold">
+          <Link to={`/${lang}`}>
             <Image src={setting.avatar} className="rounded-full size-8" />
           </Link>
           <div
