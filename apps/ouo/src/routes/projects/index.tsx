@@ -70,7 +70,7 @@ export default async function Index(props: RouterProps<typeof route>) {
                   href={metadata.link}
                   className={cn(
                     "inline-flex items-center gap-2 px-2 py-2 rounded-lg",
-                    "bg-primary-500/20 hover:bg-primary-500/30",
+                    "bg-primary-500/5 hover:bg-primary-500/10",
                     "text-primary-900 dark:text-primary-100",
                     "transition-colors duration-200",
                     "border border-primary-500/30",
@@ -88,7 +88,7 @@ export default async function Index(props: RouterProps<typeof route>) {
                   href={metadata.demo}
                   className={cn(
                     "inline-flex items-center gap-2 px-2 py-2 rounded-lg",
-                    "bg-secondary-500/20 hover:bg-secondary-500/30",
+                    "bg-primary-500/5 hover:bg-primary-500/10",
                     "text-secondary-900 dark:text-secondary-100",
                     "transition-colors duration-200",
                     "border border-secondary-500/30",
@@ -103,7 +103,7 @@ export default async function Index(props: RouterProps<typeof route>) {
         </div>
       </Card>
 
-      <div className="prose dark:prose-invert max-w-none">
+      <div className="prose prose-zinc dark:prose-invert max-w-none">
         <DyComponent />
       </div>
     </Flatten>
