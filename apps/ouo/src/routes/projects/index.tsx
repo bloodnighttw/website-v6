@@ -103,6 +103,31 @@ export default async function Index(props: RouterProps<typeof route>) {
         </div>
       </Card>
 
+      {metadata.demo && (
+        <Card
+          className={cn(
+            "p-6 mb-8",
+            "bg-primary-500/10 backdrop-blur-sm",
+            "border border-primary-500/20",
+          )}
+        >
+          <h2 className="text-2xl font-bold text-primary-900 dark:text-primary-100 mb-4">
+            {t("projects.liveDemo")}
+          </h2>
+          <div className="relative w-full rounded-lg overflow-hidden border border-primary-500/30">
+            <div className="aspect-video w-full">
+              <iframe
+                src={metadata.demo}
+                className="w-full h-full"
+                title={`${metadata.name} - Live Demo`}
+                sandbox="allow-scripts allow-same-origin"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="prose prose-zinc dark:prose-invert max-w-none">
         <DyComponent />
       </div>
