@@ -6,6 +6,7 @@ import { source } from "@/utils/source";
 import { createTranslate } from "@/utils/i18n/server";
 import { TechStackIcon } from "@/components/tech-stack-icon";
 import { cn } from "@/utils/cn";
+import Image from "rpress/image";
 
 async function Project({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
@@ -28,7 +29,7 @@ async function Project({ lang }: { lang: Lang }) {
               )}
             >
               <div className="w-full aspect-video rounded-lg overflow-hidden bg-secondary-100 dark:bg-secondary-800">
-                <img
+                <Image
                   src={project.thumbnail}
                   alt={project.name}
                   className="w-full h-full object-cover"
