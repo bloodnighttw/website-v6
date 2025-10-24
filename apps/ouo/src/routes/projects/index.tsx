@@ -62,42 +62,22 @@ export default async function Index(props: RouterProps<typeof route>) {
             )}
           </div>
 
-          {(metadata.link || metadata.demo) && (
+          {metadata.link && (
             <div className="flex flex-wrap md:flex-col gap-4">
-              {metadata.link && (
-                <a
-                  target="_blank"
-                  href={metadata.link}
-                  className={cn(
-                    "inline-flex items-center gap-2 px-2 py-2 rounded-lg",
-                    "bg-primary-500/5 hover:bg-primary-500/10",
-                    "text-primary-900 dark:text-primary-100",
-                    "transition-colors duration-200",
-                    "border border-primary-500/30",
-                  )}
-                >
-                  <HiExternalLink size={18} />
-                  <span className="font-medium">
-                    {t("projects.repository")}
-                  </span>
-                </a>
-              )}
-              {metadata.demo && (
-                <a
-                  target="_blank"
-                  href={metadata.demo}
-                  className={cn(
-                    "inline-flex items-center gap-2 px-2 py-2 rounded-lg",
-                    "bg-primary-500/5 hover:bg-primary-500/10",
-                    "text-secondary-900 dark:text-secondary-100",
-                    "transition-colors duration-200",
-                    "border border-secondary-500/30",
-                  )}
-                >
-                  <HiEye size={18} />
-                  <span className="font-medium">{t("projects.liveDemo")}</span>
-                </a>
-              )}
+              <a
+                target="_blank"
+                href={metadata.link}
+                className={cn(
+                  "inline-flex items-center gap-2 px-2 py-2 rounded-lg",
+                  "bg-primary-500/5 hover:bg-primary-500/10",
+                  "text-primary-900 dark:text-primary-100",
+                  "transition-colors duration-200",
+                  "border border-primary-500/30",
+                )}
+              >
+                <HiExternalLink size={18} />
+                <span className="font-medium">{t("projects.repository")}</span>
+              </a>
             </div>
           )}
         </div>
@@ -111,14 +91,30 @@ export default async function Index(props: RouterProps<typeof route>) {
             "border border-primary-500/20",
           )}
         >
-          <h2 className="text-2xl font-bold text-primary-900 dark:text-primary-100 mb-4">
-            {t("projects.liveDemo")}
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-primary-900 dark:text-primary-100">
+              {t("projects.liveDemo")}
+            </h2>
+            <a
+              target="_blank"
+              href={metadata.demo}
+              className={cn(
+                "inline-flex items-center justify-center p-2 rounded-lg",
+                "bg-primary-500/5 hover:bg-primary-500/10",
+                "text-secondary-900 dark:text-secondary-100",
+                "transition-colors duration-200",
+                "border border-secondary-500/30",
+              )}
+              title={t("projects.liveDemo")}
+            >
+              <HiExternalLink size={18} />
+            </a>
+          </div>
           <div className="relative w-full rounded-lg overflow-hidden border border-primary-500/30">
             <div className="aspect-video w-full">
               <iframe
                 src={metadata.demo}
-                className="w-full h-full"
+                className="w-full h-full rounded-lg"
                 title={`${metadata.name} - Live Demo`}
                 sandbox="allow-scripts allow-same-origin"
                 loading="lazy"
