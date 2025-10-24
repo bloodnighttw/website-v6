@@ -13,6 +13,7 @@ const pjSchema = z.object({
   link: z.url().optional(),
   demo: z.url().optional(),
   stack: z.array(z.enum(validTechStacks)).optional(),
+  thumbnail: z.string(),
 });
 
 const pj = source({
