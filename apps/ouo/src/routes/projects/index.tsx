@@ -9,7 +9,6 @@ import Meta from "./meta";
 
 export const route = createRoute("/:lang/projects/:pj", {
   generator: async () => {
-    console.log("Generating routes for /:lang", source.entries());
     const routes = [] as { lang: string; pj: string }[];
     for (const entry of source.entries()) {
       const pj = entry;
