@@ -87,18 +87,30 @@ export const validTechStacks = Object.keys(techStackIcons) as [
 interface TechStackIconProps {
   tech: string;
   size?: number;
+  iconOnly?: boolean;
 }
 
-export function TechStackIcon({ tech, size = 20 }: TechStackIconProps) {
+export function TechStackIcon({
+  tech,
+  size = 20,
+  iconOnly = false,
+}: TechStackIconProps) {
   const Icon = techStackIcons[tech];
 
   if (!Icon) {
+    if (iconOnly) {
+      return <span className="w-5 h-5 rounded-full bg-primary-500/20" />;
+    }
     return (
       <span className="inline-flex items-center gap-2">
         <span className="w-5 h-5 rounded-full bg-primary-500/20" />
         <span>{tech}</span>
       </span>
     );
+  }
+
+  if (iconOnly) {
+    return <Icon size={size} />;
   }
 
   return (
