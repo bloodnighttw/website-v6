@@ -25,17 +25,17 @@ export default async function RootLayout(props: RootProps) {
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className="relative">
+      <body>
         <script>{`(${loadTheme.toString()})()`}</script>
         <I18nProvider
           lang={props.lang}
           resources={resources.default as Record<string, unknown>}
         >
-          <div className="absolute w-full h-screen overflow-y-auto bg-primary-50/40 dark:bg-primary-900/40">
+          <div className="gridient-bg fixed -z-10" />
+          <div className="w-full h-screen overflow-y-auto">
             <Navbar lang={props.lang} />
             <div className="container mt-8">{props.children}</div>
           </div>
-          <div className="gridient-bg absolute -z-1" />
         </I18nProvider>
       </body>
     </html>

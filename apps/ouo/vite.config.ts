@@ -5,12 +5,15 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
 import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
+import { validTechStacks } from "./src/components/tech-stack-icon";
 
 const pjSchema = z.object({
   name: z.string(),
   description: z.string(),
   link: z.url().optional(),
   demo: z.url().optional(),
+  stack: z.array(z.enum(validTechStacks)).optional(),
+  thumbnail: z.string(),
 });
 
 const pj = source({
