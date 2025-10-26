@@ -16,13 +16,7 @@ export default async function Meta({ metadata, lang }: MetaProps) {
   const t = await createTranslate(lang);
 
   return (
-    <Card
-      className={cn(
-        "p-6 mb-8",
-        "bg-primary-500/10 backdrop-blur-sm",
-        "border border-primary-500/20",
-      )}
-    >
+    <Card className={cn("p-6 mb-8", "bg-secondary-500/5 backdrop-blur-xl")}>
       <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
         <div className="space-y-4 flex-1">
           <div>

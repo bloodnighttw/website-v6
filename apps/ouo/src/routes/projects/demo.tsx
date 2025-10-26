@@ -15,13 +15,7 @@ export default async function Demo({ demo, lang }: DemoProps) {
   const t = await createTranslate(lang);
 
   return (
-    <Card
-      className={cn(
-        "p-6 mb-8",
-        "bg-primary-500/10 backdrop-blur-sm",
-        "border border-primary-500/20",
-      )}
-    >
+    <Card className={cn("p-6 mb-8", "bg-secondary-500/5 backdrop-blur-xl")}>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold text-primary-900 dark:text-primary-100">
           {t("projects.liveDemo")}
