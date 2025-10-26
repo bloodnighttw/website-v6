@@ -36,10 +36,10 @@ export default async function Demo({ demo, lang }: DemoProps) {
         </a>
       </div>
       <div className="relative w-full rounded-lg overflow-hidden border border-primary-500/30">
-        <div className="aspect-video w-full">
+        <div className="aspect-video w-full bg-secondary-500">
           <iframe
             src={demo}
-            className="w-full h-full rounded-lg"
+            className="w-full h-full"
             title={"Live Demo"}
             sandbox="allow-scripts allow-same-origin"
             loading="lazy"
