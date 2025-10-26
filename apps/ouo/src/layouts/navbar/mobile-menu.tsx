@@ -28,6 +28,7 @@ const MENU_STYLES = {
   divider: "border-primary-500/20 my-2",
   controls: "flex items-center gap-4 mt-2 px-2 py-2",
   controlsLabel: "text-sm opacity-70 font-medium",
+  nav: "flex flex-col",
 } as const;
 
 export default function MobileMenu({ lang }: { lang: Lang }) {
@@ -128,7 +129,7 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
             role="menu"
             aria-label="Mobile navigation menu"
           >
-            <nav role="navigation">
+            <nav className={MENU_STYLES.nav} role="navigation">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
