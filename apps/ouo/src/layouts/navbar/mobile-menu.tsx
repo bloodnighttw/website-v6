@@ -91,7 +91,7 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
                 blog
               </Link>
               <hr className="border-primary-500/20 mt-2" />
-              <div className="flex items-center gap-4 mt-2 px-2 pb-4">
+              <div className="flex items-center gap-4 mt-2 px-2 h-8">
                 <span className="text-sm opacity-70">Settings:</span>
                 <LangButton />
                 <ThemeButton />
