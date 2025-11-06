@@ -7,13 +7,14 @@ import { pjSource } from "@/utils/source";
 import Demo from "./demo";
 import Meta from "./meta";
 
-export const route = createRoute("/:lang/projects/:pj", {
+export const route = createRoute("/:lang/projects/:slug", {
   generator: async () => {
-    const routes = [] as { lang: string; pj: string }[];
-    for (const entry of pjSource.entries()) {
-      const pj = entry;
-      routes.push({ lang: "en", pj: pj[0] });
-      routes.push({ lang: "zh", pj: pj[0] });
+    const routes = [] as { lang: string; slug: string }[];
+    const slugs = pjSource.getSlugs();
+
+    for (const slug of slugs) {
+      routes.push({ lang: "en", slug });
+      routes.push({ lang: "zh", slug });
     }
 
     return routes;
@@ -24,12 +25,13 @@ export default async function Index(props: RouterProps<typeof route>) {
   const helper = new FlatComponentHelper();
   helper.add(RootLayout, { lang: props.params.lang as Lang });
   const Flatten = helper.flatten();
+
   const [dyComponent] = await pjSource.search(
-    [props.params.pj],
+    [props.params.slug],
     props.params.lang,
   );
-  const DyComponent = dyComponent.default;
 
+  const DyComponent = dyComponent.default;
   const metadata = dyComponent.zod;
 
   return (

@@ -9,5 +9,11 @@
     "title": "我的專案",
     "repository": "儲存庫",
     "liveDemo": "線上展示"
+  },
+  "blog": {
+    "title": "部落格"
+  },
+  "content": {
+    "notTranslated": "此內容尚無繁體中文版本，顯示原始版本。"
   }
 }
