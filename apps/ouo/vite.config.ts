@@ -22,6 +22,18 @@ const pj = source({
   schema: pjSchema,
 });
 
+const blogSchem = z.object({
+  title: z.string(),
+  date: z.string(),
+  categories: z.array(z.string()).optional(),
+});
+
+const blog = source({
+  name: "blog",
+  include: "docs/blog/**/*.mdx",
+  schema: blogSchem,
+});
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
@@ -32,10 +44,11 @@ export default defineConfig({
       strictMode: true,
       prefetchStrategy: "hover",
     }),
-    mdx([pj]),
+    mdx([pj, blog]),
   ],
 });
 
 type PJ = z.infer<typeof pjSchema>;
+type Blog = z.infer<typeof blogSchem>;
 
-export type { PJ };
+export type { PJ, Blog };

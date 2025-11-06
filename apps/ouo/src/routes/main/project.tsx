@@ -2,7 +2,7 @@ import Card from "@/components/card";
 import CardLabel from "@/components/card/label";
 import Link from "rpress/link";
 import type { Lang } from "@/utils/i18n/config";
-import { source } from "@/utils/source";
+import { pjSource } from "@/utils/source";
 import { createTranslate } from "@/utils/i18n/server";
 import { TechStackIcon } from "@/components/tech-stack-icon";
 import { cn } from "@/utils/cn";
@@ -10,7 +10,9 @@ import Image from "rpress/image";
 
 async function Project({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
-  const projects = Object.values(source.getByLang(lang)).map((mod) => mod.zod);
+  const projects = Object.values(pjSource.getByLang(lang)).map(
+    (mod) => mod.zod,
+  );
 
   return (
     <>

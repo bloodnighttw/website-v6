@@ -1,7 +1,7 @@
 import CONFIG from "@/config/config.json";
 import type { ComponentType } from "react";
 
-const defaultLang = CONFIG["prefer-lang"] ?? "en";
+const defaultLang = CONFIG["prefer-lang"] ?? "zh";
 
 interface MDXProps {
   components?: Record<string, ComponentType<any>>;

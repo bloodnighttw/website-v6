@@ -28,3 +28,20 @@ declare module "virtual:source:pj" {
   const modules: Record<string, Module>;
   export default modules;
 }
+
+declare module "virtual:source:blog" {
+  import type { ComponentType, ComponentType } from "react";
+
+  interface MDXProps {
+    components?: Record<string, ComponentType<any>>;
+    [key: string]: any;
+  }
+
+  interface Module {
+    default: ComponentType<MDXProps>;
+    zod: import("../vite.config").Blog;
+  }
+
+  const modules: Record<string, Module>;
+  export default modules;
+}
