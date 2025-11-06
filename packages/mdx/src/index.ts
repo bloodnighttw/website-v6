@@ -81,27 +81,41 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
           ? normalizePattern(matched.exclude)
           : undefined;
 
-        const files = await glob(patterns, {
-          ignore: ignorePatterns,
-        });
+        // Build glob patterns for import.meta.glob
+        const globPatterns = patterns.map((p) => `/${p}`);
 
-        const imports: string[] = [];
-        const keys: string[] = [];
+        // Get base directory to strip from paths
+        const baseDir = patterns[0]?.split("*")[0].replace(/\/$/, "") || "";
 
-        for (const file of files) {
-          const normalizedFile = normalizePath(file);
-          const key = getRelativePath(matched.include, normalizedFile).replace(
-            /\.mdx$/,
-            "",
-          );
-          const importName = `__module_${imports.length}`;
-          imports.push(
-            `const ${importName} = await import('/${normalizedFile}');`,
-          );
-          keys.push(`  "${key}": ${importName}`);
-        }
+        // Use import.meta.glob to leverage Vite's HMR
+        const code = `
+const modules = import.meta.glob(${JSON.stringify(globPatterns)}, { 
+  eager: false${ignorePatterns ? `,\n  ignore: ${JSON.stringify(ignorePatterns)}` : ""}
+});
 
-        return `${imports.join("\n")}\nexport default {\n${keys.join(",\n")}\n};`;
+const result = {};
+
+for (const [path, moduleLoader] of Object.entries(modules)) {
+  const module = await moduleLoader();
+  
+  // Extract key from path
+  let key = path.slice(1); // Remove leading slash
+  
+  // Remove base directory
+  if (key.startsWith('${baseDir}/')) {
+    key = key.slice(${baseDir.length + 1});
+  }
+  
+  // Remove .mdx extension
+  key = key.replace(/\\.mdx$/, '');
+  
+  result[key] = module;
+}
+
+export default result;
+`;
+
+        return code;
       }
     },
     async transform(value, id) {
@@ -122,6 +136,51 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
         const result: SourceDescription = { code, map: compiled.map };
         return result;
       }
+    },
+    configureServer(server) {
+      const handleFileChange = (file: string) => {
+        const normalizedFile = normalizePath(file);
+
+        // Check if the file matches any source pattern
+        for (const src of source) {
+          if (src.filter(normalizedFile)) {
+            server.config.logger.info(
+              `\x1b[36m[@rpress/mdx]\x1b[0m File change detected: ${normalizedFile}`,
+            );
+
+            // Invalidate the virtual module to trigger re-evaluation of import.meta.glob
+            const moduleId = `\0${VIRTUAL_PREFIX}${src.name}`;
+            const module = server.moduleGraph.getModuleById(moduleId);
+            if (module) {
+              server.moduleGraph.invalidateModule(module);
+
+              // Invalidate importers recursively
+              const invalidateImporters = (mod: typeof module) => {
+                for (const importer of mod.importers) {
+                  server.moduleGraph.invalidateModule(importer);
+                  invalidateImporters(importer);
+                }
+              };
+              invalidateImporters(module);
+            }
+
+            // Send full reload to client
+            server.ws.send({
+              type: "full-reload",
+              path: "*",
+            });
+
+            server.config.logger.info(
+              `\x1b[36m[@rpress/mdx]\x1b[0m Reloaded source: ${src.name}`,
+            );
+            break;
+          }
+        }
+      };
+
+      // Watch for new files and deletions
+      server.watcher.on("add", handleFileChange);
+      server.watcher.on("unlink", handleFileChange);
     },
   };
 }

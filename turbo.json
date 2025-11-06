@@ -10,7 +10,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["rpress#build"]
+      "dependsOn": ["rpress#build", "@rpress/mdx#build"]
     },
     "preview": {
       "cache": true,
