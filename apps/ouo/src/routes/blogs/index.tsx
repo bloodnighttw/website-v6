@@ -32,6 +32,7 @@ export default async function Index(props: RouterProps<typeof route>) {
 
   const DyComponent = dyComponent.default;
   const metadata = dyComponent.zod;
+  console.log("IMAGE", dyComponent.preview);
 
   return (
     <Flatten>

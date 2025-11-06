@@ -6,6 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
 import { validTechStacks } from "./src/components/tech-stack-icon";
+import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
 
 const pjSchema = z.object({
   name: z.string(),
@@ -32,6 +33,8 @@ const blog = source({
   name: "blog",
   include: "docs/blog/**/*.mdx",
   schema: blogSchem,
+  recmaPlugins: [recmaInjectPreview()],
+  remarkPlugins: [remarkExtractImage()],
 });
 
 export default defineConfig({

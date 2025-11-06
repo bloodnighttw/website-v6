@@ -8,10 +8,22 @@ interface MDXProps {
   [key: string]: any;
 }
 
-export interface Module<T> {
+// Base module interface with common properties
+export interface BaseModule<T> {
   default: ComponentType<MDXProps>;
   zod: T;
 }
+
+// Module interface for blog posts (with preview)
+export interface BlogModule<T> extends BaseModule<T> {
+  preview: string;
+}
+
+// Module interface for projects (without preview)
+export interface ProjectModule<T> extends BaseModule<T> {}
+
+// Generic module type that can be either BlogModule or ProjectModule
+export type Module<T, M extends BaseModule<T> = BaseModule<T>> = M;
 
 interface SourceEntry {
   slug: string;
@@ -24,8 +36,12 @@ interface SourceEntry {
  * Input format: "lang/slug/nested" (e.g., "en/blog-post", "zh/about")
  * Internal storage: Map<"slug,lang", Module> (e.g., "blog-post,en")
  */
-export class SourceTree<E, T extends Record<string, Module<E>>> {
-  #modules: Map<string, Module<E>> = new Map();
+export class SourceTree<
+  E,
+  M extends BaseModule<E> = BaseModule<E>,
+  T extends Record<string, M> = Record<string, M>,
+> {
+  #modules: Map<string, M> = new Map();
   #slugs: Set<string> = new Set();
 
   constructor(source: T) {
@@ -70,7 +86,7 @@ export class SourceTree<E, T extends Record<string, Module<E>>> {
   public async search(
     slug: string[],
     preferredLang: string,
-  ): Promise<readonly [Module<E>, boolean]> {
+  ): Promise<readonly [M, boolean]> {
     const slugStr = slug.join("/");
 
     // Try preferred language first
@@ -107,8 +123,8 @@ export class SourceTree<E, T extends Record<string, Module<E>>> {
   /**
    * Get all modules for a specific language
    */
-  public getByLang(lang: string): Record<string, Module<E>> {
-    const result: Record<string, Module<E>> = {};
+  public getByLang(lang: string): Record<string, M> {
+    const result: Record<string, M> = {};
 
     for (const slug of this.#slugs) {
       const key = this.createKey(slug, lang);

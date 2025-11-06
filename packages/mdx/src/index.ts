@@ -11,7 +11,6 @@ import { VFile } from "vfile";
 import type { Plugin } from "vite";
 import type { Source, SourceFn } from "./source";
 import { normalizePath } from "vite";
-import { glob } from "glob";
 
 type ApplicableOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -35,22 +34,6 @@ function normalizePattern(pattern: FilterPattern): string[] {
     return [pattern];
   }
   return [];
-}
-
-function getRelativePath(include: FilterPattern, filePath: string): string {
-  const patterns = normalizePattern(include);
-
-  for (const pattern of patterns) {
-    const baseDir = pattern.split("*")[0].replace(/\/$/, "");
-    const normalizedPath = normalizePath(filePath);
-
-    if (normalizedPath.includes(baseDir)) {
-      const relativePath = normalizedPath.split(baseDir + "/")[1];
-      return relativePath || filePath;
-    }
-  }
-
-  return filePath;
 }
 
 export default function mdx(sourceFns?: SourceFn[]): Plugin {

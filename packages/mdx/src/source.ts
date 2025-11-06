@@ -55,7 +55,7 @@ function recmaInjectFrontmatter() {
                 type: "Literal",
                 value: JSON.stringify(vfile.data.zod),
                 raw: JSON.stringify(vfile.data.zod),
-              } as any,
+              },
             },
           ],
           kind: "const",

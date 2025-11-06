@@ -1,5 +1,5 @@
 declare module "*.mdx" {
-  import type { ComponentType, ComponentType } from "react";
+  import type { ComponentType } from "react";
 
   interface MDXProps {
     components?: Record<string, ComponentType<any>>;
@@ -13,7 +13,7 @@ declare module "*.mdx" {
 }
 
 declare module "virtual:source:pj" {
-  import type { ComponentType, ComponentType } from "react";
+  import type { ComponentType } from "react";
 
   interface MDXProps {
     components?: Record<string, ComponentType<any>>;
@@ -30,7 +30,7 @@ declare module "virtual:source:pj" {
 }
 
 declare module "virtual:source:blog" {
-  import type { ComponentType, ComponentType } from "react";
+  import type { ComponentType } from "react";
 
   interface MDXProps {
     components?: Record<string, ComponentType<any>>;
@@ -40,6 +40,7 @@ declare module "virtual:source:blog" {
   interface Module {
     default: ComponentType<MDXProps>;
     zod: import("../vite.config").Blog;
+    preview: string;
   }
 
   const modules: Record<string, Module>;
