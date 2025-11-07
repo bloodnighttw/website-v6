@@ -11,6 +11,7 @@ import { VFile } from "vfile";
 import type { Plugin } from "vite";
 import type { Source, SourceFn } from "./source";
 import { normalizePath } from "vite";
+import { glob } from "glob";
 
 type ApplicableOptions = Omit<CompileOptions, "SourceMapGenerator">;
 
@@ -36,9 +37,26 @@ function normalizePattern(pattern: FilterPattern): string[] {
   return [];
 }
 
+function getRelativePath(include: FilterPattern, filePath: string): string {
+  const patterns = normalizePattern(include);
+
+  for (const pattern of patterns) {
+    const baseDir = pattern.split("*")[0].replace(/\/$/, "");
+    const normalizedPath = normalizePath(filePath);
+
+    if (normalizedPath.includes(baseDir)) {
+      const relativePath = normalizedPath.split(baseDir + "/")[1];
+      return relativePath || filePath;
+    }
+  }
+
+  return filePath;
+}
+
 export default function mdx(sourceFns?: SourceFn[]): Plugin {
   let source: Source[];
   const VIRTUAL_PREFIX = "virtual:source:";
+  const virtualModuleCache = new Map<string, Set<string>>();
 
   return {
     name: "@rpress/mdx",
@@ -49,6 +67,55 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
       if (id.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + id;
       }
+    },
+    configureServer(server) {
+      // Watch for MDX file add/delete and trigger HMR
+      server.watcher.on("all", async (event, path) => {
+        if (event === "add" || event === "unlink") {
+          const normalizedPath = normalizePath(path);
+
+          // Check if the changed file matches any source
+          for (const src of source) {
+            if (src.filter(normalizedPath)) {
+              const virtualId = "\0" + VIRTUAL_PREFIX + src.name;
+
+              // Clear the cache to force reload on next import
+              virtualModuleCache.delete(virtualId);
+
+              // Invalidate modules in all available environments (client, ssr, etc.)
+              if (server.environments) {
+                for (const env of Object.values(server.environments)) {
+                  if (env.moduleGraph) {
+                    const envModule = env.moduleGraph.getModuleById(virtualId);
+                    if (envModule) {
+                      // Invalidate in this environment
+                      env.moduleGraph.invalidateModule(envModule);
+
+                      // Collect and invalidate all importers recursively
+                      const collectImporters = (mod: typeof envModule) => {
+                        mod.importers.forEach((importer) => {
+                          env.moduleGraph.invalidateModule(importer);
+                          collectImporters(importer);
+                        });
+                      };
+
+                      collectImporters(envModule);
+                    }
+                  }
+                }
+              }
+
+              // Send full reload to ensure all changes are picked up
+              server.ws.send({
+                type: "full-reload",
+                path: "*",
+              });
+
+              break;
+            }
+          }
+        }
+      });
     },
     async load(id) {
       if (id.startsWith("\0" + VIRTUAL_PREFIX)) {
@@ -64,41 +131,31 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
           ? normalizePattern(matched.exclude)
           : undefined;
 
-        // Build glob patterns for import.meta.glob
-        const globPatterns = patterns.map((p) => `/${p}`);
+        const files = await glob(patterns, {
+          ignore: ignorePatterns,
+        });
 
-        // Get base directory to strip from paths
-        const baseDir = patterns[0]?.split("*")[0].replace(/\/$/, "") || "";
+        const imports: string[] = [];
+        const keys: string[] = [];
+        const fileSet = new Set<string>();
 
-        // Use import.meta.glob to leverage Vite's HMR
-        const code = `
-const modules = import.meta.glob(${JSON.stringify(globPatterns)}, { 
-  eager: false${ignorePatterns ? `,\n  ignore: ${JSON.stringify(ignorePatterns)}` : ""}
-});
+        for (const file of files) {
+          const normalizedFile = normalizePath(file);
+          fileSet.add(normalizedFile);
 
-const result = {};
+          const key = getRelativePath(matched.include, normalizedFile).replace(
+            /\.mdx$/,
+            "",
+          );
+          const importName = `__module_${imports.length}`;
+          imports.push(`import * as ${importName} from '/${normalizedFile}';`);
+          keys.push(`  "${key}": ${importName}`);
+        }
 
-for (const [path, moduleLoader] of Object.entries(modules)) {
-  const module = await moduleLoader();
-  
-  // Extract key from path
-  let key = path.slice(1); // Remove leading slash
-  
-  // Remove base directory
-  if (key.startsWith('${baseDir}/')) {
-    key = key.slice(${baseDir.length + 1});
-  }
-  
-  // Remove .mdx extension
-  key = key.replace(/\\.mdx$/, '');
-  
-  result[key] = module;
-}
+        // Cache the files for this virtual module for HMR tracking
+        virtualModuleCache.set(id, fileSet);
 
-export default result;
-`;
-
-        return code;
+        return `${imports.join("\n")}\nexport default {\n${keys.join(",\n")}\n};`;
       }
     },
     async transform(value, id) {
@@ -113,57 +170,30 @@ export default result;
         file.extname &&
         formatAwareProcessors.extnames.includes(file.extname)
       ) {
-        console.log("mdx transform", { id });
         const compiled = await formatAwareProcessors.process(file);
         const code = String(compiled.value);
         const result: SourceDescription = { code, map: compiled.map };
         return result;
       }
     },
-    configureServer(server) {
-      const handleFileChange = (file: string) => {
-        const normalizedFile = normalizePath(file);
+    handleHotUpdate(ctx) {
+      const normalizedPath = normalizePath(ctx.file);
 
-        // Check if the file matches any source pattern
-        for (const src of source) {
-          if (src.filter(normalizedFile)) {
-            server.config.logger.info(
-              `\x1b[36m[@rpress/mdx]\x1b[0m File change detected: ${normalizedFile}`,
-            );
+      // Check if the changed file is an MDX file tracked by any virtual module
+      for (const src of source) {
+        if (src.filter(normalizedPath)) {
+          const virtualId = "\0" + VIRTUAL_PREFIX + src.name;
+          const virtualModule = ctx.server.moduleGraph.getModuleById(virtualId);
 
-            // Invalidate the virtual module to trigger re-evaluation of import.meta.glob
-            const moduleId = `\0${VIRTUAL_PREFIX}${src.name}`;
-            const module = server.moduleGraph.getModuleById(moduleId);
-            if (module) {
-              server.moduleGraph.invalidateModule(module);
+          if (virtualModule) {
+            // Invalidate the virtual module so it regenerates with updated file list
+            ctx.server.moduleGraph.invalidateModule(virtualModule);
 
-              // Invalidate importers recursively
-              const invalidateImporters = (mod: typeof module) => {
-                for (const importer of mod.importers) {
-                  server.moduleGraph.invalidateModule(importer);
-                  invalidateImporters(importer);
-                }
-              };
-              invalidateImporters(module);
-            }
-
-            // Send full reload to client
-            server.ws.send({
-              type: "full-reload",
-              path: "*",
-            });
-
-            server.config.logger.info(
-              `\x1b[36m[@rpress/mdx]\x1b[0m Reloaded source: ${src.name}`,
-            );
-            break;
+            // Return both the changed module and the virtual module
+            return [virtualModule, ...ctx.modules];
           }
         }
-      };
-
-      // Watch for new files and deletions
-      server.watcher.on("add", handleFileChange);
-      server.watcher.on("unlink", handleFileChange);
+      }
     },
   };
 }
