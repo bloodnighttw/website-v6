@@ -12,6 +12,9 @@ import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import RouteContext from "@/libs/route/context";
 
+// Store scroll positions for each URL
+const scrollHistory = new Map<string, number>();
+
 // we export it to prevent hmr invalidate.
 // (fast-refresh require a default export)
 export default function BrowserRoot({
@@ -22,21 +25,47 @@ export default function BrowserRoot({
   const [payload, setPayload] = useState(initialPayload);
 
   const setUrl = useCallback((url: string) => {
-    load(url).then((payload: RscPayload) => {
-      window.history.pushState({}, "", url);
-      // to mark it as non-urgent
-      startTransition(() => {
-        setPayload(payload);
+    // Save current scroll position before navigating
+    const currentUrl = window.location.pathname;
+    scrollHistory.set(currentUrl, window.scrollY);
+
+    load(url)
+      .then((payload: RscPayload) => {
+        window.history.pushState({}, "", url);
+        // to mark it as non-urgent
+        startTransition(() => {
+          setPayload(payload);
+        });
+      })
+      .then(() => {
+        // Reset scroll to top for new page navigation
+        window.scrollTo(0, 0);
       });
-    });
   }, []);
 
   useEffect(() => {
+    // Disable browser's automatic scroll restoration
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
     // add a event listener to handle popstate
     // so that we can handle back/forward button
 
     const onPopState = () => {
-      load(window.location.pathname).then(setPayload);
+      const targetUrl = window.location.pathname;
+
+      load(targetUrl)
+        .then((payload) => {
+          startTransition(() => {
+            setPayload(payload);
+          });
+        })
+        .then(() => {
+          // Restore scroll position if we have it saved, otherwise reset to top
+          const savedPosition = scrollHistory.get(targetUrl);
+          window.scrollTo(0, savedPosition ?? 0);
+        });
     };
 
     window.addEventListener("popstate", onPopState);

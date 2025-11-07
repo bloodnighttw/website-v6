@@ -9,7 +9,7 @@ declare module "virtual:rpress:routes" {
 }
 
 declare module "virtual:rpress:rsc-loader" {
-  const load: import("@/libs/route/rsc-loader").load;
+  const load: import("@/libs/route/rsc-loader").LOAD;
   export default load;
 }
 
