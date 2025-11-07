@@ -4,6 +4,7 @@ import { FlatComponentHelper } from "rpress/helper";
 import "server-only";
 import About from "./about";
 import Project from "./project";
+import Blog from "./blog";
 import Info from "./info";
 import type { Lang } from "@/utils/i18n/config";
 
@@ -22,6 +23,7 @@ export default async function Index(props: RouterProps<typeof route>) {
     <Flatten>
       <About lang={props.params.lang as Lang} />
       <Project lang={props.params.lang as Lang} />
+      <Blog lang={props.params.lang as Lang} />
       <Info />
     </Flatten>
   );
