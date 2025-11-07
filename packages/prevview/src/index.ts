@@ -35,7 +35,7 @@ export function recmaInjectPreview() {
           kind: "const",
         },
         specifiers: [],
-      } as any);
+      });
     }
   };
 }

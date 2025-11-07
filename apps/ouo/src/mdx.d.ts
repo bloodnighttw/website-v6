@@ -40,7 +40,7 @@ declare module "virtual:source:blog" {
   interface Module {
     default: ComponentType<MDXProps>;
     zod: import("../vite.config").Blog;
-    preview: string;
+    preview: string | undefined;
   }
 
   const modules: Record<string, Module>;

@@ -16,7 +16,7 @@ export interface BaseModule<T> {
 
 // Module interface for blog posts (with preview)
 export interface BlogModule<T> extends BaseModule<T> {
-  preview: string;
+  preview: string | undefined;
 }
 
 // Module interface for projects (without preview)
