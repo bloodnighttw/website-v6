@@ -27,12 +27,13 @@ export default function BrowserRoot({
   const setUrl = useCallback((url: string) => {
     // Save current scroll position before navigating
     const currentUrl = window.location.pathname;
+    // check url has hash
     scrollHistory.set(currentUrl, window.scrollY);
 
     load(url).then((payload: RscPayload) => {
       window.history.pushState({}, "", url);
-      // Reset scroll to top for new page navigation
-      window.scrollTo(0, 0);
+      // if it don't have hash, scroll to top
+      if (url.indexOf("#") === -1) window.scrollTo(0, 0);
       // to mark it as non-urgent
       startTransition(() => {
         setPayload(payload);
@@ -41,21 +42,11 @@ export default function BrowserRoot({
   }, []);
 
   useEffect(() => {
-    // Disable browser's automatic scroll restoration
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual";
-    }
-
-    // add a event listener to handle popstate
-    // so that we can handle back/forward button
-
     const onPopState = () => {
       const targetUrl = window.location.pathname;
 
       load(targetUrl).then((payload) => {
         // Restore scroll position if we have it saved, otherwise reset to top
-        const savedPosition = scrollHistory.get(targetUrl);
-        window.scrollTo(0, savedPosition ?? 0);
         startTransition(() => {
           setPayload(payload);
         });
