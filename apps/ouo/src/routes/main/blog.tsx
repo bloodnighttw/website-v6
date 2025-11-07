@@ -9,12 +9,7 @@ import Image from "rpress/image";
 
 async function Blog({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
-  let blogModules = blogSource.getByLang(lang);
-
-  // Fallback to Chinese if no blogs in current language
-  if (Object.keys(blogModules).length === 0) {
-    blogModules = blogSource.getByLang("zh");
-  }
+  let blogModules = blogSource.entriesWithLang(lang);
 
   const blogs = Object.entries(blogModules).map(([slug, mod]) => ({
     slug,

@@ -121,6 +121,31 @@ export class SourceTree<
   }
 
   /**
+   * Get all modules with their preferred language
+   * Returns a record where each slug maps to the module in the preferred language (or default language if not available)
+   */
+  public entriesWithLang(preferredLang: string): Record<string, M> {
+    const result: Record<string, M> = {};
+
+    for (const slug of this.#slugs) {
+      // Try preferred language first
+      const preferredKey = this.createKey(slug, preferredLang);
+      if (this.#modules.has(preferredKey)) {
+        result[slug] = this.#modules.get(preferredKey)!;
+        continue;
+      }
+
+      // Fallback to default language
+      const fallbackKey = this.createKey(slug, defaultLang);
+      if (this.#modules.has(fallbackKey)) {
+        result[slug] = this.#modules.get(fallbackKey)!;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Get all modules for a specific language
    */
   public getByLang(lang: string): Record<string, M> {
