@@ -29,18 +29,15 @@ export default function BrowserRoot({
     const currentUrl = window.location.pathname;
     scrollHistory.set(currentUrl, window.scrollY);
 
-    load(url)
-      .then((payload: RscPayload) => {
-        window.history.pushState({}, "", url);
-        // to mark it as non-urgent
-        startTransition(() => {
-          setPayload(payload);
-        });
-      })
-      .then(() => {
-        // Reset scroll to top for new page navigation
-        window.scrollTo(0, 0);
+    load(url).then((payload: RscPayload) => {
+      window.history.pushState({}, "", url);
+      // Reset scroll to top for new page navigation
+      window.scrollTo(0, 0);
+      // to mark it as non-urgent
+      startTransition(() => {
+        setPayload(payload);
       });
+    });
   }, []);
 
   useEffect(() => {
@@ -55,17 +52,14 @@ export default function BrowserRoot({
     const onPopState = () => {
       const targetUrl = window.location.pathname;
 
-      load(targetUrl)
-        .then((payload) => {
-          startTransition(() => {
-            setPayload(payload);
-          });
-        })
-        .then(() => {
-          // Restore scroll position if we have it saved, otherwise reset to top
-          const savedPosition = scrollHistory.get(targetUrl);
-          window.scrollTo(0, savedPosition ?? 0);
+      load(targetUrl).then((payload) => {
+        // Restore scroll position if we have it saved, otherwise reset to top
+        const savedPosition = scrollHistory.get(targetUrl);
+        window.scrollTo(0, savedPosition ?? 0);
+        startTransition(() => {
+          setPayload(payload);
         });
+      });
     };
 
     window.addEventListener("popstate", onPopState);
