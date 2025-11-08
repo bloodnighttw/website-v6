@@ -56,6 +56,7 @@ function getRelativePath(include: FilterPattern, filePath: string): string {
 export default function mdx(sourceFns?: SourceFn[]): Plugin {
   let source: Source[];
   const VIRTUAL_PREFIX = "virtual:source:";
+  const virtualModuleCache = new Map<string, Set<string>>();
 
   return {
     name: "@rpress/mdx",
@@ -66,6 +67,49 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
       if (id.startsWith(VIRTUAL_PREFIX)) {
         return "\0" + id;
       }
+    },
+    configureServer(server) {
+      // Watch for MDX file add/delete and trigger HMR
+      server.watcher.on("all", async (event, path) => {
+        if (event === "add" || event === "unlink") {
+          const normalizedPath = normalizePath(path);
+
+          // Check if the changed file matches any source
+          for (const src of source) {
+            if (src.filter(normalizedPath)) {
+              const virtualId = "\0" + VIRTUAL_PREFIX + src.name;
+
+              // Clear the cache to force reload on next import
+              virtualModuleCache.delete(virtualId);
+
+              // Invalidate modules in all available environments (client, ssr, etc.)
+              if (server.environments) {
+                for (const env of Object.values(server.environments)) {
+                  if (env.moduleGraph) {
+                    const envModule = env.moduleGraph.getModuleById(virtualId);
+                    if (envModule) {
+                      // Invalidate in this environment
+                      env.moduleGraph.invalidateModule(envModule);
+
+                      // Collect and invalidate all importers recursively
+                      const collectImporters = (mod: typeof envModule) => {
+                        mod.importers.forEach((importer) => {
+                          env.moduleGraph.invalidateModule(importer);
+                          collectImporters(importer);
+                        });
+                      };
+
+                      collectImporters(envModule);
+                    }
+                  }
+                }
+              }
+
+              break;
+            }
+          }
+        }
+      });
     },
     async load(id) {
       if (id.startsWith("\0" + VIRTUAL_PREFIX)) {
@@ -87,19 +131,23 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
 
         const imports: string[] = [];
         const keys: string[] = [];
+        const fileSet = new Set<string>();
 
         for (const file of files) {
           const normalizedFile = normalizePath(file);
+          fileSet.add(normalizedFile);
+
           const key = getRelativePath(matched.include, normalizedFile).replace(
             /\.mdx$/,
             "",
           );
           const importName = `__module_${imports.length}`;
-          imports.push(
-            `const ${importName} = await import('/${normalizedFile}');`,
-          );
+          imports.push(`import * as ${importName} from '/${normalizedFile}';`);
           keys.push(`  "${key}": ${importName}`);
         }
+
+        // Cache the files for this virtual module for HMR tracking
+        virtualModuleCache.set(id, fileSet);
 
         return `${imports.join("\n")}\nexport default {\n${keys.join(",\n")}\n};`;
       }
@@ -116,11 +164,29 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
         file.extname &&
         formatAwareProcessors.extnames.includes(file.extname)
       ) {
-        console.log("mdx transform", { id });
         const compiled = await formatAwareProcessors.process(file);
         const code = String(compiled.value);
         const result: SourceDescription = { code, map: compiled.map };
         return result;
+      }
+    },
+    handleHotUpdate(ctx) {
+      const normalizedPath = normalizePath(ctx.file);
+
+      // Check if the changed file is an MDX file tracked by any virtual module
+      for (const src of source) {
+        if (src.filter(normalizedPath)) {
+          const virtualId = "\0" + VIRTUAL_PREFIX + src.name;
+          const virtualModule = ctx.server.moduleGraph.getModuleById(virtualId);
+
+          if (virtualModule) {
+            // Invalidate the virtual module so it regenerates with updated file list
+            ctx.server.moduleGraph.invalidateModule(virtualModule);
+
+            // Return both the changed module and the virtual module
+            return [virtualModule, ...ctx.modules];
+          }
+        }
       }
     },
   };

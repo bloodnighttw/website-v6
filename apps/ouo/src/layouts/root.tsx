@@ -31,11 +31,9 @@ export default async function RootLayout(props: RootProps) {
           lang={props.lang}
           resources={resources.default as Record<string, unknown>}
         >
-          <div className="gridient-bg fixed -z-10" />
-          <div className="w-full h-screen overflow-y-auto">
-            <Navbar lang={props.lang} />
-            <div className="container mt-8">{props.children}</div>
-          </div>
+          <div className="gridient-bg fixed -z-10 top-0" />
+          <Navbar lang={props.lang} />
+          <div className="container mt-8">{props.children}</div>
         </I18nProvider>
       </body>
     </html>

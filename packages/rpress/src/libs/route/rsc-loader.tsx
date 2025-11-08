@@ -21,3 +21,6 @@ if (import.meta.hot) {
 }
 
 export default load;
+
+type LOAD = typeof load;
+export { type LOAD };

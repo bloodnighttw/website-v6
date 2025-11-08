@@ -6,6 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
 import { validTechStacks } from "./src/components/tech-stack-icon";
+import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
 
 const pjSchema = z.object({
   name: z.string(),
@@ -22,6 +23,20 @@ const pj = source({
   schema: pjSchema,
 });
 
+const blogSchem = z.object({
+  title: z.string(),
+  date: z.string(),
+  categories: z.array(z.string()).optional(),
+});
+
+const blog = source({
+  name: "blog",
+  include: "docs/blog/**/*.mdx",
+  schema: blogSchem,
+  recmaPlugins: [recmaInjectPreview()],
+  remarkPlugins: [remarkExtractImage()],
+});
+
 export default defineConfig({
   plugins: [
     tailwindcss(),
@@ -32,10 +47,11 @@ export default defineConfig({
       strictMode: true,
       prefetchStrategy: "hover",
     }),
-    mdx([pj]),
+    mdx([pj, blog]),
   ],
 });
 
 type PJ = z.infer<typeof pjSchema>;
+type Blog = z.infer<typeof blogSchem>;
 
-export type { PJ };
+export type { PJ, Blog };

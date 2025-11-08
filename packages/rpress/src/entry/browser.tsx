@@ -1,10 +1,5 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "@/libs/utils/path/constant";
@@ -20,6 +15,19 @@ export default function BrowserRoot({
   initialPayload: RscPayload;
 }) {
   const [payload, setPayload] = useState(initialPayload);
+  const [isPending, startTransition] = useTransition();
+  const [needScroll2Top, setNeedScroll2Top] = useState(false);
+
+  // Scroll when transition completes
+  useEffect(() => {
+    if (isPending) return;
+    if (!needScroll2Top) return;
+
+    window.scrollTo(0, 0);
+
+    return;
+    // we need to run this every time after transition ends
+  });
 
   const setUrl = useCallback((url: string) => {
     load(url).then((payload: RscPayload) => {
@@ -27,16 +35,22 @@ export default function BrowserRoot({
       // to mark it as non-urgent
       startTransition(() => {
         setPayload(payload);
+        setNeedScroll2Top(true);
       });
     });
   }, []);
 
   useEffect(() => {
-    // add a event listener to handle popstate
-    // so that we can handle back/forward button
-
     const onPopState = () => {
-      load(window.location.pathname).then(setPayload);
+      const targetUrl = window.location.pathname;
+
+      load(targetUrl).then((payload) => {
+        // Restore scroll position if we have it saved, otherwise reset to top
+        startTransition(() => {
+          setPayload(payload);
+          setNeedScroll2Top(false);
+        });
+      });
     };
 
     window.addEventListener("popstate", onPopState);

@@ -9,5 +9,11 @@
     "title": "My Projects",
     "repository": "Repository",
     "liveDemo": "Live Demo"
+  },
+  "blog": {
+    "title": "Blog"
+  },
+  "content": {
+    "notTranslated": "This content is not available in English. Showing the original version."
   }
 }

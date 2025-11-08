@@ -3,14 +3,13 @@ import RootLayout from "@/layouts/root";
 import { FlatComponentHelper } from "rpress/helper";
 import "server-only";
 import type { Lang } from "@/utils/i18n/config";
-import { pjSource } from "@/utils/source";
-import Demo from "./demo";
+import { blogSource } from "@/utils/source";
 import Meta from "./meta";
 
-export const route = createRoute("/:lang/projects/:slug", {
+export const route = createRoute("/:lang/blog/:slug", {
   generator: async () => {
     const routes = [] as { lang: string; slug: string }[];
-    const slugs = pjSource.getSlugs();
+    const slugs = blogSource.getSlugs();
 
     for (const slug of slugs) {
       routes.push({ lang: "en", slug });
@@ -26,7 +25,7 @@ export default async function Index(props: RouterProps<typeof route>) {
   helper.add(RootLayout, { lang: props.params.lang as Lang });
   const Flatten = helper.flatten();
 
-  const [dyComponent] = await pjSource.search(
+  const [dyComponent, isExactMatch] = await blogSource.search(
     [props.params.slug],
     props.params.lang,
   );
@@ -36,8 +35,11 @@ export default async function Index(props: RouterProps<typeof route>) {
 
   return (
     <Flatten>
-      <Meta metadata={metadata} lang={props.params.lang as Lang} />
-      <Demo demo={metadata.demo} lang={props.params.lang as Lang} />
+      <Meta
+        metadata={metadata}
+        lang={props.params.lang as Lang}
+        isExactMatch={isExactMatch}
+      />
 
       <div className="prose prose-zinc dark:prose-invert max-w-none">
         <DyComponent />
