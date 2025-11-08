@@ -105,12 +105,6 @@ export default function mdx(sourceFns?: SourceFn[]): Plugin {
                 }
               }
 
-              // Send full reload to ensure all changes are picked up
-              server.ws.send({
-                type: "full-reload",
-                path: "*",
-              });
-
               break;
             }
           }
