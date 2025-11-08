@@ -1,19 +1,11 @@
 import * as ReactClient from "@vitejs/plugin-rsc/browser";
-import React, {
-  startTransition,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import ReactDomClient from "react-dom/client";
 import { rscStream } from "rsc-html-stream/client";
 import { type RscPayload } from "@/libs/utils/path/constant";
 import config from "virtual:rpress:config";
 import load from "virtual:rpress:rsc-loader";
 import RouteContext from "@/libs/route/context";
-
-// Store scroll positions for each URL
-const scrollHistory = new Map<string, number>();
 
 // we export it to prevent hmr invalidate.
 // (fast-refresh require a default export)
@@ -23,20 +15,27 @@ export default function BrowserRoot({
   initialPayload: RscPayload;
 }) {
   const [payload, setPayload] = useState(initialPayload);
+  const [isPending, startTransition] = useTransition();
+  const [needScroll2Top, setNeedScroll2Top] = useState(false);
+
+  // Scroll when transition completes
+  useEffect(() => {
+    if (isPending) return;
+    if (!needScroll2Top) return;
+
+    window.scrollTo(0, 0);
+
+    return;
+    // we need to run this every time after transition ends
+  });
 
   const setUrl = useCallback((url: string) => {
-    // Save current scroll position before navigating
-    const currentUrl = window.location.pathname;
-    // check url has hash
-    scrollHistory.set(currentUrl, window.scrollY);
-
     load(url).then((payload: RscPayload) => {
       window.history.pushState({}, "", url);
-      // if it don't have hash, scroll to top
-      if (url.indexOf("#") === -1) window.scrollTo(0, 0);
       // to mark it as non-urgent
       startTransition(() => {
         setPayload(payload);
+        setNeedScroll2Top(true);
       });
     });
   }, []);
@@ -49,6 +48,7 @@ export default function BrowserRoot({
         // Restore scroll position if we have it saved, otherwise reset to top
         startTransition(() => {
           setPayload(payload);
+          setNeedScroll2Top(false);
         });
       });
     };
