@@ -1,0 +1,147 @@
+---
+title: "在 Web Worker 中使用 react-konva render 圖片"
+date: 2026-01-27
+categories:
+  - react
+  - canvas
+  - web-worker
+---
+
+最近，我在工作中使用 `react-konva` 編寫一個 Component，它提供了一個很棒的 API 來在 React 中使用 canvas。
+但其中有一個問題我得考慮：我將需要在 web worker 中重複使用這些東西，但`react-konva` 無法直接在 worker 中使用。
+
+實際上，根據 [react-konva 的doc](https://konvajs.org/docs/react/Canvas_Export.html)中寫到。
+我們可以使用 `toDataURL` 將 canvas 內容輸出為 data URL string，然後將其傳遞給 worker，並在 worker 中使用它。
+
+但現在有另一個問題，如果我們想要render數千張圖片呢？
+我們至少得去考慮 2 件事：
+
+1. 如果我們將 data URL 傳遞給 worker，那意味著我們會堵塞 ui threads。
+
+2. 在主執行緒和 worker 之間傳遞數據非常耗時，特別是對於相圖片這種比較大的東西，在我的測試當中，
+   在 worker 和主執行緒之間傳遞一張 1920x1080 大小的圖片data url大約需要 100ms，而使用 react-konva 渲染一張圖片只需要大約 10ms，這是有很大差距的。
+
+那麼解決方法是什麼？
+
+# 解決方法
+
+## 步驟 1：在 worker 中使用 OffscreenCanvas
+
+標準的 WEB API 提供了一種在 web worker 中使用 canvas 的方法，即 [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas)，
+根據 [konva 文檔](https://konvajs.org/docs/sandbox/Web_Worker.html)，我們可以將 `HTMLCanvasElement` monkey patch 為 `OffscreenCanvas`，
+這樣 konva 就會使用它而不是 DOM 中的 canvas。
+
+```ts
+Konva.Util.createCanvasElement = () => {
+  const canvas = new OffscreenCanvas(800, 600);
+  (canvas as any).style = {};
+  return canvas as any;
+};
+```
+
+## 步驟 2：修改 react-konva reconciler 以在不使用 DOM 的情況下使用 Stage
+
+如果你查看 `react-konva` 的 source code，你會發現 react-konva `Stage` 有黑魔法，它創立了一個 `HTMLDivElement` 來放 canvas，
+我們已經知道在 worker 中，我們不可能創建 DOM 元素，所以我們需要修改 react-konva的reconciler 以跳過 `div` 元素的創建。
+
+```ts
+import Konva from "konva/lib/Core";
+import { Stage } from "konva/lib/Stage";
+import React from "react";
+import { KonvaRenderer } from "react-konva/lib/ReactKonvaCore";
+
+export async function render(
+  element: React.ReactElement,
+  config: {
+    width?: number;
+    height?: number;
+    pixelRatio?: number;
+  },
+): Promise<Blob> {
+  // Create Konva stage
+  const stage = new Stage({
+    width,
+    height,
+  });
+
+  try {
+    // Create container
+    const container = KonvaRenderer.createContainer(
+      stage,
+      0,
+      null,
+      false,
+      null,
+      "",
+      () => {},
+      () => {},
+      () => {},
+      () => {},
+      null,
+    );
+
+    // Render once - no Suspense since all tiles are preloaded
+    await new Promise<void>((res) => {
+      KonvaRenderer.updateContainer(wrappedElement, container, null, () => {
+        res();
+      });
+    });
+    console.log("Render completed successfully");
+
+    // Draw all layers, which is canvas content
+    stage.draw();
+
+    // Create output canvas with pixelRatio
+    const outputCanvas = new OffscreenCanvas(
+      width * pixelRatio,
+      height * pixelRatio,
+    );
+    const outputCtx = outputCanvas.getContext("2d");
+
+    if (!outputCtx) {
+      throw new Error("Failed to get output canvas context");
+    }
+
+    // Draw all layers to output
+    const layers = stage.getLayers();
+    for (const layer of layers) {
+      const layerCanvas = layer.getCanvas()._canvas;
+      outputCtx.drawImage(
+        layerCanvas,
+        0,
+        0,
+        width * pixelRatio,
+        height * pixelRatio,
+      );
+    }
+
+    // Cleanup
+    KonvaRenderer.updateContainer(null, container, null, () => {
+      stage.destroy();
+    });
+
+    // Convert to blob
+    const blob = await outputCanvas.convertToBlob({
+      type: "image/png",
+    });
+
+    console.log(`Render completed in ${performance.now() - now} ms`);
+    return blob;
+  } catch (err) {
+    console.error("Rendering failed:", err);
+    throw err;
+  }
+}
+```
+
+完成了！現在你可以在 web worker 中使用 react-konva 和你自定義的component來輸出圖片了！
+
+其實我們可以讓這個東西變得更強大，但這篇文章的意圖是來說明我是如何讓它在 worker 中工作。實際上，
+在我工作的專案中，關於 reconciler 的邏輯更複雜，我需要處理 Suspense、數據獲取和雜項的計算等東西。
+
+這個解決方案並不完美，我相信還有改進的空間，但它確實解決了我當前的問題，希望這篇文章能幫助到你！
+
+# 感謝
+
+感謝 konva 專案，我從他們的source code和docs中學到了很多。
+也感謝 react reconciler，我在上面搞了很多研究才有這些東西能動。
