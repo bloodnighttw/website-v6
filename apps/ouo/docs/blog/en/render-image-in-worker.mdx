@@ -1,0 +1,146 @@
+---
+title: "Render An Image inside Web worker with react-konva"
+date: 2026-01-27
+categories:
+  - react
+  - canvas
+  - web-worker
+---
+
+Recently, I am writing a rendering component with `react-konva` at my work, it offer a great declarative API to work with canvas in React, I implemented a lot of features with it.
+There has a critical problem I need to care: I will need to use it inside a web worker, and there is no way to use it inside worker directly.
+
+Actually, according to the [documentation of react-konva](https://konvajs.org/docs/react/Canvas_Export.html),
+we can export the canvas content to an image with `toDataURL` as data URL string, then pass it to worker, and use it inside the worker.
+
+But now it has another problem, what if we want to render thoudsands of images?
+we have at least 2 thing to consider:
+
+1. if we pass the data URL string to worker, that mean we block the main thread.
+
+2. passing data between main thread and worker is expensive, especially for large data, in my test case,
+   it can take around 100ms to pass an image from worker to mainthread with an image 1920x1080 size, you know what, render an image with react-konva take only around 10ms.
+
+so what is soluction?
+
+# Solution
+
+## Step1: use OffscreenCanvas in worker
+
+The standway WEB API offer a way to use canvas inside web worker with [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas),
+and as [konva documentation](https://konvajs.org/docs/sandbox/Web_Worker.html) said, we can monkey patch the `HTMLCanvasElement` to `OffscreenCanvas`,
+then konva will use it instead of normal canvas from DOM.
+
+```ts
+Konva.Util.createCanvasElement = () => {
+  const canvas = new OffscreenCanvas(800, 600);
+  (canvas as any).style = {};
+  return canvas as any;
+};
+```
+
+## Step2: hack into react-konva reconciler to use Stage without DOM
+
+if you look at source code of `react-konva`, you will find that the `Stage` component is special, it create a `HTMLDivElement` to hold the canvas,
+in worker, there is no possibility to create DOM element, so we need to hack into the reconciler to skip the creation of `div` element.
+
+```ts
+import Konva from "konva/lib/Core";
+import { Stage } from "konva/lib/Stage";
+import React from "react";
+
+export async function render(
+  element: React.ReactElement,
+  config: {
+    width?: number;
+    height?: number;
+    pixelRatio?: number;
+  },
+): Promise<Blob> {
+  // Create Konva stage
+  const stage = new Stage({
+    width,
+    height,
+  });
+
+  try {
+    // Create container
+    const container = KonvaRenderer.createContainer(
+      stage,
+      0,
+      null,
+      false,
+      null,
+      "",
+      () => {},
+      () => {},
+      () => {},
+      () => {},
+      null,
+    );
+
+    // Render once - no Suspense since all tiles are preloaded
+    await new Promise<void>((res) => {
+      KonvaRenderer.updateContainer(wrappedElement, container, null, () => {
+        res();
+      });
+    });
+    console.log("Render completed successfully");
+
+    // Draw all layers, which is canvas content
+    stage.draw();
+
+    // Create output canvas with pixelRatio
+    const outputCanvas = new OffscreenCanvas(
+      width * pixelRatio,
+      height * pixelRatio,
+    );
+    const outputCtx = outputCanvas.getContext("2d");
+
+    if (!outputCtx) {
+      throw new Error("Failed to get output canvas context");
+    }
+
+    // Draw all layers to output
+    const layers = stage.getLayers();
+    for (const layer of layers) {
+      const layerCanvas = layer.getCanvas()._canvas;
+      outputCtx.drawImage(
+        layerCanvas,
+        0,
+        0,
+        width * pixelRatio,
+        height * pixelRatio,
+      );
+    }
+
+    // Cleanup
+    KonvaRenderer.updateContainer(null, container, null, () => {
+      stage.destroy();
+    });
+
+    // Convert to blob
+    const blob = await outputCanvas.convertToBlob({
+      type: "image/png",
+    });
+
+    console.log(`Render completed in ${performance.now() - now} ms`);
+    return blob;
+  } catch (err) {
+    console.error("Rendering failed:", err);
+    throw err;
+  }
+}
+```
+
+and boom, now you can render image inside web worker with react-konva, with your defined components!
+
+We can actually make this fucntion more powerful, but my intention is to show you how to make it work in worker. In fact
+in my work project, the logic around reconciler is more complex, I need to handle Suspense, data fetching and calculation of content, etc.
+
+This solution is not perfect, but it work in my case, and I hope it can help you if you have similar requirement.
+
+# Credit
+
+And thank to konva project, I learn a lot from their source code and documentation.
+I also do a lot of research on react reconciler source code to make this work.
