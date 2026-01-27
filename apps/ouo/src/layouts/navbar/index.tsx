@@ -9,8 +9,8 @@ import type { Lang } from "@/utils/i18n/config";
 import { cn } from "@/utils/cn";
 
 const NAV_LINKS = [
-  { href: "/friends", label: "friends link" },
-  { href: "/blog", label: "blog" },
+  // { href: "/friends", label: "friends link" },
+  // { href: "/blog", label: "blog" },
 ] as const;
 
 const NAVBAR_STYLES = {
