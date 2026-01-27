@@ -25,10 +25,8 @@ export default defineConfig({
     "entry/ssr": "src/entry/ssr.tsx",
   },
   format: ["esm"],
+  hash: false,
   dts: true,
-  sourcemap: true,
-  // in dev we don't need to clean
-  clean: false,
   minify: true,
   target: "esnext",
   external: [
