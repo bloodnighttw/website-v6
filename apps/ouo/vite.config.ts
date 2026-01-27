@@ -7,6 +7,7 @@ import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
 import { validTechStacks } from "./src/components/tech-stack-icon";
 import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
+import rehypeShiki from "@shikijs/rehype";
 
 const pjSchema = z.object({
   name: z.string(),
@@ -35,6 +36,17 @@ const blog = source({
   schema: blogSchem,
   recmaPlugins: [recmaInjectPreview()],
   remarkPlugins: [remarkExtractImage()],
+  rehypePlugins: [
+    [
+      rehypeShiki,
+      {
+        theme: "catppuccin-mocha",
+        colorReplacements: {
+          "#1e1e2e": "#18181B",
+        },
+      },
+    ],
+  ],
 });
 
 export default defineConfig({

@@ -33,7 +33,7 @@ export default async function RootLayout(props: RootProps) {
         >
           <div className="gridient-bg fixed -z-10 top-0" />
           <Navbar lang={props.lang} />
-          <div className="container mt-8">{props.children}</div>
+          <div className="container my-8">{props.children}</div>
         </I18nProvider>
       </body>
     </html>
