@@ -5,6 +5,7 @@ export default defineConfig({
     index: "src/index.ts",
   },
   format: ["esm"],
+  hash: false,
   dts: true,
   sourcemap: true,
   // in dev we don't need to clean
