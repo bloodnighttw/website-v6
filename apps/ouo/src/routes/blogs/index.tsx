@@ -35,6 +35,31 @@ export default async function Index(props: RouterProps<typeof route>) {
 
   return (
     <Flatten>
+      <title>{metadata.title}</title>
+      <meta name="title" content={metadata.title} />
+      <meta name="description" content={metadata.description} />
+
+      <meta property="og:title" content={metadata.title} />
+      <meta property="og:description" content={metadata.description} />
+      <meta property="og:type" content="article" />
+      <meta property="article:published_time" content={metadata.date} />
+      {/* for preview image */}
+      <meta
+        property="og:image"
+        content={dyComponent.preview || "/default.png"}
+      />
+      <meta property="og:image:alt" content={metadata.title} />
+      <meta property="og:image:type" content="image/png" />
+
+      {/*For twitter*/}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={metadata.title} />
+      <meta name="twitter:description" content={metadata.description} />
+      <meta
+        name="twitter:image"
+        content={dyComponent.preview || "/default.png"}
+      />
+
       <Meta
         metadata={metadata}
         lang={props.params.lang as Lang}

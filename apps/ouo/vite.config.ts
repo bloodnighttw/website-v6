@@ -27,6 +27,7 @@ const pj = source({
 const blogSchem = z.object({
   title: z.string(),
   date: z.string(),
+  description: z.string(),
   categories: z.array(z.string()).optional(),
 });
 
