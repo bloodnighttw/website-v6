@@ -40,7 +40,7 @@ async function Blog({ lang }: { lang: Lang }) {
             >
               <div className="w-full aspect-video rounded-lg overflow-hidden bg-secondary-100 dark:bg-secondary-800">
                 <Image
-                  src={blog.preview ?? "/projects/idle-ts.png"}
+                  src={blog.preview ?? "/default.png"}
                   alt={blog.title}
                   className="w-full h-full object-cover"
                   height={353}
