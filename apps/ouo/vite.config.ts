@@ -65,7 +65,7 @@ export default defineConfig({
     }),
     mdx([pj, blog]),
     stylex.vite({
-      // useCSSLayers: true,
+      useCSSLayers: true,
       debug: true,
       aliases: {
         "@/*": [
