@@ -65,12 +65,10 @@ export default defineConfig({
     }),
     mdx([pj, blog]),
     stylex.vite({
-      // useCSSLayers: true,
+      useCSSLayers: true,
       debug: true,
       aliases: {
-        "@/*": [
-          path.join(path.dirname(fileURLToPath(import.meta.url)), "./src/*"),
-        ],
+        "@/*": [path.join(path.dirname(fileURLToPath(import.meta.url)), "src")],
       },
     }),
   ],
