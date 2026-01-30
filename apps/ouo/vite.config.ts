@@ -8,7 +8,7 @@ import { z } from "zod";
 import { validTechStacks } from "./src/components/tech-stack-icon";
 import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
 import rehypeShiki from "@shikijs/rehype";
-import stylex from "@stylexjs/unplugin";
+import stylexPlugin from "unplugin-stylex/vite";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -64,16 +64,13 @@ export default defineConfig({
       prefetchStrategy: "hover",
     }),
     mdx([pj, blog]),
-    stylex.vite({
-      useCSSLayers: true,
-      debug: true,
-      aliases: {
-        "@/*": [
-          path.join(path.dirname(fileURLToPath(import.meta.url)), "src", "*"),
-        ],
-      },
-    }),
+    stylexPlugin(),
   ],
+  resolve: {
+    alias: {
+      ["@"]: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "src"),
+    },
+  },
 });
 
 type PJ = z.infer<typeof pjSchema>;
