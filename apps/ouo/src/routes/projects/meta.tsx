@@ -8,8 +8,8 @@ import { HiExternalLink } from "react-icons/hi";
 import { createTranslate } from "@/utils/i18n/server";
 
 import * as stylex from "@stylexjs/stylex";
-import { gap } from "@/styles/layout.stylex";
-import { breakpoints } from "@/styles/breakpoint.stylex";
+import { gap } from "@/styles/layout.stylex.ts";
+import { breakpoints } from "@/styles/breakpoint.stylex.ts";
 
 interface MetaProps {
   metadata: PJ;
