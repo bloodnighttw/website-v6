@@ -8,6 +8,8 @@ import { HiExternalLink } from "react-icons/hi";
 import { createTranslate } from "@/utils/i18n/server";
 
 import * as stylex from "@stylexjs/stylex";
+import { gap } from "@/styles/layout.stylex";
+import { breakpoints } from "@/styles/breakpoint.stylex";
 
 interface MetaProps {
   metadata: PJ;
@@ -19,6 +21,16 @@ const styles = stylex.create({
     padding: "1.5rem",
     marginBottom: "2rem",
   },
+  rowBetweenStart: {
+    display: "flex",
+    flexDirection: "column",
+    gap: gap["6"],
+    ["@media (min-width: 768px)"]: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+    },
+  },
 });
 
 export default async function Meta({ metadata, lang }: MetaProps) {
@@ -29,7 +41,7 @@ export default async function Meta({ metadata, lang }: MetaProps) {
       className={cn("p-6 mb-8", "bg-secondary-500/5")}
       {...stylex.props(styles.card)}
     >
-      <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+      <div {...stylex.props(styles.rowBetweenStart)}>
         <div className="space-y-4 flex-1">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-primary-900 dark:text-primary-100">
