@@ -8,6 +8,7 @@ import { z } from "zod";
 import { validTechStacks } from "./src/components/tech-stack-icon";
 import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
 import rehypeShiki from "@shikijs/rehype";
+import stylex from "@stylexjs/unplugin";
 
 const pjSchema = z.object({
   name: z.string(),
@@ -61,6 +62,10 @@ export default defineConfig({
       prefetchStrategy: "hover",
     }),
     mdx([pj, blog]),
+    stylex.vite({
+      useCSSLayers: true,
+      debug: true,
+    }),
   ],
 });
 
