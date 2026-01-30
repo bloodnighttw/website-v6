@@ -5,6 +5,22 @@ import Navbar from "./navbar";
 import loadTheme from "@/utils/theme/loadtheme";
 import type { Lang } from "@/utils/i18n/config";
 import { I18nProvider } from "@/utils/i18n/provider";
+import * as stylex from "@stylexjs/stylex";
+import { spacing } from "@/styles/tokens.stylex";
+import { styles as globalStyles } from "@/styles/styles";
+import { DevStyleXInject } from "@/components/dev-stylex-inject";
+
+const styles = stylex.create({
+  gradientBg: {
+    position: "fixed",
+    zIndex: -10,
+    top: 0,
+  },
+  container: {
+    marginTop: spacing.xl,
+    marginBottom: spacing.xl,
+  },
+});
 
 interface RootProps {
   children: React.ReactNode;
@@ -24,6 +40,7 @@ export default async function RootLayout(props: RootProps) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <DevStyleXInject cssHref="/stylex.css" />
       </head>
       <body>
         <script>{`(${loadTheme.toString()})()`}</script>
@@ -31,9 +48,11 @@ export default async function RootLayout(props: RootProps) {
           lang={props.lang}
           resources={resources.default as Record<string, unknown>}
         >
-          <div className="gridient-bg fixed -z-10 top-0" />
+          <div {...stylex.props(globalStyles.gradientBg, styles.gradientBg)} />
           <Navbar lang={props.lang} />
-          <div className="container my-8">{props.children}</div>
+          <div {...stylex.props(globalStyles.container, styles.container)}>
+            {props.children}
+          </div>
         </I18nProvider>
       </body>
     </html>

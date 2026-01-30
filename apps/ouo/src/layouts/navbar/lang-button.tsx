@@ -2,6 +2,28 @@
 
 import useNavigate from "rpress/navigate";
 import { useTranslation } from "react-i18next";
+import * as stylex from "@stylexjs/stylex";
+
+const styles = stylex.create({
+  button: {
+    width: "1.5rem",
+    height: "1.5rem",
+    cursor: "pointer",
+    marginRight: "0.5rem",
+    transitionProperty: "transform",
+    transitionDuration: "200ms",
+    transform: {
+      ":hover": "scale(1.1)",
+    },
+  },
+  svg: {
+    transitionProperty: "transform",
+    transitionDuration: "200ms",
+    transform: {
+      ":hover": "scale(1.05)",
+    },
+  },
+});
 
 const LANGUAGES = {
   en: { label: "EN", nextLang: "zh", ariaLabel: "Switch to Chinese" },
@@ -24,7 +46,7 @@ export default function LangButton() {
   return (
     <button
       onClick={toggleLang}
-      className="w-6 h-6 cursor-pointer mr-2 transition-transform duration-200 hover:scale-110"
+      {...stylex.props(styles.button)}
       aria-label={langConfig.ariaLabel}
       type="button"
       title={langConfig.ariaLabel}
@@ -36,7 +58,7 @@ export default function LangButton() {
         viewBox="0 0 24 24"
         fill="currentColor"
         aria-hidden="true"
-        className="transition-transform duration-200 hover:scale-105"
+        {...stylex.props(styles.svg)}
       >
         <text
           x="50%"

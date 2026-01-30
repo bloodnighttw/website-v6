@@ -1,88 +1,22 @@
-import {
-  SiTypescript,
-  SiJavascript,
-  SiReact,
-  SiVite,
-  SiNextdotjs,
-  SiNodedotjs,
-  SiPython,
-  SiRust,
-  SiGo,
-  SiTailwindcss,
-  SiDocker,
-  SiPostgresql,
-  SiMongodb,
-  SiRedis,
-  SiGraphql,
-  SiExpress,
-  SiNestjs,
-  SiVuedotjs,
-  SiAngular,
-  SiSvelte,
-  SiWebpack,
-  SiEsbuild,
-  SiJest,
-  SiVitest,
-  SiCypress,
-  SiStorybook,
-  SiGit,
-  SiGithub,
-  SiGitlab,
-  SiVercel,
-  SiNetlify,
-  SiGooglecloud,
-  SiFigma,
-  SiSupabase,
-  SiFirebase,
-  SiPrisma,
-} from "react-icons/si";
-import type { IconType } from "react-icons";
+import * as stylex from "@stylexjs/stylex";
+import { colors, radius } from "@/styles/tokens.stylex";
+import { techStackIcons, validTechStacks } from "@/config/tech-stacks";
 
-export const techStackIcons: Record<string, IconType> = {
-  TypeScript: SiTypescript,
-  JavaScript: SiJavascript,
-  React: SiReact,
-  Vite: SiVite,
-  NextJS: SiNextdotjs,
-  NodeJS: SiNodedotjs,
-  Python: SiPython,
-  Rust: SiRust,
-  Go: SiGo,
-  TailwindCSS: SiTailwindcss,
-  Tailwind: SiTailwindcss,
-  tailwindcss: SiTailwindcss,
-  Docker: SiDocker,
-  PostgreSQL: SiPostgresql,
-  MongoDB: SiMongodb,
-  Redis: SiRedis,
-  GraphQL: SiGraphql,
-  Express: SiExpress,
-  NestJS: SiNestjs,
-  Vue: SiVuedotjs,
-  Angular: SiAngular,
-  Svelte: SiSvelte,
-  Webpack: SiWebpack,
-  Esbuild: SiEsbuild,
-  Jest: SiJest,
-  Vitest: SiVitest,
-  Cypress: SiCypress,
-  Storybook: SiStorybook,
-  Git: SiGit,
-  GitHub: SiGithub,
-  GitLab: SiGitlab,
-  Vercel: SiVercel,
-  Netlify: SiNetlify,
-  GCP: SiGooglecloud,
-  Figma: SiFigma,
-  Supabase: SiSupabase,
-  Firebase: SiFirebase,
-  Prisma: SiPrisma,
-};
+const styles = stylex.create({
+  fallback: {
+    width: "1.25rem",
+    height: "1.25rem",
+    borderRadius: radius.full,
+    backgroundColor: "rgba(161, 161, 170, 0.2)",
+  },
+  inlineFlex: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem",
+  },
+});
 
-export const validTechStacks = Object.keys(techStackIcons) as [
-  string,
-  ...string[],
-];
+export { techStackIcons, validTechStacks };
 
 interface TechStackIconProps {
   tech: string;
@@ -99,11 +33,11 @@ export function TechStackIcon({
 
   if (!Icon) {
     if (iconOnly) {
-      return <span className="w-5 h-5 rounded-full bg-primary-500/20" />;
+      return <span {...stylex.props(styles.fallback)} />;
     }
     return (
-      <span className="inline-flex items-center gap-2">
-        <span className="w-5 h-5 rounded-full bg-primary-500/20" />
+      <span {...stylex.props(styles.inlineFlex)}>
+        <span {...stylex.props(styles.fallback)} />
         <span>{tech}</span>
       </span>
     );
@@ -114,7 +48,7 @@ export function TechStackIcon({
   }
 
   return (
-    <span className="inline-flex items-center gap-2">
+    <span {...stylex.props(styles.inlineFlex)}>
       <Icon size={size} />
       <span>{tech}</span>
     </span>

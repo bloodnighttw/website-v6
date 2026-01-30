@@ -2,12 +2,16 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import rpress from "rpress/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import tailwindcss from "@tailwindcss/vite";
 import mdx, { source } from "@rpress/mdx";
 import { z } from "zod";
-import { validTechStacks } from "./src/components/tech-stack-icon";
+import { validTechStacks } from "./src/config/tech-stacks";
 import { recmaInjectPreview, remarkExtractImage } from "@rpress/preview";
 import rehypeShiki from "@shikijs/rehype";
+import stylex from "@stylexjs/unplugin";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const pjSchema = z.object({
   name: z.string(),
@@ -52,8 +56,17 @@ const blog = source({
 
 export default defineConfig({
   plugins: [
-    tailwindcss(),
     tsconfigPaths(),
+    stylex.vite({
+      useCSSLayers: true,
+      aliases: {
+        "@/*": [path.join(__dirname, "./src/*")],
+      },
+      unstable_moduleResolution: {
+        type: "commonJS",
+        rootDir: __dirname,
+      },
+    }),
     react(),
     rpress({
       routesDir: "src/routes/**",

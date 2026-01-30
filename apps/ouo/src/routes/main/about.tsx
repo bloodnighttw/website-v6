@@ -4,7 +4,127 @@ import Image from "rpress/image";
 import CONFIG from "@/config/config.json";
 import type { Lang } from "@/utils/i18n/config";
 import { createTranslate } from "@/utils/i18n/server";
-import { cn } from "@/utils/cn";
+import * as stylex from "@stylexjs/stylex";
+import { colors, spacing, fontSize } from "@/styles/tokens.stylex";
+
+const styles = stylex.create({
+  container: {
+    display: "flex",
+    marginTop: spacing.xl,
+    marginBottom: spacing.xl,
+    flexDirection: {
+      default: "column-reverse",
+      "@media (min-width: 768px)": "row",
+    },
+    gap: {
+      default: spacing.xl,
+      "@media (min-width: 768px)": "4rem",
+    },
+    alignItems: {
+      default: "center",
+      "@media (min-width: 768px)": "stretch",
+    },
+  },
+  leftSide: {
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+  },
+  greeting: {
+    marginLeft: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+    marginRight: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+  },
+  name: {
+    fontSize: {
+      default: fontSize["4xl"],
+      "@media (min-width: 768px)": fontSize["6xl"],
+    },
+    fontWeight: 700,
+    marginTop: "0.25rem",
+    alignItems: "center",
+    marginLeft: {
+      default: "auto",
+      "@media (min-width: 640px)": 0,
+    },
+    marginRight: {
+      default: "auto",
+    },
+  },
+  role: {
+    fontFamily: "monospace",
+    marginTop: "0.25rem",
+    marginLeft: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+    marginRight: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+  },
+  description: {
+    marginTop: "0.25rem",
+    fontSize: fontSize.lg,
+    marginLeft: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+    marginRight: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+  },
+  socialLinks: {
+    display: "flex",
+    gap: spacing.xl,
+    marginLeft: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+    marginRight: {
+      default: "auto",
+      "@media (min-width: 768px)": 0,
+    },
+    marginTop: {
+      default: spacing.md,
+      "@media (min-width: 768px)": "auto",
+    },
+  },
+  socialIcon: {
+    width: "1.5rem",
+    height: "1.5rem",
+    cursor: "pointer",
+    transitionDuration: "200ms",
+    fill: {
+      default: colors.primary700,
+      ":hover": colors.primary950,
+      ":is(.dark *)": colors.primary300,
+      ":is(.dark *):hover": colors.primary50,
+    },
+  },
+  imageContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  avatar: {
+    borderRadius: "9999px",
+    width: {
+      default: "10rem",
+      "@media (min-width: 768px)": "12rem",
+    },
+    height: {
+      default: "10rem",
+      "@media (min-width: 768px)": "12rem",
+    },
+    boxShadow: `0 4px 6px -1px ${colors.primary500}20`,
+  },
+});
 
 async function About({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
@@ -13,35 +133,25 @@ async function About({ lang }: { lang: Lang }) {
   const age = Math.floor(range / (1000 * 60 * 60 * 24 * 365.25));
 
   return (
-    <div className="flex my-16 flex-col-reverse md:flex-row gap-8 md:gap-16 items-center md:items-stretch">
+    <div {...stylex.props(styles.container)}>
       {/*left side*/}
-      <div className="flex flex-col flex-1">
-        <p className="mx-auto md:mx-0">{t("about.greeting")}</p>
-        <h1 className="text-4xl md:text-6xl font-bold mt-1 items-center mx-auto sm:mx-0">
-          {t("about.name")}
-        </h1>
-        <p className="font-mono mt-1 mx-auto md:mx-0">{`${age} y/o • ${t("about.role")}`}</p>
-        <p className="mt-1 text-lg mx-auto md:mx-0">{t("about.description")}</p>
-        <div
-          className={cn(
-            "flex gap-8 *:size-6 *:cursor-pointer",
-            "dark:*:fill-primary-300 dark:*:hover:fill-primary-50 *:duration-200",
-            "*:fill-primary-700 *:hover:fill-primary-950",
-            "mx-auto md:mx-0 mt-4 md:mt-auto",
-          )}
-        >
-          <FaGithub />
-          <FaTwitter />
-          <FaTelegram />
-          <FaDiscord />
-          <IoMail />
+      <div {...stylex.props(styles.leftSide)}>
+        <p {...stylex.props(styles.greeting)}>{t("about.greeting")}</p>
+        <h1 {...stylex.props(styles.name)}>{t("about.name")}</h1>
+        <p
+          {...stylex.props(styles.role)}
+        >{`${age} y/o • ${t("about.role")}`}</p>
+        <p {...stylex.props(styles.description)}>{t("about.description")}</p>
+        <div {...stylex.props(styles.socialLinks)}>
+          <FaGithub {...stylex.props(styles.socialIcon)} />
+          <FaTwitter {...stylex.props(styles.socialIcon)} />
+          <FaTelegram {...stylex.props(styles.socialIcon)} />
+          <FaDiscord {...stylex.props(styles.socialIcon)} />
+          <IoMail {...stylex.props(styles.socialIcon)} />
         </div>
       </div>
-      <div className="flex items-center">
-        <Image
-          src={CONFIG.avatar}
-          className="rounded-full size-40 md:size-48 shadow shadow-primary-500/20"
-        />
+      <div {...stylex.props(styles.imageContainer)}>
+        <Image src={CONFIG.avatar} {...stylex.props(styles.avatar)} />
       </div>
     </div>
   );

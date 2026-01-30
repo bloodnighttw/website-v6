@@ -1,6 +1,7 @@
-import clsx from "clsx";
-import { twMerge } from "tailwind-merge";
+import * as stylex from "@stylexjs/stylex";
 
-export function cn(...classes: (string | false | undefined)[]) {
-  return clsx(twMerge(classes));
+export function cn(
+  ...styles: (stylex.StyleXStyles | false | undefined | null)[]
+): string {
+  return stylex.props(...styles.filter(Boolean)).className ?? "";
 }

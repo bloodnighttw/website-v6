@@ -4,8 +4,93 @@ import Link from "rpress/link";
 import type { Lang } from "@/utils/i18n/config";
 import { blogSource } from "@/utils/source";
 import { createTranslate } from "@/utils/i18n/server";
-import { cn } from "@/utils/cn";
 import Image from "rpress/image";
+import * as stylex from "@stylexjs/stylex";
+import { colors, spacing, radius, fontSize } from "@/styles/tokens.stylex";
+
+const styles = stylex.create({
+  labelContainer: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: spacing.xl,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: {
+      default: "1fr",
+      "@media (min-width: 768px)": "repeat(2, 1fr)",
+      "@media (min-width: 1024px)": "repeat(3, 1fr)",
+    },
+    gap: spacing.xl,
+    marginTop: spacing.xl,
+  },
+  card: {
+    padding: spacing.md,
+    height: "100%",
+    cursor: "pointer",
+    backgroundColor: {
+      ":hover": "rgba(120, 113, 108, 0.1)",
+    },
+    transitionProperty: "background-color",
+    transitionDuration: "200ms",
+    display: "flex",
+    flexDirection: "column",
+    gap: spacing.md,
+  },
+  imageContainer: {
+    width: "100%",
+    aspectRatio: "16 / 9",
+    borderRadius: radius.lg,
+    overflow: "hidden",
+    backgroundColor: {
+      default: colors.secondary100,
+      ":is(.dark *)": colors.secondary800,
+    },
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
+  content: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.5rem",
+  },
+  title: {
+    fontSize: fontSize.xl,
+    fontWeight: 700,
+  },
+  date: {
+    fontSize: fontSize.sm,
+    color: {
+      default: colors.secondary600,
+      ":is(.dark *)": colors.secondary400,
+    },
+  },
+  categories: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "0.5rem",
+  },
+  category: {
+    paddingLeft: "0.5rem",
+    paddingRight: "0.5rem",
+    paddingTop: "0.25rem",
+    paddingBottom: "0.25rem",
+    fontSize: fontSize.xs,
+    backgroundColor: {
+      default: colors.secondary100,
+      ":is(.dark *)": colors.secondary800,
+    },
+    color: {
+      default: colors.secondary700,
+      ":is(.dark *)": colors.secondary300,
+    },
+    borderRadius: radius.md,
+  },
+});
 
 async function Blog({ lang }: { lang: Lang }) {
   const t = await createTranslate(lang);
@@ -24,33 +109,26 @@ async function Blog({ lang }: { lang: Lang }) {
 
   return (
     <>
-      <div className="flex justify-center mt-8">
+      <div {...stylex.props(styles.labelContainer)}>
         <CardLabel>{t("blog.title")}</CardLabel>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+      <div {...stylex.props(styles.grid)}>
         {sortedBlogs.map((blog) => (
           <Link key={blog.slug} to={`/${lang}/blog/${blog.slug}`}>
-            <Card
-              className={cn(
-                "p-4 h-full cursor-pointer",
-                "hover:bg-secondary-500/10",
-                "transition-colors duration-200",
-                "flex flex-col gap-4",
-              )}
-            >
-              <div className="w-full aspect-video rounded-lg overflow-hidden bg-secondary-100 dark:bg-secondary-800">
+            <Card {...stylex.props(styles.card)}>
+              <div {...stylex.props(styles.imageContainer)}>
                 <Image
                   src={blog.preview ?? "/default.png"}
                   alt={blog.title}
-                  className="w-full h-full object-cover"
+                  {...stylex.props(styles.image)}
                   height={353}
                   width={628}
                 />
               </div>
 
-              <div className="flex-1 space-y-2">
-                <h3 className="text-xl font-bold">{blog.title}</h3>
-                <p className="text-sm text-secondary-600 dark:text-secondary-400">
+              <div {...stylex.props(styles.content)}>
+                <h3 {...stylex.props(styles.title)}>{blog.title}</h3>
+                <p {...stylex.props(styles.date)}>
                   {new Date(blog.date).toLocaleDateString(
                     lang === "zh" ? "zh-TW" : "en-US",
                     {
@@ -63,12 +141,9 @@ async function Blog({ lang }: { lang: Lang }) {
               </div>
 
               {blog.categories && blog.categories.length > 0 && (
-                <div className="flex flex-wrap gap-2">
+                <div {...stylex.props(styles.categories)}>
                   {blog.categories.map((category) => (
-                    <span
-                      key={category}
-                      className="px-2 py-1 text-xs bg-secondary-100 dark:bg-secondary-800 text-secondary-700 dark:text-secondary-300 rounded-md"
-                    >
+                    <span key={category} {...stylex.props(styles.category)}>
                       {category}
                     </span>
                   ))}

@@ -2,34 +2,118 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "rpress/link";
-import { cn } from "@/utils/cn";
-import { HiMenu, HiX } from "react-icons/hi";
+import * as stylex from "@stylexjs/stylex";
+import { colors, spacing, radius, fontSize } from "@/styles/tokens.stylex";
+import { styles as globalStyles } from "@/styles/styles";
 import type { Lang } from "@/utils/i18n/config";
 import LangButton from "./lang-button";
 import ThemeButton from "./theme-button";
 import { createPortal } from "react-dom";
+import { HiMenu, HiX } from "react-icons/hi";
 
 const NAV_LINKS = [
   { href: "/friends", label: "friends link" },
   { href: "/blog", label: "blog" },
 ] as const;
 
-const MENU_STYLES = {
-  button:
-    "md:hidden w-6 cursor-pointer mr-2 relative h-6 flex items-center justify-center rounded transition-transform hover:scale-110",
-  icon: "absolute inset-0",
-  container: cn(
-    "absolute top-full left-0 my-4 right-0 mx-4",
-    "card bg-primary-500/10 backdrop-blur-2xl rounded-2xl shadow-xl",
-    "flex flex-col p-2 md:hidden",
-    "animate-in fade-in slide-in-from-top-2 duration-200",
-  ),
-  link: "text-lg px-4 py-2 hover:bg-primary-500/20 rounded-lg active:scale-95",
-  divider: "border-primary-500/20 my-2",
-  controls: "flex items-center gap-4 mt-2 px-2 py-2",
-  controlsLabel: "text-sm opacity-70 font-medium",
-  nav: "flex flex-col",
-} as const;
+const styles = stylex.create({
+  button: {
+    display: {
+      default: "flex",
+      "@media (min-width: 768px)": "none",
+    },
+    width: "1.5rem",
+    cursor: "pointer",
+    marginRight: "0.5rem",
+    position: "relative",
+    height: "1.5rem",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: radius.md,
+    transitionProperty: "transform",
+    transitionDuration: "200ms",
+    transform: {
+      ":hover": "scale(1.1)",
+    },
+  },
+  icon: {
+    position: "absolute",
+    inset: 0,
+    transitionProperty: "opacity, transform",
+    transitionDuration: "300ms",
+  },
+  iconVisible: {
+    opacity: 1,
+    transform: "rotate(0deg) scale(1)",
+  },
+  iconHidden: {
+    opacity: 0,
+    transform: "rotate(90deg) scale(0)",
+  },
+  iconHiddenNegative: {
+    opacity: 0,
+    transform: "rotate(-90deg) scale(0)",
+  },
+  container: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+    right: 0,
+    marginLeft: spacing.md,
+    marginRight: spacing.md,
+    backgroundColor: "rgba(113, 113, 122, 0.1)",
+    backdropFilter: "blur(20px)",
+    borderRadius: radius.xl,
+    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+    display: "flex",
+    flexDirection: "column",
+    padding: "0.5rem",
+    animationName: "fadeInSlideDown",
+    animationDuration: "200ms",
+  },
+  link: {
+    fontSize: fontSize.lg,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
+    paddingTop: "0.5rem",
+    paddingBottom: "0.5rem",
+    borderRadius: radius.lg,
+    backgroundColor: {
+      ":hover": "rgba(113, 113, 122, 0.2)",
+    },
+    transform: {
+      ":active": "scale(0.95)",
+    },
+  },
+  divider: {
+    borderColor: "rgba(113, 113, 122, 0.2)",
+    borderWidth: "1px 0 0 0",
+    borderStyle: "solid",
+    marginTop: "0.5rem",
+    marginBottom: "0.5rem",
+  },
+  controls: {
+    display: "flex",
+    alignItems: "center",
+    gap: spacing.md,
+    marginTop: "0.5rem",
+    paddingLeft: "0.5rem",
+    paddingRight: "0.5rem",
+    paddingTop: "0.5rem",
+    paddingBottom: "0.5rem",
+  },
+  controlsLabel: {
+    fontSize: fontSize.sm,
+    opacity: 0.7,
+    fontWeight: 500,
+  },
+  nav: {
+    display: "flex",
+    flexDirection: "column",
+  },
+});
 
 export default function MobileMenu({ lang }: { lang: Lang }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,12 +128,10 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
     setIsOpen(false);
   };
 
-  // Check if we're on the client side
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Handle click outside to close menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -59,7 +141,6 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
 
     if (isOpen) {
       document.addEventListener("click", handleClickOutside);
-      // Prevent body scroll when menu is open
       document.body.style.overflow = "hidden";
     }
 
@@ -69,7 +150,6 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
     };
   }, [isOpen]);
 
-  // Handle escape key to close menu
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -90,7 +170,7 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
     <>
       <button
         onClick={toggleMenu}
-        className={MENU_STYLES.button}
+        {...stylex.props(styles.button)}
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
         aria-controls="mobile-menu"
@@ -98,21 +178,17 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
       >
         <HiMenu
           size={24}
-          className={cn(
-            MENU_STYLES.icon,
-            isOpen
-              ? "opacity-0 rotate-90 scale-0"
-              : "opacity-100 rotate-0 scale-100",
+          {...stylex.props(
+            styles.icon,
+            isOpen ? styles.iconHiddenNegative : styles.iconVisible,
           )}
           aria-hidden="true"
         />
         <HiX
           size={24}
-          className={cn(
-            MENU_STYLES.icon,
-            isOpen
-              ? "opacity-100 rotate-0 scale-100"
-              : "opacity-0 -rotate-90 scale-0",
+          {...stylex.props(
+            styles.icon,
+            isOpen ? styles.iconVisible : styles.iconHidden,
           )}
           aria-hidden="true"
         />
@@ -123,18 +199,18 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
         createPortal(
           <div
             id="mobile-menu"
-            className={MENU_STYLES.container}
+            {...stylex.props(styles.container, globalStyles.card)}
             ref={ref}
             onClick={(e) => e.stopPropagation()}
             role="menu"
             aria-label="Mobile navigation menu"
           >
-            <nav className={MENU_STYLES.nav} role="navigation">
+            <nav {...stylex.props(styles.nav)} role="navigation">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   to={`/${lang}${link.href}`}
-                  className={MENU_STYLES.link}
+                  {...stylex.props(styles.link)}
                   onClick={closeMenu}
                   role="menuitem"
                 >
@@ -143,10 +219,10 @@ export default function MobileMenu({ lang }: { lang: Lang }) {
               ))}
             </nav>
 
-            <hr className={MENU_STYLES.divider} />
+            <hr {...stylex.props(styles.divider)} />
 
-            <div className={MENU_STYLES.controls}>
-              <span className={MENU_STYLES.controlsLabel}>Settings:</span>
+            <div {...stylex.props(styles.controls)}>
+              <span {...stylex.props(styles.controlsLabel)}>Settings:</span>
               <LangButton />
               <ThemeButton />
             </div>

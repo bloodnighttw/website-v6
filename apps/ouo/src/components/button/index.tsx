@@ -1,53 +1,149 @@
-import { cn } from "@/utils/cn";
+import * as stylex from "@stylexjs/stylex";
+import { colors, spacing, fontSize, radius } from "@/styles/tokens.stylex";
 
-type varient = "primary" | "secondary" | "outline";
+type variant = "primary" | "secondary" | "outline";
+
+const styles = stylex.create({
+  base: {
+    paddingLeft: spacing.md,
+    paddingRight: spacing.md,
+    paddingTop: "0.25rem",
+    paddingBottom: "0.25rem",
+    borderRadius: radius.md,
+    outline: "none",
+    opacity: {
+      ":disabled": 0.5,
+    },
+    cursor: {
+      default: "pointer",
+      ":disabled": "not-allowed",
+    },
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "2rem",
+  },
+
+  focus: {
+    boxShadow: {
+      ":focus": "0 0 0 2px, 0 0 0 4px",
+    },
+  },
+
+  animation: {
+    transitionProperty: "all",
+    transitionDuration: "200ms",
+    transitionTimingFunction: "ease-in-out",
+    transform: {
+      ":active:not(:disabled)": "scale(0.9)",
+    },
+  },
+
+  font: {
+    fontWeight: 500,
+    fontSize: fontSize.sm,
+  },
+
+  primary: {
+    backgroundColor: {
+      default: colors.primary800,
+      ":hover:not(:disabled)": colors.primary950,
+      ":is(.dark *)": colors.primary200,
+      ":is(.dark *):hover:not(:disabled)": colors.primary50,
+    },
+    color: {
+      default: colors.primary50,
+      ":is(.dark *)": colors.primary950,
+    },
+  },
+
+  secondary: {
+    backgroundColor: {
+      default: colors.secondary800,
+      ":hover:not(:disabled)": colors.secondary950,
+      ":is(.dark *)": colors.secondary200,
+      ":is(.dark *):hover:not(:disabled)": colors.secondary50,
+    },
+    color: {
+      default: colors.secondary50,
+      ":is(.dark *)": colors.secondary950,
+    },
+  },
+
+  outline: {
+    borderWidth: "1px",
+    borderStyle: "solid",
+    borderColor: {
+      default: colors.primary900,
+      ":is(.dark *)": colors.primary100,
+    },
+    color: {
+      default: colors.primary900,
+      ":is(.dark *)": colors.primary100,
+    },
+    backgroundColor: {
+      ":hover:not(:disabled)": "rgba(161, 161, 170, 0.1)",
+    },
+  },
+
+  primaryFocus: {
+    boxShadow: {
+      ":focus": `0 0 0 2px ${colors.primary500}, 0 0 0 4px ${colors.primary50}`,
+      ":is(.dark *):focus": `0 0 0 2px ${colors.primary100}, 0 0 0 4px ${colors.primary950}`,
+    },
+    backgroundColor: {
+      ":focus": colors.primary950,
+      ":is(.dark *):focus": colors.primary50,
+    },
+  },
+
+  secondaryFocus: {
+    boxShadow: {
+      ":focus": `0 0 0 2px ${colors.secondary500}, 0 0 0 4px ${colors.secondary50}`,
+      ":is(.dark *):focus": `0 0 0 2px ${colors.secondary100}, 0 0 0 4px ${colors.secondary950}`,
+    },
+    backgroundColor: {
+      ":focus": colors.secondary950,
+      ":is(.dark *):focus": colors.secondary50,
+    },
+  },
+
+  outlineFocus: {
+    boxShadow: {
+      ":focus": "none",
+    },
+    borderColor: {
+      ":focus": colors.primary600,
+      ":is(.dark *):focus": colors.primary300,
+    },
+    backgroundColor: {
+      ":focus": "rgba(161, 161, 170, 0.1)",
+    },
+  },
+});
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  varient?: varient;
+  variant?: variant;
 }
 
 export function Button(props: ButtonProps) {
-  const { varient = "primary", className, children, disabled, ...rest } = props;
+  const { variant = "primary", className, children, disabled, ...rest } = props;
 
-  const baseStyles =
-    "px-4 py-1 rounded focus:outline-0 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center cursor-pointer h-8";
-
-  const focusStyles = "focus:ring-2 focus:ring-offset-2";
-
-  const animationStyles =
-    "transition-all duration-200 ease-in-out enabled:active:scale-90";
-
-  const fontStyles = "font-medium text-sm";
-
-  const varientStyles: Record<varient, string> = {
-    primary:
-      "bg-primary-800 text-primary-50 enabled:hover:bg-primary-950 focus:ring-primary-500 dark:bg-primary-200 dark:enabled:hover:bg-primary-50 dark:text-primary-950 ",
-    secondary:
-      "bg-secondary-800 text-secondary-50 enabled:hover:bg-secondary-950 focus:ring-secondary-500 dark:bg-secondary-200 dark:enabled:hover:bg-secondary-50 dark:text-secondary-950",
-    outline:
-      "border border-primary-900 text-primary-900 dark:border-primary-100 dark:text-primary-100 enabled:hover:bg-primary-400/10",
-  };
-
-  const focusVariantStyles: Record<varient, string> = {
-    primary:
-      "dark:focus:ring-primary-100 focus:ring-primary-900 ring-offset-primary-50 dark:ring-offset-primary-950 focus:bg-primary-950 dark:focus:bg-primary-50",
-    secondary:
-      "dark:focus:ring-secondary-100 focus:ring-secondary-900 ring-offset-secondary-50 dark:ring-offset-secondary-950 focus:bg-secondary-950 dark:focus:bg-secondary-50",
-    outline:
-      "focus:ring-0 focus:ring-offset-0 border-primary-600 dark:border-primary-300 focus:bg-primary-400/10",
+  const variantStyles = {
+    primary: [styles.primary, styles.primaryFocus],
+    secondary: [styles.secondary, styles.secondaryFocus],
+    outline: [styles.outline, styles.outlineFocus],
   };
 
   return (
     <button
-      className={cn(
-        baseStyles,
-        animationStyles,
-        fontStyles,
-        varientStyles[varient],
-        focusStyles,
-        focusVariantStyles[varient],
-        className,
+      {...stylex.props(
+        styles.base,
+        styles.animation,
+        styles.font,
+        ...variantStyles[variant],
+        className as stylex.StyleXStyles,
       )}
       {...rest}
       type="button"

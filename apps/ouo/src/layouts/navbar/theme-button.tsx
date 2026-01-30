@@ -2,6 +2,56 @@
 
 import { toggleTheme } from "@/utils/theme";
 import { MdOutlineDarkMode, MdOutlineLightMode } from "react-icons/md";
+import * as stylex from "@stylexjs/stylex";
+import { colors, radius } from "@/styles/tokens.stylex";
+
+const styles = stylex.create({
+  button: {
+    width: "1.5rem",
+    height: "1.5rem",
+    cursor: "pointer",
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transitionProperty: "transform",
+    transitionDuration: "200ms",
+    transform: {
+      ":hover": "scale(1.1)",
+    },
+    borderRadius: radius.md,
+  },
+  lightIcon: {
+    color: colors.secondary50,
+    position: "absolute",
+    inset: 0,
+    transitionProperty: "opacity, transform",
+    transitionDuration: "300ms",
+    opacity: {
+      default: 0,
+      ":is(.dark *)": 1,
+    },
+    transform: {
+      default: "rotate(-90deg)",
+      ":is(.dark *)": "rotate(0deg)",
+    },
+  },
+  darkIcon: {
+    color: colors.secondary900,
+    position: "absolute",
+    inset: 0,
+    transitionProperty: "opacity, transform",
+    transitionDuration: "300ms",
+    opacity: {
+      default: 1,
+      ":is(.dark *)": 0,
+    },
+    transform: {
+      default: "rotate(0deg)",
+      ":is(.dark *)": "rotate(90deg)",
+    },
+  },
+});
 
 export default function ThemeButton() {
   const handleToggleTheme = () => {
@@ -11,18 +61,18 @@ export default function ThemeButton() {
   return (
     <button
       onClick={handleToggleTheme}
-      className="w-6 h-6 cursor-pointer relative flex items-center justify-center transition-transform duration-200 hover:scale-110 rounded"
+      {...stylex.props(styles.button)}
       aria-label="Toggle theme"
       type="button"
     >
       <MdOutlineLightMode
         size={24}
-        className="text-secondary-50 absolute inset-0 duration-300 dark:opacity-100 dark:rotate-0 opacity-0 -rotate-90"
+        {...stylex.props(styles.lightIcon)}
         aria-hidden="true"
       />
       <MdOutlineDarkMode
         size={24}
-        className="text-secondary-900 absolute inset-0 duration-300 dark:opacity-0 dark:rotate-90 opacity-100 rotate-0"
+        {...stylex.props(styles.darkIcon)}
         aria-hidden="true"
       />
     </button>

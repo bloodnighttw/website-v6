@@ -1,15 +1,30 @@
-import { cn } from "@/utils/cn";
+import * as stylex from "@stylexjs/stylex";
+import { colors, radius } from "@/styles/tokens.stylex";
+import { styles as globalStyles } from "@/styles/styles";
+
+const styles = stylex.create({
+  card: {
+    borderRadius: radius.xl,
+    backgroundColor: "rgba(120, 113, 108, 0.05)",
+  },
+});
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
 export default function Card(props: CardProps) {
-  const old = "rounded-xl bg-secondary-500/5 card";
   const { className, ...rest } = props;
 
   return (
-    <div className={cn(old, className)} {...rest}>
+    <div
+      {...stylex.props(
+        styles.card,
+        globalStyles.card,
+        className as stylex.StyleXStyles,
+      )}
+      {...rest}
+    >
       {props.children}
     </div>
   );

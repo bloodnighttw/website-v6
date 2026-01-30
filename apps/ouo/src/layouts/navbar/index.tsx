@@ -6,76 +6,162 @@ import ThemeButton from "./theme-button";
 import LangButton from "./lang-button";
 import MobileMenu from "./mobile-menu";
 import type { Lang } from "@/utils/i18n/config";
-import { cn } from "@/utils/cn";
+import * as stylex from "@stylexjs/stylex";
+import { colors, spacing, radius, fontSize } from "@/styles/tokens.stylex";
+import { styles as globalStyles } from "@/styles/styles";
 
 const NAV_LINKS = [
   // { href: "/friends", label: "friends link" },
   // { href: "/blog", label: "blog" },
 ] as const;
 
-const NAVBAR_STYLES = {
-  container: "container *:px-4 md:*:pr-6 sticky top-2 z-100",
-  wrapper: cn(
-    "flex items-center min-h-16 gap-4 card mt-2",
-    "bg-primary-500/10 rounded-full backdrop-blur-2xl",
-  ),
-  avatar:
-    "rounded-full size-8 transition-transform duration-300 hover:scale-110",
-  navLinks: cn(
-    "mx-auto flex gap-4 text-sm not-md:hidden",
-    "text-primary-700 dark:text-primary-300",
-  ),
-  navLink: cn(
-    "relative py-1 transition-all duration-200",
-    "hover:text-primary-900 dark:hover:text-primary-100",
-    "after:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0",
-    "after:h-0.5 after:bg-primary-500 after:scale-x-0 after:transition-transform",
-    "hover:after:scale-x-100",
-  ),
-  controls: "mx-auto md:mx-0 flex not-md:hidden gap-2 items-center",
-} as const;
+const styles = stylex.create({
+  container: {
+    position: "sticky",
+    top: "0.5rem",
+    zIndex: 100,
+    paddingLeft: {
+      default: spacing.md,
+      "@media (min-width: 768px)": "1.5rem",
+    },
+    paddingRight: {
+      default: spacing.md,
+      "@media (min-width: 768px)": "1.5rem",
+    },
+  },
+  wrapper: {
+    display: "flex",
+    alignItems: "center",
+    minHeight: "4rem",
+    gap: spacing.md,
+    marginTop: "0.5rem",
+    backgroundColor: "rgba(113, 113, 122, 0.1)",
+    borderRadius: radius.full,
+    backdropFilter: "blur(20px)",
+  },
+  avatar: {
+    borderRadius: radius.full,
+    width: "2rem",
+    height: "2rem",
+    transitionProperty: "transform",
+    transitionDuration: "300ms",
+    transform: {
+      ":hover": "scale(1.1)",
+    },
+  },
+  navLinks: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: {
+      default: "none",
+      "@media (min-width: 768px)": "flex",
+    },
+    gap: spacing.md,
+    fontSize: fontSize.sm,
+    color: {
+      default: colors.primary700,
+      ":is(.dark *)": colors.primary300,
+    },
+  },
+  navLink: {
+    position: "relative",
+    paddingTop: "0.25rem",
+    paddingBottom: "0.25rem",
+    transitionProperty: "color",
+    transitionDuration: "200ms",
+    color: {
+      ":hover": {
+        default: colors.primary900,
+        ":is(.dark *)": colors.primary100,
+      },
+    },
+    "::after": {
+      content: "''",
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: "2px",
+      backgroundColor: colors.primary500,
+      transform: "scaleX(0)",
+      transitionProperty: "transform",
+      transitionDuration: "200ms",
+    },
+    ":hover::after": {
+      transform: "scaleX(1)",
+    },
+  },
+  controls: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: {
+      default: "none",
+      "@media (min-width: 768px)": "flex",
+    },
+    gap: "0.5rem",
+    alignItems: "center",
+    "@media (min-width: 768px)": {
+      marginLeft: 0,
+      marginRight: 0,
+    },
+  },
+  mobileSpacer: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    display: {
+      default: "block",
+      "@media (min-width: 768px)": "none",
+    },
+  },
+  menuPlaceholder: {
+    position: "sticky",
+    top: "4.5rem",
+    width: "100%",
+    zIndex: 100,
+  },
+});
 
 export default function Navbar({ lang }: { lang: Lang }) {
   return (
     <>
       <nav
-        className={NAVBAR_STYLES.container}
+        {...stylex.props(styles.container)}
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className={NAVBAR_STYLES.wrapper}>
+        <div {...stylex.props(styles.wrapper, globalStyles.card)}>
           <Link to={`/${lang}`} aria-label="Home">
             <Image
               src={setting.avatar}
-              className={NAVBAR_STYLES.avatar}
+              {...stylex.props(styles.avatar)}
               alt="Avatar"
             />
           </Link>
 
-          <div className={NAVBAR_STYLES.navLinks}>
+          <div {...stylex.props(styles.navLinks)}>
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 to={`/${lang}${link.href}`}
-                className={NAVBAR_STYLES.navLink}
+                {...stylex.props(styles.navLink)}
               >
                 {link.label}
               </Link>
             ))}
           </div>
 
-          <div className={NAVBAR_STYLES.controls}>
+          <div {...stylex.props(styles.controls)}>
             <LangButton />
             <ThemeButton />
           </div>
 
-          <div className="mx-auto md:hidden" />
+          <div {...stylex.props(styles.mobileSpacer)} />
           <MobileMenu lang={lang} />
         </div>
       </nav>
       <div
         id="menu"
-        className="sticky top-18 w-full z-100"
+        {...stylex.props(styles.menuPlaceholder)}
         aria-live="polite"
       />
     </>
