@@ -5,6 +5,7 @@ import Navbar from "./navbar";
 import loadTheme from "@/utils/theme/loadtheme";
 import type { Lang } from "@/utils/i18n/config";
 import { I18nProvider } from "@/utils/i18n/provider";
+import { DevStyleXInject } from "@/DevStyleXInject";
 
 interface RootProps {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ export default async function RootLayout(props: RootProps) {
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <DevStyleXInject cssHref="/stylex.css" />
       </head>
       <body>
         <script>{`(${loadTheme.toString()})()`}</script>

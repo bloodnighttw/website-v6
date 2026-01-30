@@ -7,16 +7,28 @@ import { TechStackIcon } from "@/components/tech-stack-icon";
 import { HiExternalLink } from "react-icons/hi";
 import { createTranslate } from "@/utils/i18n/server";
 
+import * as stylex from "@stylexjs/stylex";
+
 interface MetaProps {
   metadata: PJ;
   lang: Lang;
 }
 
+const styles = stylex.create({
+  card: {
+    padding: "1.5rem",
+    marginBottom: "2rem",
+  },
+});
+
 export default async function Meta({ metadata, lang }: MetaProps) {
   const t = await createTranslate(lang);
 
   return (
-    <Card className={cn("p-6 mb-8", "bg-secondary-500/5")}>
+    <Card
+      className={cn("p-6 mb-8", "bg-secondary-500/5")}
+      {...stylex.props(styles.card)}
+    >
       <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
         <div className="space-y-4 flex-1">
           <div>
