@@ -23,12 +23,18 @@ const styles = stylex.create({
   },
   rowBetweenStart: {
     display: "flex",
-    flexDirection: "column",
     gap: gap["6"],
-    ["@media (min-width: 768px)"]: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "flex-start",
+    flexDirection: {
+      default: "column",
+      [breakpoints.medium]: "row",
+    },
+    justifyContent: {
+      default: "flex-start",
+      [breakpoints.medium]: "space-between",
+    },
+    alignItems: {
+      default: "stretch",
+      [breakpoints.medium]: "flex-start",
     },
   },
 });
