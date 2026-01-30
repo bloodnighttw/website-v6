@@ -64,7 +64,9 @@ export default defineConfig({
       prefetchStrategy: "hover",
     }),
     mdx([pj, blog]),
-    stylexPlugin(),
+    stylexPlugin({
+      dev: true,
+    }),
   ],
   resolve: {
     alias: {
