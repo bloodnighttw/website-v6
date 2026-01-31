@@ -1,11 +1,80 @@
 ---
-title: "Unlocking Markdown's Superpowers: An introduction about remark/rehype library"
+title: "My studies on GPUI #1 Entity "
 description: "An introduction to the remark and rehype libraries for processing Markdown, including how to write custom plugins using the unified ecosystem."
-date: 2025-05-29
+date: 2026-02-01
 categories:
-  - markdown
-  - remark
-  - rehype
+  - rust
+  - gpui
 ---
 
-asdasdasd
+# Before you read
+
+It is recommand to read the serious
+[GPUI Hello World Tutorial - From Core Concepts to Hello World ](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)
+before reading this article, it provide a basic entry to GPUI since this article is not a beginner tutorial.
+
+This article is part of my studies on GPUI, I will write a series of articles to record my learning process and share my understanding of GPUI.
+
+# What is Entity in GPUI.
+
+A entity is something that is owned and managed by GPUI, and we can access it through app context.
+
+## An Entity that implement Render trait
+
+In GPUI, if a struct implement `Render` trait, and we create it to be managed by GPUI App as `Entity<T>`,
+it will be considered as a `View` that is used to render UI elements.
+
+(this code from [GPUI Hello World Tutorial - From Core Concepts to Hello World](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)):
+
+```rust
+// main.rs
+use gpui::{
+    div, prelude::*, px, rgb, size, App, Application, Bounds, Context, SharedString, Window,
+    WindowBounds, WindowOptions,
+};
+
+struct HelloWorld {
+    text: SharedString,
+}
+
+impl Render for HelloWorld {
+    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .flex()
+            .flex_col()
+            .bg(rgb(0x2e3440))
+            .size(px(500.0))
+            .justify_center()
+            .items_center()
+            .text_xl()
+            .text_color(rgb(0xd8dee9))
+            .child(format!("Hello, {}!", &self.text))
+    }
+}
+
+fn main() {
+    Application::new().run(|cx: &mut App| {
+        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
+        cx.open_window(
+            WindowOptions {
+                window_bounds: Some(WindowBounds::Windowed(bounds)),
+                ..Default::default()
+            },
+            |_, cx| {
+                cx.new(|_| HelloWorld {
+                    text: "GPUI World".into(),
+                })
+            },
+        )
+        .unwrap();
+    });
+}
+```
+
+This is just a basic ui that display "Hello, GPUI World!" in a window. and you can see cx.new create a new `Entity<HelloWorld>`,
+and `HelloWorld` implement `Render` trait, so it is a entity can render UI.
+
+## An Entity that does not implement Render trait.
+
+Entity can create without implement `Render` trait, in this case, the entity is not a view that can render UI,
+and be consider as just a piece of data that is owned and managed by GPUI App.
