@@ -1,5 +1,3 @@
 packages:
   - apps/*
   - packages/*
-patchedDependencies:
-  "@stylexjs/babel-plugin": patches/@stylexjs__babel-plugin.patch
