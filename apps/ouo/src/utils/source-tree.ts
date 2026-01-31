@@ -1,7 +1,4 @@
-import CONFIG from "@/config/config.json";
 import type { ComponentType } from "react";
-
-const defaultLang = CONFIG["prefer-lang"] ?? "zh";
 
 interface MDXProps {
   components?: Record<string, ComponentType<any>>;
@@ -77,33 +74,22 @@ export class SourceTree<
   }
 
   /**
-   * Search for a module by slug and language
-   * Returns [module, isExactMatch]
-   * - If found in preferred language: [module, true]
-   * - If found in default language: [module, false]
+   * Search for a module by slug
+   * Returns [module, lang] where lang is the language of the found module
+   * - If found: [module, lang]
    * - If not found: throws error
    */
-  public async search(
-    slug: string[],
-    preferredLang: string,
-  ): Promise<readonly [M, boolean]> {
+  public async search(slug: string[]): Promise<readonly [M, string]> {
     const slugStr = slug.join("/");
 
-    // Try preferred language first
-    const preferredKey = this.createKey(slugStr, preferredLang);
-    if (this.#modules.has(preferredKey)) {
-      return [this.#modules.get(preferredKey)!, true] as const;
+    // Get any available language for this slug
+    const availableLangs = this.getAvailableLanguages(slugStr);
+    if (availableLangs.length > 0) {
+      const key = this.createKey(slugStr, availableLangs[0]);
+      return [this.#modules.get(key)!, availableLangs[0]] as const;
     }
 
-    // Fallback to default language
-    const fallbackKey = this.createKey(slugStr, defaultLang);
-    if (this.#modules.has(fallbackKey)) {
-      return [this.#modules.get(fallbackKey)!, false] as const;
-    }
-
-    throw new Error(
-      `Content not found: slug="${slugStr}", languages tried: [${preferredLang}, ${defaultLang}]`,
-    );
+    throw new Error(`Content not found: slug="${slugStr}"`);
   }
 
   /**
@@ -121,24 +107,18 @@ export class SourceTree<
   }
 
   /**
-   * Get all modules with their preferred language
-   * Returns a record where each slug maps to the module in the preferred language (or default language if not available)
+   * Get all modules
+   * Returns a record where each slug maps to any available module
    */
-  public entriesWithLang(preferredLang: string): Record<string, M> {
+  public entriesWithLang(): Record<string, M> {
     const result: Record<string, M> = {};
 
     for (const slug of this.#slugs) {
-      // Try preferred language first
-      const preferredKey = this.createKey(slug, preferredLang);
-      if (this.#modules.has(preferredKey)) {
-        result[slug] = this.#modules.get(preferredKey)!;
-        continue;
-      }
-
-      // Fallback to default language
-      const fallbackKey = this.createKey(slug, defaultLang);
-      if (this.#modules.has(fallbackKey)) {
-        result[slug] = this.#modules.get(fallbackKey)!;
+      // Get any available language for this slug
+      const availableLangs = this.getAvailableLanguages(slug);
+      if (availableLangs.length > 0) {
+        const key = this.createKey(slug, availableLangs[0]);
+        result[slug] = this.#modules.get(key)!;
       }
     }
 
