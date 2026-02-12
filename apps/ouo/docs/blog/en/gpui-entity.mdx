@@ -17,7 +17,7 @@ This article is part of my studies on GPUI, I will write a series of articles to
 
 # What is Entity in GPUI.
 
-A entity is something that is owned and managed by GPUI, and we can access it through app context.
+A entity is something that is owned and managed by GPUI, actully you can consider it as a RC in rust standard library, and we can access it through app context.
 
 ## Creating an Entity.
 
@@ -40,48 +40,81 @@ In GPUI, if a struct implement `Render` trait, and we create it to be managed by
 (this code is from [GPUI Hello World Tutorial - From Core Concepts to Hello World](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)):
 
 ```rust
-// main.rs
 use gpui::{
-    div, prelude::*, px, rgb, size, App, Application, Bounds, Context, SharedString, Window,
-    WindowBounds, WindowOptions,
+    AppContext, Context, Entity, InteractiveElement, IntoElement, MouseUpEvent,
+    ParentElement, Render, Styled, Window, div, relative,
 };
 
-struct HelloWorld {
-    text: SharedString,
+// this is a thing that we can see the ui got rerender or not.
+use crate::utils::random_color::random_color;
+
+struct Counter {
+    count: i32,
 }
 
-impl Render for HelloWorld {
-    fn render(&mut self, _window: &mut Window, _cx: &mut Context<Self>) -> impl IntoElement {
-        div()
-            .flex()
-            .flex_col()
-            .bg(rgb(0x2e3440))
-            .size(px(500.0))
-            .justify_center()
-            .items_center()
-            .text_xl()
-            .text_color(rgb(0xd8dee9))
-            .child(format!("Hello, {}!", &self.text))
+struct ReactiveCounter {
+    count: i32,
+}
+
+pub struct View {
+    counter1: Entity<Counter>,
+    reactive_counter: Entity<ReactiveCounter>,
+}
+
+impl View {
+    pub fn new(cx: &mut Context<Self>) -> Self {
+        let first_counter: Entity<Counter> = cx.new(|_cx| Counter { count: 0 });
+
+        let second_counter = cx.new(|cx| {
+            cx.observe(
+                &first_counter,
+                |second: &mut ReactiveCounter, first: Entity<Counter>, cx| {
+                    second.count = first.read(cx).count * 3;
+                },
+            )
+            .detach();
+
+            ReactiveCounter { count: 0 }
+        });
+
+        Self {
+            counter1: first_counter,
+            reactive_counter: second_counter,
+        }
+    }
+
+    pub fn on_increase(&mut self, _: &MouseUpEvent, _: &mut Window, cx: &mut Context<Self>) {
+        self.counter1.update(cx, |counter, cx| {
+            counter.count += 1;
+            cx.notify();
+        })
     }
 }
 
-fn main() {
-    Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(500.), px(500.)), cx);
-        cx.open_window(
-            WindowOptions {
-                window_bounds: Some(WindowBounds::Windowed(bounds)),
-                ..Default::default()
-            },
-            |_, cx| {
-                cx.new(|_| HelloWorld {
-                    text: "GPUI World".into(),
-                })
-            },
-        )
-        .unwrap();
-    });
+impl Render for View {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .size_full()
+            .flex()
+            .child(
+                div()
+                    .on_mouse_up(gpui::MouseButton::Left, cx.listener(Self::on_increase))
+                    .h_full()
+                    .w(relative(0.5))
+                    .bg(random_color())
+                    .flex()
+                    .justify_center()
+                    .items_center()
+                    .child(format!(
+                        "COUNTER: {} \nReactive Counter: {}",
+                        self.counter1.read(cx).count,
+                        self.reactive_counter.read(cx).count,
+                    )),
+            )
+            .child(div().h_full().w(relative(0.5)).bg(random_color()))
+    }
 }
+
 ```
 
 This is just a basic ui that display "Hello, GPUI World!" in a window. and you can see cx.new create a new `Entity<HelloWorld>`,
@@ -134,6 +167,32 @@ tool to make entity update to things happe, this also include event-based update
 ## Event-based update.
 
 ```rust
+use gpui::{
+    AppContext, Context, Entity, EventEmitter, InteractiveElement, IntoElement, MouseUpEvent,
+    ParentElement, Render, Styled, Window, div, relative,
+};
+
+// this is a thing that we can see the ui got rerender or not.
+use crate::utils::random_color::random_color;
+
+struct Counter {
+    count: i32,
+}
+
+struct EventCounter {
+    count: i32,
+}
+
+struct EventPayload {
+    count_now: i32,
+}
+
+impl EventEmitter<EventPayload> for Counter {}
+
+pub struct View {
+    counter1: Entity<Counter>,
+    event_counter: Entity<EventCounter>,
+}
 
 impl View {
     pub fn new(cx: &mut Context<Self>) -> Self {
@@ -166,7 +225,29 @@ impl View {
     }
 }
 
-// impl render here, for simplicity, we don't show here
+impl Render for View {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        div()
+            .size_full()
+            .flex()
+            .child(
+                div()
+                    .on_mouse_up(gpui::MouseButton::Left, cx.listener(Self::on_increase))
+                    .h_full()
+                    .w(relative(0.5))
+                    .bg(random_color())
+                    .flex()
+                    .justify_center()
+                    .items_center()
+                    .child(format!(
+                        "COUNTER: {} \n Event Counter: {}",
+                        self.counter1.read(cx).count,
+                        self.event_counter.read(cx).count
+                    )),
+            )
+            .child(div().h_full().w(relative(0.5)).bg(random_color()))
+    }
+}
 
 ```
 
