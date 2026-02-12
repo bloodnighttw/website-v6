@@ -19,12 +19,25 @@ This article is part of my studies on GPUI, I will write a series of articles to
 
 A entity is something that is owned and managed by GPUI, and we can access it through app context.
 
+## Creating an Entity.
+
+To create an entity, we can use `cx.new` method, and pass a closure that return the struct we want to create as entity.
+
+```rust
+let my_entity: Entity<MyStruct> = cx.new(|_cx| MyStruct {
+    // initialize fields
+});
+```
+
+This is a simple example of creating an entity of type `MyStruct`, and we can access this entity through `my_entity` variable, and
+with this way, GPUI can manage the lifecycle of `MyStruct` instance, and you should access it through GPUI context `cx`, it can be found in
+various places, such as in `render` method of `Render` trait, or in `new` method of other entities, or in event handlers.
+
 ## An Entity that implement Render trait
 
-In GPUI, if a struct implement `Render` trait, and we create it to be managed by GPUI App as `Entity<T>`,
-it will be considered as a `View` that is used to render UI elements.
+In GPUI, if a struct implement `Render` trait, and we create it to be managed by GPUI App as `Entity<T>`, it will be considered as a `View` that is used to render UI elements.
 
-(this code from [GPUI Hello World Tutorial - From Core Concepts to Hello World](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)):
+(this code is from [GPUI Hello World Tutorial - From Core Concepts to Hello World](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)):
 
 ```rust
 // main.rs
@@ -78,3 +91,92 @@ and `HelloWorld` implement `Render` trait, so it is a entity can render UI.
 
 Entity can create without implement `Render` trait, in this case, the entity is not a view that can render UI,
 and be consider as just a piece of data that is owned and managed by GPUI App.
+
+### Make an Entity reactive to other Entity changes.
+
+```rust
+impl View {
+    pub fn new(cx: &mut Context<Self>) -> Self {
+        let first_counter: Entity<Counter> = cx.new(|_cx| Counter { count: 0 });
+
+        let second_counter = cx.new(|cx| {
+            cx.observe(
+                &first_counter,
+                |second: &mut ReactiveCounter, first: Entity<Counter>, cx| {
+                    second.count = first.read(cx).count * 3;
+                    cx.notify()
+                },
+            )
+            .detach();
+
+            ReactiveCounter { count: 0 }
+        });
+
+
+        Self {
+            counter1: first_counter,
+            reactive_counter: second_counter,
+        }
+    }
+
+}
+
+// impl render here, for simplicity, we don't show here
+
+```
+
+in such way, when `first_counter` change, `second_counter` will be updated automatically, don't forgett to call
+`cx.notify()` to notify GPUI that the entity has changed.
+
+This is a simple way to make an entity reactive to other entity changes, but not the only way, GPUI provide more powerful
+tool to make entity update to things happe, this also include event-based update.
+
+## Event-based update.
+
+```rust
+
+impl View {
+    pub fn new(cx: &mut Context<Self>) -> Self {
+        let first_counter: Entity<Counter> = cx.new(|_cx| Counter { count: 0 });
+
+        let event_counter = cx.new(|cx: &mut Context<EventCounter>| {
+            // Note we can set up the callback before the Counter is even created!
+            cx.subscribe(&first_counter, |second, _first, event, _cx| {
+                second.count = event.count_now << 1;
+            })
+            .detach();
+
+            EventCounter { count: 0 }
+        });
+
+        Self {
+            counter1: first_counter,
+            event_counter,
+        }
+    }
+
+    pub fn on_increase(&mut self, _: &MouseUpEvent, _: &mut Window, cx: &mut Context<Self>) {
+        self.counter1.update(cx, |counter, cx| {
+            counter.count += 1;
+            cx.notify();
+            cx.emit(EventPayload {
+                count_now: counter.count,
+            });
+        })
+    }
+}
+
+// impl render here, for simplicity, we don't show here
+
+```
+
+as you can see, we can use `cx.subscribe` to subscribe to the entity that send the event, and provide a callback that will be called when the entity emit an event,
+in this case, when `counter1` emit an event, `event_counter` will update its count to be `counter1.count << 1`.
+
+BTW, you can see full code of these example in [GPUI Experiment](https://github.com/bloodnighttw/gpui-experiment/blob/master/src/data_flow/entities.rs), which is part of
+my GPUI experiment project to make me understand GPUI better by writing code and testing things out.
+
+## Credits:
+
+- [GPUI Hello World Tutorial - From Core Concepts to Hello World](https://blog.0xshadow.dev/posts/learning-gpui/gpui-hello-world-tutorial/)
+- [Ownership and data flow](https://github.com/zed-industries/zed/blob/main/crates/gpui/src/_ownership_and_data_flow.rs)
